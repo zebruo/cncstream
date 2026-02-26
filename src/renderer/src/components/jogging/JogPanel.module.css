@@ -1,0 +1,139 @@
+.modeRow {
+  display: flex;
+  gap: 2px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.modeBtn {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.modeBtn.active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.jogArea {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  justify-content: center;
+}
+
+.xyPad {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 3px;
+}
+
+.jogBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-jog-btn);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-fast);
+  user-select: none;
+}
+
+.jogBtn:hover:not(:disabled) {
+  background-color: var(--color-jog-btn-hover);
+}
+
+.jogBtn:active:not(:disabled) {
+  background-color: var(--color-jog-btn-active);
+  color: #fff;
+}
+
+.jogIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.jogBtn.center {
+  background-color: transparent;
+  cursor: default;
+  opacity: 1 !important;
+}
+
+.centerIcon {
+  width: 30px;
+  height: 30px;
+  opacity: 0.4;
+  filter: var(--icon-filter);
+}
+
+.zControls {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zBtn {
+  width: 56px;
+  height: 72px;
+  font-size: var(--font-size-md) !important;
+  font-weight: 700;
+  color: var(--color-axis-z) !important;
+}
+
+.aControls {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.aBtn {
+  width: 56px;
+  height: 72px;
+  font-size: var(--font-size-md) !important;
+  font-weight: 700;
+  color: var(--color-axis-a) !important;
+}
+
+.presetSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.presetLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.presetRow {
+  display: flex;
+  gap: 3px;
+}
+
+.presetBtn {
+  flex: 1;
+  padding: 4px 4px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.presetBtn.active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.presetBtn:hover:not(.active) {
+  background-color: var(--color-bg-elevated);
+}

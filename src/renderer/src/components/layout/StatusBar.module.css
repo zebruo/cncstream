@@ -1,0 +1,52 @@
+.statusBar {
+  display: flex;
+  align-items: center;
+  height: var(--statusbar-height);
+  padding: 0 var(--space-md);
+  background-color: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+  gap: var(--space-sm);
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.label {
+  color: var(--color-text-muted);
+}
+
+.value {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+}
+
+.unit {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.separator {
+  width: 1px;
+  height: 16px;
+  background-color: var(--color-border);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.modeBadge {
+  font-size: 9px;
+  padding: 0 3px;
+  border-radius: 2px;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: help;
+}

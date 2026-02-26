@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="500"
+   height="500"
+   viewBox="0 0 15 15"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="down.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch1"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#6b76df;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch1"
+       id="linearGradient1"
+       x1="1.5407611"
+       y1="7.5"
+       x2="13.459239"
+       y2="7.5"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.92599825,0,0,0.92599825,0.55501342,0.55501375)" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.00875"
+     inkscape:cx="399.50434"
+     inkscape:cy="241.38786"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     d="M 8.6890723,11.306926 10.242009,8.9623764 12.772395,5.1420722 C 13.300546,4.3327763 12.922165,2.9522303 12.165416,2.9522303 H 7.254396 2.8321287 c -0.7567447,0 -1.1351272,1.380546 -0.5990872,2.1898419 l 4.0832961,6.1648538 c 0.6463931,0.987792 1.7184589,0.987792 2.3727347,0 z"
+     fill="#292D32"
+     id="path1"
+     style="fill:#5c7cfa;fill-opacity:1;stroke:url(#linearGradient1);stroke-width:0;stroke-dasharray:none" />
+</svg>

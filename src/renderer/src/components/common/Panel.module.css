@@ -1,0 +1,42 @@
+.panel {
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.headerClickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.chevron {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-left: var(--space-xs);
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}

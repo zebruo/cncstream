@@ -1,0 +1,45 @@
+export interface GrblSettingDef {
+  description: string
+  units: string
+}
+
+export const GRBL_SETTINGS: Record<string, GrblSettingDef> = {
+  '$0': { description: 'Step pulse time', units: 'microseconds' },
+  '$1': { description: 'Step idle delay', units: 'milliseconds' },
+  '$2': { description: 'Step port invert', units: 'mask' },
+  '$3': { description: 'Direction port invert', units: 'mask' },
+  '$4': { description: 'Step enable invert', units: 'boolean' },
+  '$5': { description: 'Limit pins invert', units: 'boolean' },
+  '$6': { description: 'Probe pin invert', units: 'boolean' },
+  '$10': { description: 'Status report', units: 'mask' },
+  '$11': { description: 'Junction deviation', units: 'mm' },
+  '$12': { description: 'Arc tolerance', units: 'mm' },
+  '$13': { description: 'Report inches', units: 'boolean' },
+  '$20': { description: 'Soft limits', units: 'boolean' },
+  '$21': { description: 'Hard limits', units: 'boolean' },
+  '$22': { description: 'Homing cycle', units: 'boolean' },
+  '$23': { description: 'Homing dir invert', units: 'mask' },
+  '$24': { description: 'Homing feed', units: 'mm/min' },
+  '$25': { description: 'Homing seek', units: 'mm/min' },
+  '$26': { description: 'Homing debounce', units: 'milliseconds' },
+  '$27': { description: 'Homing pull-off', units: 'mm' },
+  '$30': { description: 'Max spindle speed', units: 'RPM' },
+  '$31': { description: 'Min spindle speed', units: 'RPM' },
+  '$32': { description: 'Laser mode', units: 'boolean' },
+  '$100': { description: 'X steps/mm', units: 'steps/mm' },
+  '$101': { description: 'Y steps/mm', units: 'steps/mm' },
+  '$102': { description: 'Z steps/mm', units: 'steps/mm' },
+  '$103': { description: 'A steps/mm', units: 'steps/degree' },
+  '$110': { description: 'X max rate', units: 'mm/min' },
+  '$111': { description: 'Y max rate', units: 'mm/min' },
+  '$112': { description: 'Z max rate', units: 'mm/min' },
+  '$113': { description: 'A max rate', units: 'deg/min' },
+  '$120': { description: 'X acceleration', units: 'mm/sec^2' },
+  '$121': { description: 'Y acceleration', units: 'mm/sec^2' },
+  '$122': { description: 'Z acceleration', units: 'mm/sec^2' },
+  '$123': { description: 'A acceleration', units: 'deg/sec^2' },
+  '$130': { description: 'X max travel', units: 'mm' },
+  '$131': { description: 'Y max travel', units: 'mm' },
+  '$132': { description: 'Z max travel', units: 'mm' },
+  '$133': { description: 'A max travel', units: 'degrees' }
+}

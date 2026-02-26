@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="500"
+   height="500"
+   viewBox="0 0 15 15"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="downleft.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch1"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#6b76df;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch1"
+       id="linearGradient1"
+       x1="1.5407611"
+       y1="7.5"
+       x2="13.459239"
+       y2="7.5"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.65477964,-0.65477964,-0.65477964,0.65477964,15.759233,9.0626332)" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.00875"
+     inkscape:cx="399.50434"
+     inkscape:cy="241.38786"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     d="M 2.404835,10.913735 2.9645898,8.1577972 3.8766996,3.6671812 C 4.0754995,2.721463 5.319248,2.012826 5.8543504,2.5479284 l 3.4726147,3.4726148 3.1270159,3.1270155 c 0.535098,0.5350989 -0.173537,1.7788493 -1.124834,1.9720703 L 4.082612,12.591512 C 2.9270687,12.832918 2.1690036,12.074852 2.404835,10.913735 Z"
+     fill="#292D32"
+     id="path1"
+     style="fill:#5c7cfa;fill-opacity:1;stroke:url(#linearGradient1);stroke-width:0;stroke-dasharray:none" />
+</svg>

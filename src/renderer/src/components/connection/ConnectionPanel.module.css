@@ -1,0 +1,104 @@
+.row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.portSelect {
+  flex: 1;
+  padding: 6px 8px;
+}
+
+.baudSelect {
+  flex: 1;
+  padding: 6px 8px;
+}
+
+.refreshBtn {
+  padding: 4px 8px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  background-color: var(--color-bg-elevated);
+}
+
+.refreshBtn:disabled {
+  opacity: 0.3;
+}
+
+.refreshIconImg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.connectBtn {
+  padding: 4px 8px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  transition: opacity var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connectBtn:hover:not(:disabled) {
+  opacity: 0.7;
+  background-color: var(--color-bg-elevated);
+}
+
+.connectBtn:disabled {
+  opacity: 0.3;
+}
+
+.connectBtn.disconnect {
+  background-color: transparent;
+}
+
+.connectIcon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.connectionDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.connectionDot[data-state="disconnected"] {
+  background-color: var(--color-text-muted);
+}
+
+.connectionDot[data-state="connecting"] {
+  background-color: var(--color-warning);
+  animation: pulse 1s infinite;
+}
+
+.connectionDot[data-state="connected"] {
+  background-color: var(--color-success);
+}
+
+.connectionDot[data-state="error"] {
+  background-color: var(--color-error);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.error {
+  padding: 6px 8px;
+  background-color: rgba(250, 82, 82, 0.1);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+}

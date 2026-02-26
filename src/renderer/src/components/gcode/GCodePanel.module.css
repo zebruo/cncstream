@@ -1,0 +1,245 @@
+.panel {
+  padding: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.openBtn {
+  padding: 6px 16px;
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.openBtn:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.fileName {
+  flex: 1;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.closeBtn {
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.closeBtn:hover {
+  background-color: var(--color-error);
+  color: #fff;
+}
+
+/* Insight */
+.fileNameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.insight {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+}
+
+.insightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs) var(--space-md);
+}
+
+.insightItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.insightLabel {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.insightValue {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+/* Bottom row: travel table + progress */
+.bottomRow {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-xs);
+  align-items: center;
+}
+
+/* Travel table */
+.travelTable {
+  width: 20%;
+  flex-shrink: 0;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+}
+
+.travelTable th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: right;
+  padding: 2px 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.travelTable th:first-child {
+  text-align: left;
+}
+
+.travelTable td {
+  padding: 2px 6px;
+  text-align: right;
+  color: var(--color-text-primary);
+}
+
+.axisCell {
+  text-align: left !important;
+  font-weight: 600;
+  color: var(--color-text-secondary) !important;
+}
+
+.travelTable tbody tr:nth-child(even) {
+  background-color: var(--color-bg-tertiary);
+}
+
+/* Job controls */
+.jobControls {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.startBtn,
+.resumeBtn {
+  padding: 8px 16px;
+  background-color: var(--color-success);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.startBtn:hover:not(:disabled),
+.resumeBtn:hover {
+  filter: brightness(1.1);
+}
+
+.pauseBtn {
+  padding: 8px 16px;
+  background-color: var(--color-warning);
+  color: #000;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.stopBtn {
+  padding: 8px 16px;
+  background-color: var(--color-error);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.stopBtn:hover {
+  filter: brightness(1.1);
+}
+
+/* Probe warning */
+.probeWarning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  background-color: rgba(230, 126, 34, 0.1);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+}
+
+.probeWarningText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.probeWarningBtns {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.cancelBtn {
+  padding: 8px 16px;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+
+.cancelBtn:hover {
+  background-color: var(--color-border);
+}
+
+/* Progress */
+.progress {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progressBar {
+  height: 6px;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-full);
+  transition: width 200ms ease;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-muted);
+}

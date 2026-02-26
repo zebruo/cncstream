@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="500"
+   height="500"
+   viewBox="0 0 15 15"
+   fill="none"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="upright.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch1"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#6b76df;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch1"
+       id="linearGradient1"
+       x1="1.5407611"
+       y1="7.5"
+       x2="13.459239"
+       y2="7.5"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.65477964,0.65477964,0.65477964,-0.65477964,-0.75923318,5.9373665)" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.00875"
+     inkscape:cx="399.50434"
+     inkscape:cy="241.38786"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     d="M 12.595165,4.0862645 12.03541,6.8422027 11.123301,11.332819 c -0.1988,0.945718 -1.4425487,1.654355 -1.9776511,1.119253 L 5.6730346,8.9794558 2.5460194,5.852441 C 2.0109201,5.3173417 2.719556,4.0735921 3.6708526,3.8803706 L 10.917388,2.4084877 c 1.155543,-0.2414055 1.913608,0.5166595 1.677777,1.6777768 z"
+     fill="#292D32"
+     id="path1"
+     style="fill:#5c7cfa;fill-opacity:1;stroke:url(#linearGradient1);stroke-width:0;stroke-dasharray:none" />
+</svg>

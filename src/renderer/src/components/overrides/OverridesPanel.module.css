@@ -1,0 +1,128 @@
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.sections > * {
+  padding: var(--space-sm);
+  background-color: var(--color-bg-tertiary);
+}
+
+.override {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overrideHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overrideLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.overrideValue {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.overrideBar {
+  height: 4px;
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.overrideFill {
+  height: 100%;
+  background-color: var(--color-accent);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-fast);
+  max-width: 100%;
+}
+
+.overrideBtns {
+  display: flex;
+  gap: 3px;
+}
+
+.ovBtn {
+  flex: 1;
+  padding: 3px 6px;
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-secondary);
+}
+
+.ovBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.resetBtn {
+  font-family: var(--font-family-base);
+}
+
+.rapidRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.rapidValue {
+  flex: 1;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.rapidBtns {
+  display: flex;
+  gap: 3px;
+}
+
+.rapidBtn {
+  padding: 3px 8px;
+  background-color: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-secondary);
+}
+
+.rapidBtn.active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.rapidBtn:hover:not(.active):not(:disabled) {
+  background-color: var(--color-bg-elevated);
+}
+
+.toggleBtn {
+  width: 20px;
+  height: 20px;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.toggleBtn:hover {
+  color: var(--color-text-primary);
+}

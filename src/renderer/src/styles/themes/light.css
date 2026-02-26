@@ -1,0 +1,78 @@
+[data-theme="light"] {
+  /* Backgrounds */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #d8d9dd;
+  --color-bg-tertiary: #c7c8d1;
+  --color-bg-elevated: #ffffff;
+  --color-bg-input: #ffffff;
+  --color-bg-hover: #e9ecef;
+
+  /* Text */
+  --color-text-primary: #1a1b1e;
+  --color-text-secondary: #495057;
+  --color-text-muted: #6c757d;
+  --color-text-inverse: #ffffff;
+
+  /* Borders */
+  --color-border: #b2b7bd;
+  --color-border-focus: #4c6ef5;
+
+  /* Accent */
+  --color-accent: #4c6ef5;
+  --color-accent-hover: #5c7cfa;
+  --color-accent-active: #3b5bdb;
+  --color-accent-text: #ffffff;
+
+  /* Status */
+  --color-success: #2f9e44;
+  --color-warning: #e67700;
+  --color-error: #e03131;
+  --color-info: #1971c2;
+
+  /* Machine states */
+  --color-state-idle: #2f9e44;
+  --color-state-run: #1971c2;
+  --color-state-hold: #e67700;
+  --color-state-alarm: #e03131;
+  --color-state-jog: #9c36b5;
+  --color-state-home: #1971c2;
+  --color-state-check: #e67700;
+  --color-state-door: #e03131;
+  --color-state-sleep: #868e96;
+
+  /* DRO */
+  --color-dro-bg: #f8f9fa;
+  --color-dro-text: #1a1b1e;
+  --color-dro-label: #495057;
+  --color-dro-zero-btn: #e03131;
+
+  /* Axes colors */
+  --color-axis-x: #e03131;
+  --color-axis-y: #2f9e44;
+  --color-axis-z: #1971c2;
+  --color-axis-a: #9c36b5;
+
+  /* Visualizer */
+  --color-viz-bg: #d2d6da;
+  --color-viz-grid: #dee2e6;
+  --color-viz-grid-major: #ced4da;
+  --color-viz-rapid: #0077cc;
+  --color-viz-feed: #2f9e44;
+  --color-viz-executed: #e67700;
+  --color-viz-tool: #e03131;
+
+  /* Jog pad */
+  --color-jog-btn: #e9ecef;
+  --color-jog-btn-hover: #dee2e6;
+  --color-jog-btn-active: #4c6ef5;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.12);
+
+  /* Scrollbar */
+  --scrollbar-bg: #f1f3f5;
+  --scrollbar-thumb: #ced4da;
+  --scrollbar-thumb-hover: #adb5bd;
+}

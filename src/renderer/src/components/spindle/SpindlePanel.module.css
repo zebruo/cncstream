@@ -1,0 +1,125 @@
+.activeAlert {
+  padding: 2px 8px;
+  background-color: var(--color-warning);
+  color: #000;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.startRow {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.dirBtn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+}
+
+.dirBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dirBtn.active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.rpmInput {
+  width: 72px;
+  flex-shrink: 0;
+  padding: 4px 6px;
+  text-align: right;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+.toggleBtn {
+  flex: 1;
+  padding: 8px;
+  background-color: var(--color-success);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
+}
+
+.toggleBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.toggleBtn.on {
+  background-color: var(--color-error);
+}
+
+.modeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.modeLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.modeSelect {
+  flex: 1;
+  padding: 2px 4px;
+  font-size: var(--font-size-xs);
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.infoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.modeBadge {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}

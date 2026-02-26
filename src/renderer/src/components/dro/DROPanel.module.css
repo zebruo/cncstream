@@ -1,0 +1,98 @@
+.headerActions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.posToggle {
+  padding: 2px 8px;
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-mono);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.posToggle.active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}
+
+.zeroAllBtn {
+  padding: 2px 8px;
+  background-color: var(--color-dro-zero-btn);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.zeroAllBtn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.dro {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.axisRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--color-dro-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.axisLabel {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.axisValue {
+  flex: 1;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-dro);
+  font-weight: 600;
+  color: var(--color-dro-text);
+  text-align: right;
+  padding-right: var(--space-sm);
+  cursor: text;
+  line-height: 1.2;
+}
+
+.editInput {
+  flex: 1;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  text-align: right;
+  padding: 2px var(--space-sm);
+  background-color: var(--color-bg-input);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+}
+
+.zeroBtn {
+  width: 32px;
+  height: 32px;
+  background-color: var(--color-dro-zero-btn);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+  transition: filter var(--transition-fast);
+}
+
+.zeroBtn:hover:not(:disabled) {
+  filter: brightness(1.2);
+}
