@@ -8,6 +8,14 @@ Application de bureau construite avec **Electron**, **React** et **TypeScript**.
 
 ---
 
+## Interface
+
+| Mode sombre | Mode clair |
+|---|---|
+| ![Mode sombre](docs/mode_sombre.png) | ![Mode clair](docs/mode_clair.png) |
+
+---
+
 ## Fonctionnalités
 
 ### Connexion série
