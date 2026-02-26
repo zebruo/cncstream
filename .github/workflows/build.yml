@@ -1,0 +1,68 @@
+name: Build and Release CNCStream
+
+# Déclenché automatiquement quand un tag v* est poussé (ex: v1.0.1)
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    permissions:
+      contents: write   # Nécessaire pour créer la release GitHub
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Build + package Windows
+        run: npm run package:win
+
+      - name: Installer Inno Setup
+        run: choco install innosetup --yes
+
+      - name: Compiler le setup Inno Setup
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\CNCStream.iss
+
+      - name: Lire la version depuis package.json
+        id: pkg
+        shell: pwsh
+        run: |
+          $v = (Get-Content package.json | ConvertFrom-Json).version
+          echo "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Créer le zip portable
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist\win-unpacked `
+            -DestinationPath "dist\CNCStream-${{ steps.pkg.outputs.version }}-portable.zip"
+
+      - name: Publier la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          name: CNCStream v${{ steps.pkg.outputs.version }}
+          body: |
+            ## CNCStream v${{ steps.pkg.outputs.version }}
+
+            ### Téléchargements
+            - **CNCStream-Setup-${{ steps.pkg.outputs.version }}.exe** — Installation classique (Menu Démarrer, désinstalleur automatique)
+            - **CNCStream-${{ steps.pkg.outputs.version }}-portable.zip** — Version portable, aucune installation requise
+
+            ### Compatibilité
+            Windows 10 / 11 — GRBL 1.1 et grblHAL
+          files: |
+            installer/output/CNCStream-Setup-${{ steps.pkg.outputs.version }}.exe
+            dist/CNCStream-${{ steps.pkg.outputs.version }}-portable.zip
