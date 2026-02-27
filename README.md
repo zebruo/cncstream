@@ -27,7 +27,7 @@ Application de bureau construite avec **Electron**, **React** et **TypeScript**.
 ### DRO — Digital Read-Out
 - Affichage des positions sur **4 axes** : X, Y, Z, A (axe A activable dans les réglages)
 - Bascule **MPos / WPos** (position machine / position de travail)
-- Sélection du système de coordonnées de travail **G54 à G59**
+- Affichage du système de coordonnées de travail actif (G54 par défaut) — pour un usage ponctuel avec une seule pièce à la fois, G54 suffit
 - Saisie directe de position par clic sur une valeur (commande `G10 L20`)
 - Affichage **mm ou pouces** (conversion à l'affichage, la machine reste toujours en G21)
 
@@ -78,9 +78,10 @@ Application de bureau construite avec **Electron**, **React** et **TypeScript**.
 ### Broche (Spindle)
 - Commandes M3 (CW), M4 (CCW), M5 (arrêt)
 - Trois modes de contrôle :
-  - **PWM** : vitesse pilotée par GRBL, overrides actifs, arrêt automatique à la pause
-  - **Relais** : sortie ON/OFF, vitesse physique maximale, arrêt automatique à la pause
-  - **Manuel** : potentiomètre physique externe, valeurs indicatives, contrôle manuel à la pause
+  - **PWM** : vitesse pilotée par GRBL, overrides actifs
+  - **Relais** : sortie ON/OFF, vitesse physique maximale
+  - **Manuel** : potentiomètre physique externe, valeurs indicatives
+- À la pause : arrêt automatique de la broche et des axes ; à la reprise : redémarrage de la broche avant les axes (tous modes)
 - Badge mode visible dans le panneau, tooltip explicatif sur chaque mode
 
 ### Arrosage (Coolant)
