@@ -949,7 +949,7 @@ class MachineControllerService extends events.EventEmitter {
     return this.commandQueue.enqueue("$X", CommandPriority.HIGH);
   }
   async probeZ(feedRate, maxDistance, retractDistance) {
-    await this.commandQueue.enqueue(`G38.2 Z-${maxDistance} F${feedRate}`, CommandPriority.HIGH);
+    await this.commandQueue.enqueue(`G21 G91 G38.2 Z-${maxDistance} F${feedRate}`, CommandPriority.HIGH);
     await this.commandQueue.enqueue(`G21 G91 G0 Z${retractDistance}`, CommandPriority.HIGH);
   }
   async getGrblSettings() {

@@ -250,7 +250,7 @@ export class MachineControllerService extends EventEmitter {
   }
 
   async probeZ(feedRate: number, maxDistance: number, retractDistance: number): Promise<void> {
-    await this.commandQueue.enqueue(`G38.2 Z-${maxDistance} F${feedRate}`, CommandPriority.HIGH)
+    await this.commandQueue.enqueue(`G21 G91 G38.2 Z-${maxDistance} F${feedRate}`, CommandPriority.HIGH)
     await this.commandQueue.enqueue(`G21 G91 G0 Z${retractDistance}`, CommandPriority.HIGH)
   }
 
