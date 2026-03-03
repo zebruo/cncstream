@@ -8,6 +8,84 @@ Application de bureau construite avec **Electron**, **React** et **TypeScript**.
 
 ---
 
+## Sécurité et tests avant utilisation
+
+> **CNCStream est un logiciel de contrôle de machine-outil. Une mauvaise utilisation peut provoquer des blessures graves, des dommages matériels ou la destruction de la pièce usinée. Lire attentivement cette section avant toute mise en route.**
+
+### Précautions générales
+
+- Ne jamais laisser la machine sans surveillance pendant l'usinage
+- Garder le bouton d'arrêt d'urgence (E-Stop) accessible à portée de main
+- Porter les équipements de protection individuels adaptés (lunettes, protection auditive)
+- S'assurer que la broche est **complètement arrêtée** avant de toucher la pièce ou l'outil
+- Ne jamais désactiver les fins de course matériels
+
+### Vérifications avant la première connexion
+
+- [ ] Le câble USB est branché sur le contrôleur GRBL (pas sur la machine directement)
+- [ ] Les fins de course sont câblés et fonctionnels (`$21=1` recommandé)
+- [ ] La limite de déplacement logicielle est activée (`$20=1`) avec des valeurs cohérentes (`$130`, `$131`, `$132`)
+- [ ] Le courant moteur est correctement réglé sur les drivers
+- [ ] La broche est **arrêtée** et le variateur hors tension
+
+### Tests à faire dans l'ordre
+
+#### 1. Test de communication
+
+Connecter CNCStream → vérifier la réception du statut GRBL dans la barre de connexion.
+Envoyer `$$` dans la console → les paramètres doivent s'afficher.
+
+#### 2. Test du homing (`$H`)
+
+Effectuer le homing **sans outil** et **sans pièce** :
+- S'assurer que la machine peut atteindre les fins de course sans obstacle
+- Observer le sens de déplacement de chaque axe : doit aller vers les fins de course
+- Après homing, MPos doit afficher `0.000` sur les axes homés
+
+> Si la machine s'éloigne des fins de course, inverser le sens (`$3`) ou le câblage de la bobine.
+
+#### 3. Test du jog
+
+Tester le jog en incrémental petit pas (0,1 mm) sur chaque axe **à faible vitesse** :
+- Vérifier que X+ déplace bien vers la droite (ou le sens attendu)
+- Vérifier que Z+ monte bien (et Z- descend)
+- Tester les fins de course en approchant lentement : la machine doit s'arrêter proprement
+
+#### 4. Test du Probe Z
+
+**Prérequis** : outil en place, sonde posée sur la pièce.
+- Vérifier l'indicateur de circuit dans CNCStream : doit être **ouvert** (gris) au repos
+- Toucher manuellement le dessus de la sonde avec l'outil → l'indicateur doit passer au **vert**
+- Lancer le Probe Z en surveillant la descente : la broche doit descendre et s'arrêter au contact
+- Si la machine remonte au lieu de descendre, vérifier le paramètre `$3` (masque d'inversion Z)
+
+#### 5. Test de streaming (à vide)
+
+Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée, outil relevé au safe height) :
+- Charger un fichier G-code simple
+- Vérifier les dimensions affichées dans l'analyse (min/max par axe)
+- Lancer le streaming et surveiller le visualiseur 3D
+- Tester Pause / Resume / Stop pendant l'exécution
+
+#### 6. Premier usinage
+
+- Commencer avec une matière tendre (bois, MDF) et des paramètres de coupe conservateurs
+- Rester présent devant la machine, la main sur l'E-Stop
+- Surveiller le bruit de coupe et la température de l'outil
+
+### Paramètres GRBL recommandés
+
+| Paramètre | Valeur | Description |
+|---|---|---|
+| `$20` | `1` | Soft limits activées |
+| `$21` | `1` | Hard limits activées |
+| `$22` | `1` | Homing activé |
+| `$1` | `255` | Maintien moteurs actif (évite la perte de position) |
+
+> Ces valeurs sont à adapter à votre machine. Consulter la documentation GRBL pour la signification complète de chaque paramètre (`$$` dans la console ou l'onglet Référence de CNCStream).
+
+---
+
 ## Interface
 
 | Mode sombre | Mode clair |
@@ -170,3 +248,11 @@ src/
 │   └── assets/         # Icônes SVG
 └── shared/             # Types et constantes partagés main/renderer
 ```
+
+---
+
+## Auteur
+
+Développé avec l'assistance de l'IA [Claude](https://claude.ai) (Anthropic).
+
+Contact : zebruo@gmail.com
