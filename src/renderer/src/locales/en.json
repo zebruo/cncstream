@@ -156,6 +156,10 @@
     "spindleWarningMsg": "The spindle is not running. Start the job anyway?",
     "spindleWarningConfirm": "Start anyway",
     "spindleReadyMsg": "Spindle is running. Start the job?",
-    "spindleReadyConfirm": "Start"
+    "spindleReadyConfirm": "Start",
+    "toolDiameter": "Tool ⌀",
+    "stockDepth": "Stock depth",
+    "passes": "Passes",
+    "multiOp": "{{ops}} operations · {{passes}} passes"
   }
 }

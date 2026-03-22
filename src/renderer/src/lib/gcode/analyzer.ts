@@ -17,6 +17,8 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
 
   // Track Z values reached during rapid moves to find retract height
   const rapidZCounts = new Map<number, number>()
+  // Collect distinct cutting Z levels (fallback pass detection)
+  const cuttingZSet = new Set<number>()
 
   for (const move of parsed.movements) {
     for (const pt of [move.from, move.to]) {
@@ -32,6 +34,11 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     if (move.type === 'G0' && move.to.z > move.from.z) {
       const z = Math.round(move.to.z * 1000) / 1000 // avoid float rounding
       rapidZCounts.set(z, (rapidZCounts.get(z) || 0) + 1)
+    }
+
+    // Collect distinct cutting Z levels
+    if (move.type !== 'G0' && move.to.z < -0.001) {
+      cuttingZSet.add(Math.round(move.to.z * 100) / 100)
     }
 
     if (move.type !== 'G0' && move.feedRate > 0) {
@@ -70,6 +77,15 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     if (line.isComment && line.raw.length > 0) {
       const text = line.raw
 
+      // Box Generator style: "; Tool diameter: 4mm" (no T number)
+      if (!text.match(/\bT(\d+)\b/i)) {
+        const headerDMatch = text.match(/;\s*Tool diameter:\s*(\d+\.?\d*)\s*mm/i)
+        if (headerDMatch && !toolInfoMap.has(1)) {
+          tools.add(1)
+          toolInfoMap.set(1, { diameter: parseFloat(headerDMatch[1]) })
+        }
+      }
+
       // Match "T<number>" in comment + try to extract diameter and name
       const toolMatch = text.match(/\bT(\d+)\b/i)
       if (toolMatch) {
@@ -102,6 +118,64 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     }
   }
 
+  // Detect operations from structured comments (Box Generator, Fusion 360, VCarve)
+  // Falls back to Z level analysis if no structured comments found
+  let hasTCommands = false
+  let commentOpCount = 0
+  let commentPassCount = 0
+  let opPassMax = 0
+  let inCommentOp = false
+
+  for (const line of parsed.lines) {
+    if (line.params.T !== undefined) hasTCommands = true
+    if (!line.isComment) continue
+    const text = line.raw
+
+    const isOpStart =
+      /─{3}/.test(text) ||                        // Box Generator: ; ─── name ───
+      /\((?:OPERATION|Operation):/.test(text) ||  // Fusion 360: (Operation: name)
+      /;\s*Toolpath:/i.test(text)                 // VCarve: ; Toolpath: name
+
+    if (isOpStart) {
+      if (inCommentOp) {
+        commentOpCount++
+        commentPassCount += opPassMax
+      }
+      opPassMax = 0
+      inCommentOp = true
+    }
+
+    // ; Passe N/M → extract total M
+    const passMatch = text.match(/;\s*Passe\s+\d+\/(\d+)/i)
+    if (passMatch) opPassMax = Math.max(opPassMax, parseInt(passMatch[1]))
+  }
+  if (inCommentOp) {
+    commentOpCount++
+    commentPassCount += opPassMax
+  }
+
+  // Compute final pass stats
+  let operationCount: number
+  let passCount: number
+  let passDepth: number | null = null
+
+  if (commentPassCount > 0) {
+    // Structured comments found — use them
+    operationCount = commentOpCount
+    passCount = commentPassCount
+  } else {
+    // Fallback: distinct Z levels from cutting moves
+    const cuttingZLevels = [...cuttingZSet].sort((a, b) => a - b)
+    operationCount = cuttingZLevels.length > 0 ? 1 : 0
+    passCount = cuttingZLevels.length
+    if (cuttingZLevels.length >= 2) {
+      const diffs = cuttingZLevels.slice(1).map((z, i) => Math.abs(z - cuttingZLevels[i]))
+      const minDiff = Math.min(...diffs)
+      const maxDiff = Math.max(...diffs)
+      if (maxDiff - minDiff < 0.1) passDepth = Math.round(minDiff * 100) / 100
+    }
+  }
+
   const safeVal = (v: number, fallback: number) => (isFinite(v) ? v : fallback)
 
   return {
@@ -125,6 +199,10 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     },
     safeZ: rapidZCounts.size > 0
       ? [...rapidZCounts.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))[0]
-      : null
+      : null,
+    hasTCommands,
+    operationCount,
+    passCount,
+    passDepth
   }
 }

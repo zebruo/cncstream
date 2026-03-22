@@ -156,6 +156,10 @@
     "spindleWarningMsg": "La broche n'est pas en service. Démarrer quand même ?",
     "spindleWarningConfirm": "Démarrer quand même",
     "spindleReadyMsg": "Broche en service. Démarrer le job ?",
-    "spindleReadyConfirm": "Démarrer"
+    "spindleReadyConfirm": "Démarrer",
+    "toolDiameter": "Ø outil",
+    "stockDepth": "Ép. brut",
+    "passes": "Passes",
+    "multiOp": "{{ops}} opérations · {{passes}} passes"
   }
 }

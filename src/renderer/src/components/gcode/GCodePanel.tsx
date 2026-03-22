@@ -206,10 +206,12 @@ export function GCodePanel() {
             <div className={styles.insightItem}>
               <span className={styles.insightLabel}>{t('gcode.spindle')}</span>
               <span className={styles.insightValue}>
-                {fileInsight.spindleRange.min}-{fileInsight.spindleRange.max}
+                {fileInsight.spindleRange.min === fileInsight.spindleRange.max
+                  ? fileInsight.spindleRange.max
+                  : `${fileInsight.spindleRange.min}-${fileInsight.spindleRange.max}`}
               </span>
             </div>
-            {fileInsight.toolInfo.length > 0 && (
+            {fileInsight.hasTCommands && fileInsight.toolInfo.length > 0 && (
               <div className={styles.insightItem}>
                 <span className={styles.insightLabel}>{t('gcode.tools')}</span>
                 <span className={styles.insightValue}>
@@ -220,6 +222,20 @@ export function GCodePanel() {
                     return label
                   }).join(', ')}
                 </span>
+              </div>
+            )}
+            {fileInsight.toolInfo.some((t) => t.diameter) && (
+              <div className={styles.insightItem}>
+                <span className={styles.insightLabel}>{t('gcode.toolDiameter')}</span>
+                <span className={styles.insightValue}>
+                  {fileInsight.toolInfo.filter((t) => t.diameter).map((t) => `⌀ ${t.diameter} mm`).join(', ')}
+                </span>
+              </div>
+            )}
+            {fileInsight.boundingBox.min.z < -0.001 && (
+              <div className={styles.insightItem}>
+                <span className={styles.insightLabel}>{t('gcode.stockDepth')}</span>
+                <span className={styles.insightValue}>{Math.abs(fileInsight.boundingBox.min.z).toFixed(1)} mm</span>
               </div>
             )}
           </div>

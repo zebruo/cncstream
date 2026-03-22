@@ -5,6 +5,11 @@ declare module '*.svg' {
   export default src
 }
 
+declare module '*.module.css' {
+  const classes: Record<string, string>
+  export default classes
+}
+
 declare global {
   interface Window {
     cncstream: CNCStreamAPI
