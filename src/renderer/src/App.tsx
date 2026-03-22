@@ -15,6 +15,10 @@ export function App() {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
 
+  useEffect(() => {
+    document.title = `CNCStream v${__APP_VERSION__}`
+  }, [])
+
   return (
     <div className="app" data-theme={theme}>
       <AppLayout />
