@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { Tooltip } from '../common/Tooltip'
 import { Panel } from '../common/Panel'
 import { useJogStore } from '../../stores/jog.store'
 import { useConnectionStore } from '../../stores/connection.store'
@@ -77,19 +78,38 @@ export function JogPanel() {
       {/* XY Jog Pad + Z controls */}
       <div className={styles.jogArea}>
         <div className={styles.xyPad}>
-          {XY_DIRECTIONS.map((dir) => (
-            <button
-              key={dir.pos}
-              className={`${styles.jogBtn} ${styles[dir.pos]} ${dir.dx === 0 && dir.dy === 0 ? styles.center : ''}`}
-              onMouseDown={() => handleJogXY(dir.dx, dir.dy)}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              disabled={!isConnected || (dir.dx === 0 && dir.dy === 0)}
-              title={dir.dx === 0 && dir.dy === 0 ? t('jog.keyboardShortcuts') : `Jog ${dir.dx !== 0 ? (dir.dx > 0 ? 'X+' : 'X-') : ''}${dir.dy !== 0 ? (dir.dy > 0 ? 'Y+' : 'Y-') : ''}`}
-            >
-              <img src={dir.icon} alt="" className={dir.dx === 0 && dir.dy === 0 ? styles.centerIcon : styles.jogIcon} />
-            </button>
-          ))}
+          {XY_DIRECTIONS.map((dir) => {
+            const isCenter = dir.dx === 0 && dir.dy === 0
+            if (isCenter) {
+              return (
+                <Tooltip key={dir.pos} text={t('jog.keyboardShortcuts')}>
+                  <button
+                    className={`${styles.jogBtn} ${styles.center}`}
+                    style={{ width: '100%', height: '100%' }}
+                    onMouseDown={() => handleJogXY(dir.dx, dir.dy)}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    disabled={!isConnected || isCenter}
+                  >
+                    <img src={dir.icon} alt="" className={styles.centerIcon} />
+                  </button>
+                </Tooltip>
+              )
+            }
+            return (
+              <button
+                key={dir.pos}
+                className={styles.jogBtn}
+                onMouseDown={() => handleJogXY(dir.dx, dir.dy)}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                disabled={!isConnected}
+                title={`Jog ${dir.dx > 0 ? 'X+' : dir.dx < 0 ? 'X-' : ''}${dir.dy > 0 ? 'Y+' : dir.dy < 0 ? 'Y-' : ''}`}
+              >
+                <img src={dir.icon} alt="" className={styles.jogIcon} />
+              </button>
+            )
+          })}
         </div>
 
         <div className={styles.zControls}>
@@ -99,7 +119,6 @@ export function JogPanel() {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             disabled={!isConnected}
-            title="Z+"
           >
             Z+
           </button>
@@ -109,7 +128,6 @@ export function JogPanel() {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             disabled={!isConnected}
-            title="Z-"
           >
             Z-
           </button>
@@ -123,7 +141,6 @@ export function JogPanel() {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               disabled={!isConnected}
-              title="A+"
             >
               A+
             </button>
@@ -133,7 +150,6 @@ export function JogPanel() {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               disabled={!isConnected}
-              title="A-"
             >
               A-
             </button>

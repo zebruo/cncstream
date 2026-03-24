@@ -3,6 +3,7 @@ import { useConnectionStore } from '../../stores/connection.store'
 import { useMachineStore } from '../../stores/machine.store'
 import { useJobStore } from '../../stores/job.store'
 import { useUIStore } from '../../stores/ui.store'
+import { Tooltip } from '../common/Tooltip'
 import styles from './StatusBar.module.css'
 
 function formatTime(ms: number): string {
@@ -80,16 +81,17 @@ export function StatusBar() {
             <span className={styles.unit}>mm/min</span>
           </div>
           <div className={styles.separator} />
-          <div className={styles.section} title={spindleTooltip}>
-            <span className={styles.label}>S:</span>
+          <div className={styles.section}>
+            <Tooltip text={spindleTooltip}>
+              <span className={styles.label}>S:</span>
+            </Tooltip>
             <span className={styles.value}>{spindleLabel}</span>
             {spindleMode === 'pwm' && <span className={styles.unit}>RPM</span>}
-            <span
-              className={styles.modeBadge}
-              title={spindleModeTips[spindleMode]}
-            >
-              {SPINDLE_MODE_SHORT[spindleMode]}
-            </span>
+            <Tooltip text={spindleModeTips[spindleMode]}>
+              <span className={styles.modeBadge}>
+                {SPINDLE_MODE_SHORT[spindleMode]}
+              </span>
+            </Tooltip>
           </div>
           <div className={styles.separator} />
           <div className={styles.section}>

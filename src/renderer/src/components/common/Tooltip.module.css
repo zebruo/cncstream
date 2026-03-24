@@ -1,0 +1,20 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip {
+  position: fixed;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-accent);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  white-space: normal;
+  max-width: 260px;
+  z-index: var(--z-tooltip);
+  pointer-events: none;
+  box-shadow: var(--shadow-md);
+}

@@ -6,6 +6,7 @@ import { useConnectionStore } from '../../stores/connection.store'
 import { useMachineStore } from '../../stores/machine.store'
 import homeIcon from '../../assets/icons/home.svg'
 import unlockIcon from '../../assets/icons/unlock.svg'
+import { Tooltip } from '../common/Tooltip'
 import styles from './ZeroGoToPanel.module.css'
 
 const MM_PER_INCH = 25.4
@@ -111,19 +112,25 @@ export function ZeroGoToPanel() {
       </div>
 
       <div className={styles.row}>
-        <button className={styles.machineBtn} onClick={homeAll} disabled={!isConnected} title={t('zeroGoto.homeTitle')}>
-          <img src={homeIcon} alt="" className={styles.btnIcon} />
-        </button>
-        <button className={styles.machineBtn} onClick={unlockMachine} disabled={!isConnected} title={t('zeroGoto.unlockTitle')}>
-          <img src={unlockIcon} alt="" className={styles.btnIcon} />
-        </button>
+        <Tooltip text={t('zeroGoto.homeTitle')} style={{ flex: 1 }}>
+          <button className={styles.machineBtn} style={{ width: '100%' }} onClick={homeAll} disabled={!isConnected}>
+            <img src={homeIcon} alt="" className={styles.btnIcon} />
+          </button>
+        </Tooltip>
+        <Tooltip text={t('zeroGoto.unlockTitle')} style={{ flex: 1 }}>
+          <button className={styles.machineBtn} style={{ width: '100%' }} onClick={unlockMachine} disabled={!isConnected}>
+            <img src={unlockIcon} alt="" className={styles.btnIcon} />
+          </button>
+        </Tooltip>
       </div>
 
       <div className={styles.divider} />
 
       <div className={styles.fieldsRow}>
-        <div className={styles.probeThicknessField} title={t('zeroGoto.probeThicknessTitle')}>
-          <span className={styles.label}>{t('zeroGoto.probeThickness', { unit: isIn ? 'in' : 'mm' })}</span>
+        <div className={styles.probeThicknessField}>
+          <Tooltip text={t('zeroGoto.probeThicknessTitle')}>
+            <span className={styles.label}>{t('zeroGoto.probeThickness', { unit: isIn ? 'in' : 'mm' })}</span>
+          </Tooltip>
           <input
             type="number"
             className={styles.input}
@@ -135,8 +142,10 @@ export function ZeroGoToPanel() {
             step={isIn ? 0.001 : 0.1}
           />
         </div>
-        <div className={styles.safeHeight} title={t('zeroGoto.safeHeightTitle')}>
-          <label className={styles.label}>{t('zeroGoto.safeHeight', { unit: isIn ? 'in' : 'mm' })}</label>
+        <div className={styles.safeHeight}>
+          <Tooltip text={t('zeroGoto.safeHeightTitle')}>
+            <label className={styles.label}>{t('zeroGoto.safeHeight', { unit: isIn ? 'in' : 'mm' })}</label>
+          </Tooltip>
           <input
             type="number"
             className={styles.input}
@@ -158,14 +167,15 @@ export function ZeroGoToPanel() {
         </div>
       )}
 
+      <Tooltip text={t('zeroGoto.probeZTitle')} style={{ display: 'block' }}>
       <button
         className={`${styles.actionBtn} ${styles.probeBtn}`}
         onClick={handleProbeZ}
         disabled={!isConnected || probePhase !== 'idle' || probePin || !circuitTested}
-        title={t('zeroGoto.probeZTitle')}
       >
         {probePhase === 'running' ? t('zeroGoto.probeRunning') : t('zeroGoto.probeZ')}
       </button>
+      </Tooltip>
 
       {probePhase === 'confirm' && (
         <div className={`${styles.probeResult} ${styles.probeSuccess}`}>

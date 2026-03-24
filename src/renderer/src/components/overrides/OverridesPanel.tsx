@@ -5,6 +5,7 @@ import { useMachineStore } from '../../stores/machine.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import { useUIStore } from '../../stores/ui.store'
 import type { OverrideAction, RapidOverrideLevel } from '@shared/types/ipc'
+import { Tooltip } from '../common/Tooltip'
 import styles from './OverridesPanel.module.css'
 
 function OverrideSlider({
@@ -29,7 +30,9 @@ function OverrideSlider({
   return (
     <div className={styles.override}>
       <div className={styles.overrideHeader}>
-        <span className={styles.overrideLabel} title={tooltip}>{label}</span>
+        <Tooltip text={tooltip ?? ''}>
+          <span className={styles.overrideLabel}>{label}</span>
+        </Tooltip>
         <span className={styles.overrideValue}>{value}%</span>
       </div>
       <div className={styles.overrideBar}>
@@ -82,7 +85,9 @@ export function OverridesPanel() {
             />
           )}
           <div className={styles.rapidRow}>
-            <span className={styles.overrideLabel} title={t('overrides.rapidTooltip')}>{t('overrides.rapid')}</span>
+            <Tooltip text={t('overrides.rapidTooltip')}>
+              <span className={styles.overrideLabel}>{t('overrides.rapid')}</span>
+            </Tooltip>
             <span className={styles.rapidValue}>{overrides.rapid}%</span>
             <div className={styles.rapidBtns}>
               {([25, 50, 100] as RapidOverrideLevel[]).map((level) => (

@@ -5,6 +5,7 @@ import { useMachineStore } from '../../stores/machine.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import { useUIStore, type SpindleMode } from '../../stores/ui.store'
 import { useJobStore } from '../../stores/job.store'
+import { Tooltip } from '../common/Tooltip'
 import styles from './SpindlePanel.module.css'
 
 
@@ -100,31 +101,35 @@ export function SpindlePanel() {
       title={t('spindle.title')}
       actions={
         isSpindleOn ? (
-          <span className={styles.activeAlert} title={modeTooltips[spindleMode]}>
-            {alertLabel}
-            {spindleMode === 'pwm' && overrides.spindle !== 100 && ` (${overrides.spindle}%)`}
-          </span>
+          <Tooltip text={modeTooltips[spindleMode]}>
+            <span className={styles.activeAlert}>
+              {alertLabel}
+              {spindleMode === 'pwm' && overrides.spindle !== 100 && ` (${overrides.spindle}%)`}
+            </span>
+          </Tooltip>
         ) : null
       }
     >
       <div className={styles.controls}>
         <div className={styles.startRow}>
-          <button
-            className={`${styles.dirBtn} ${direction === 'cw' ? styles.active : ''}`}
-            onClick={() => setDirection('cw')}
-            title={t('spindle.cwTitle')}
-            disabled={isSpindleOn || jobActive}
-          >
-            ↻
-          </button>
-          <button
-            className={`${styles.dirBtn} ${direction === 'ccw' ? styles.active : ''}`}
-            onClick={() => setDirection('ccw')}
-            title={t('spindle.ccwTitle')}
-            disabled={isSpindleOn || jobActive}
-          >
-            ↺
-          </button>
+          <Tooltip text={t('spindle.cwTitle')}>
+            <button
+              className={`${styles.dirBtn} ${direction === 'cw' ? styles.active : ''}`}
+              onClick={() => setDirection('cw')}
+              disabled={isSpindleOn || jobActive}
+            >
+              ↻
+            </button>
+          </Tooltip>
+          <Tooltip text={t('spindle.ccwTitle')}>
+            <button
+              className={`${styles.dirBtn} ${direction === 'ccw' ? styles.active : ''}`}
+              onClick={() => setDirection('ccw')}
+              disabled={isSpindleOn || jobActive}
+            >
+              ↺
+            </button>
+          </Tooltip>
           {spindleMode === 'pwm' && (
             <input
               type="number"
@@ -158,9 +163,9 @@ export function SpindlePanel() {
               <option key={mode} value={mode}>{modeLabels[mode]}</option>
             ))}
           </select>
-          <span className={styles.infoIcon} title={modeTooltips[spindleMode]}>
-            i
-          </span>
+          <Tooltip text={modeTooltips[spindleMode]}>
+            <span className={styles.infoIcon}>i</span>
+          </Tooltip>
         </div>
       </div>
     </Panel>

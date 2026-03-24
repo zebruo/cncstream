@@ -4,6 +4,7 @@ import { Panel } from '../common/Panel'
 import { useMachineStore } from '../../stores/machine.store'
 import { useUIStore } from '../../stores/ui.store'
 import { useConnectionStore } from '../../stores/connection.store'
+import { Tooltip } from '../common/Tooltip'
 import styles from './DROPanel.module.css'
 
 const AXES = ['X', 'Y', 'Z', 'A'] as const
@@ -68,13 +69,14 @@ export function DROPanel() {
       title="Position"
       actions={
         <div className={styles.headerActions}>
-          <button
-            className={`${styles.posToggle} ${showMPos ? styles.active : ''}`}
-            onClick={() => setShowMPos(!showMPos)}
-            title={showMPos ? t('dro.machinePosTitle') : t('dro.workPosTitle')}
-          >
-            {showMPos ? 'MachinePos' : 'WorkPos'}
-          </button>
+          <Tooltip text={showMPos ? t('dro.machinePosTitle') : t('dro.workPosTitle')}>
+            <button
+              className={`${styles.posToggle} ${showMPos ? styles.active : ''}`}
+              onClick={() => setShowMPos(!showMPos)}
+            >
+              {showMPos ? 'MachinePos' : 'WorkPos'}
+            </button>
+          </Tooltip>
           <button
             className={styles.zeroAllBtn}
             onClick={handleZeroAll}
@@ -109,22 +111,24 @@ export function DROPanel() {
                   autoFocus
                 />
               ) : (
-                <div
-                  className={styles.axisValue}
-                  onDoubleClick={() => handleStartEdit(axis, value)}
-                  title="Double-click to edit"
-                >
-                  {formatCoord(value, units)}
-                </div>
+                <Tooltip text={t('dro.doubleClickEdit')} style={{ flex: 1 }}>
+                  <div
+                    className={styles.axisValue}
+                    onDoubleClick={() => handleStartEdit(axis, value)}
+                  >
+                    {formatCoord(value, units)}
+                  </div>
+                </Tooltip>
               )}
-              <button
-                className={styles.zeroBtn}
-                onClick={() => handleZero(axis)}
-                disabled={!isConnected}
-                title={`Zero ${axis}`}
-              >
-                {axis}<sub> 0</sub>
-              </button>
+              <Tooltip text={`Zero ${axis}`}>
+                <button
+                  className={styles.zeroBtn}
+                  onClick={() => handleZero(axis)}
+                  disabled={!isConnected}
+                >
+                  {axis}<sub> 0</sub>
+                </button>
+              </Tooltip>
             </div>
           )
         })}

@@ -99,7 +99,8 @@
   },
   "dro": {
     "workPosTitle": "Work position (WPos) — coordinates relative to the workpiece zero (G54). Click to show MachinePos.",
-    "machinePosTitle": "Machine position (MPos) — absolute coordinates from the physical reference point (home). Click to show WorkPos."
+    "machinePosTitle": "Machine position (MPos) — absolute coordinates from the physical reference point (home). Click to show WorkPos.",
+    "doubleClickEdit": "Double-click to set a value"
   },
   "spindle": {
     "title": "Spindle",

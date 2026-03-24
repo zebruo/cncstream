@@ -99,7 +99,8 @@
   },
   "dro": {
     "workPosTitle": "Position de travail (WPos) — coordonnées relatives au zéro pièce défini (G54). Cliquer pour afficher MachinePos.",
-    "machinePosTitle": "Position machine (MPos) — coordonnées absolues depuis le point de référence physique (home). Cliquer pour afficher WorkPos."
+    "machinePosTitle": "Position machine (MPos) — coordonnées absolues depuis le point de référence physique (home). Cliquer pour afficher WorkPos.",
+    "doubleClickEdit": "Double-clic pour saisir une valeur"
   },
   "spindle": {
     "title": "Broche",
