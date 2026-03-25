@@ -1,4 +1,4 @@
-import { app, BrowserWindow, shell, Menu } from 'electron'
+import { BrowserWindow, shell, Menu } from 'electron'
 import { join } from 'path'
 import type { SettingsStoreService } from './services/settings-store.service'
 
@@ -46,11 +46,6 @@ export function createMainWindow(settingsStore: SettingsStoreService): BrowserWi
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
-  if (!app.isPackaged) {
-    mainWindow.webContents.once('did-finish-load', () => {
-      mainWindow.webContents.openDevTools()
-    })
-  }
 
   return mainWindow
 }
