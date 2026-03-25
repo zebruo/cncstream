@@ -19,8 +19,11 @@ app.whenReady().then(() => {
   mainWindow = createMainWindow(settingsStore)
 
   if (!app.isPackaged) {
-    globalShortcut.register('F12', () => {
+    globalShortcut.register('CommandOrControl+Shift+I', () => {
       mainWindow?.webContents.toggleDevTools()
+    })
+    globalShortcut.register('CommandOrControl+R', () => {
+      mainWindow?.webContents.reload()
     })
   }
 
