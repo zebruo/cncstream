@@ -179,7 +179,10 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
   const safeVal = (v: number, fallback: number) => (isFinite(v) ? v : fallback)
 
   return {
-    lineCount: parsed.lines.length,
+    lineCount: parsed.lines.filter((l) => {
+      const t = l.raw.trim()
+      return t.length > 0 && !t.startsWith(';') && !t.startsWith('(')
+    }).length,
     movementCount: parsed.movements.length,
     feedRange: { min: safeVal(minFeed, 0), max: safeVal(maxFeed, 0) },
     spindleRange: { min: safeVal(minSpindle, 0), max: safeVal(maxSpindle, 0) },
