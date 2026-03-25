@@ -20,17 +20,12 @@ const STATE_COLORS: Record<string, string> = {
 export function Header() {
   const connectionState = useConnectionStore((s) => s.state)
   const machineState = useMachineStore((s) => s.machineState)
-  const firmwareVersion = useConnectionStore((s) => s.firmwareVersion)
-
   const isConnected = connectionState === 'connected'
 
   return (
     <header className={styles.header}>
       <div className={styles.left}>
         <h1 className={styles.logo}>CNCStream</h1>
-        {firmwareVersion && (
-          <span className={styles.firmware}>{firmwareVersion}</span>
-        )}
       </div>
 
       <div className={styles.center}>
