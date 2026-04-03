@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { useEffect, useRef } from 'react'
 import { Tooltip } from '../common/Tooltip'
 import { Panel } from '../common/Panel'
 import { useJogStore } from '../../stores/jog.store'
@@ -48,13 +49,51 @@ export function JogPanel() {
   const isStepActive = (val: number) => Math.abs(stepSize - (isIn ? val * MM_PER_INCH : val)) < 1e-4
   const isFeedActive = (val: number) => Math.abs(feedRate - (isIn ? val * MM_PER_INCH : val)) < 1e-4
 
+  const isJogging = useRef(false)
+
+  const stopJog = () => {
+    if (isJogging.current) {
+      isJogging.current = false
+      cancelJog()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mouseup', stopJog)
+    window.addEventListener('blur', stopJog)
+    return () => {
+      document.removeEventListener('mouseup', stopJog)
+      window.removeEventListener('blur', stopJog)
+    }
+  }, [mode])
+
   const handleJogXY = (dx: number, dy: number) => {
     if (!isConnected || (dx === 0 && dy === 0)) return
+    if (mode === 'continuous') {
+      if (isJogging.current) return
+      isJogging.current = true
+    }
     jogXY(dx, dy)
   }
 
+  const handleJogZ = (dz: number) => {
+    if (!isConnected) return
+    if (mode === 'continuous') {
+      if (isJogging.current) return
+      isJogging.current = true
+    }
+    jogZ(dz)
+  }
+
+  const handleJogA = (da: number) => {
+    if (!isConnected) return
+    if (isJogging.current) return
+    isJogging.current = true
+    jogA(da)
+  }
+
   const handleMouseUp = () => {
-    if (mode === 'continuous') cancelJog()
+    if (mode === 'continuous') stopJog()
   }
 
   return (
@@ -115,7 +154,7 @@ export function JogPanel() {
         <div className={styles.zControls}>
           <button
             className={`${styles.jogBtn} ${styles.zBtn}`}
-            onMouseDown={() => isConnected && jogZ(1)}
+            onMouseDown={() => handleJogZ(1)}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             disabled={!isConnected}
@@ -124,7 +163,7 @@ export function JogPanel() {
           </button>
           <button
             className={`${styles.jogBtn} ${styles.zBtn}`}
-            onMouseDown={() => isConnected && jogZ(-1)}
+            onMouseDown={() => handleJogZ(-1)}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             disabled={!isConnected}
@@ -137,7 +176,7 @@ export function JogPanel() {
           <div className={styles.aControls}>
             <button
               className={`${styles.jogBtn} ${styles.aBtn}`}
-              onMouseDown={() => isConnected && jogA(1)}
+              onMouseDown={() => handleJogA(1)}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               disabled={!isConnected}
@@ -146,7 +185,7 @@ export function JogPanel() {
             </button>
             <button
               className={`${styles.jogBtn} ${styles.aBtn}`}
-              onMouseDown={() => isConnected && jogA(-1)}
+              onMouseDown={() => handleJogA(-1)}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               disabled={!isConnected}
@@ -160,7 +199,9 @@ export function JogPanel() {
       {/* Step size presets — hidden in continuous mode */}
       {mode === 'incremental' && (
         <div className={styles.presetSection}>
-          <span className={styles.presetLabel}>{t('jog.step', { unit: isIn ? 'in' : 'mm' })}</span>
+          <Tooltip text={t('jog.stepTitle')}>
+            <span className={styles.presetLabel}>{t('jog.step', { unit: isIn ? 'in' : 'mm' })}</span>
+          </Tooltip>
           <div className={styles.presetRow}>
             {stepPresets.map((size) => (
               <button
@@ -177,7 +218,9 @@ export function JogPanel() {
 
       {/* Feed rate presets */}
       <div className={styles.presetSection}>
-        <span className={styles.presetLabel}>{t('jog.feed', { unit: isIn ? 'ipm' : 'mm/min' })}</span>
+        <Tooltip text={t('jog.feedTitle')}>
+          <span className={styles.presetLabel}>{t('jog.feed', { unit: isIn ? 'ipm' : 'mm/min' })}</span>
+        </Tooltip>
         <div className={styles.presetRow}>
           {feedPresets.map((rate) => (
             <button

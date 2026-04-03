@@ -1,258 +1,258 @@
 # CNCStream
 
-**Contrôleur de machine CNC pour GRBL 1.1 et grblHAL**
+[Français](README.fr.md)
 
-Application de bureau construite avec **Electron**, **React** et **TypeScript**. Interface moderne, visualisation 3D temps réel, contrôle complet de la machine via liaison série.
+**CNC machine controller for GRBL 1.1 and grblHAL**
 
-> **Compatibilité grblHAL** : CNCStream supporte le protocole de base GRBL 1.1. En pratique, si grblHAL est configuré pour rester compatible GRBL 1.1 (ce qui est souvent le cas par défaut), CNCStream fonctionne normalement. Les fonctionnalités exclusives à grblHAL (commandes étendues, protocole JSON, etc.) ne sont pas prises en charge.
+Desktop application built with **Electron**, **React** and **TypeScript**. Modern interface, real-time 3D visualization, full machine control via serial connection.
+
+> **grblHAL compatibility**: CNCStream supports the base GRBL 1.1 protocol. In practice, if grblHAL is configured to remain GRBL 1.1 compatible (which is often the default), CNCStream works normally. Features exclusive to grblHAL (extended commands, JSON protocol, etc.) are not supported.
 
 ---
 
-## Sécurité et tests avant utilisation
+## Safety and Tests Before Use
 
-> **CNCStream est un logiciel de contrôle de machine-outil. Une mauvaise utilisation peut provoquer des blessures graves, des dommages matériels ou la destruction de la pièce usinée. Lire attentivement cette section avant toute mise en route.**
+> **CNCStream is machine-tool control software. Improper use can cause serious injury, material damage, or destruction of the workpiece. Read this section carefully before first use.**
 
-### Précautions générales
+### General Precautions
 
-- Ne jamais laisser la machine sans surveillance pendant l'usinage
-- Garder le bouton d'arrêt d'urgence (E-Stop) accessible à portée de main
-- Porter les équipements de protection individuels adaptés (lunettes, protection auditive)
-- S'assurer que la broche est **complètement arrêtée** avant de toucher la pièce ou l'outil
-- Ne jamais désactiver les fins de course matériels
+- Never leave the machine unattended during machining
+- Keep the emergency stop button (E-Stop) within reach at all times
+- Wear appropriate personal protective equipment (safety glasses, hearing protection)
+- Make sure the spindle is **completely stopped** before touching the workpiece or tool
+- Never disable hardware limit switches
 
-### Vérifications avant la première connexion
+### Checks Before First Connection
 
-- [ ] Le câble USB est branché sur le contrôleur GRBL (pas sur la machine directement)
-- [ ] Les fins de course sont câblés et fonctionnels (`$21=1` recommandé)
-- [ ] La limite de déplacement logicielle est activée (`$20=1`) avec des valeurs cohérentes (`$130`, `$131`, `$132`)
-- [ ] Le courant moteur est correctement réglé sur les drivers
-- [ ] La broche est **arrêtée** et le variateur hors tension
+- [ ] USB cable is connected to the GRBL controller (not directly to the machine)
+- [ ] Limit switches are wired and functional (`$21=1` recommended)
+- [ ] Software travel limits are enabled (`$20=1`) with consistent values (`$130`, `$131`, `$132`)
+- [ ] Motor current is correctly set on the drivers
+- [ ] Spindle is **stopped** and VFD is powered off
 
-### Tests à faire dans l'ordre
+### Tests in Order
 
-#### 1. Test de communication
+#### 1. Communication Test
 
-Connecter CNCStream → vérifier la réception du statut GRBL dans la barre de connexion.
-Envoyer `$$` dans la console → les paramètres doivent s'afficher.
+Connect CNCStream → verify GRBL status is received in the connection bar.
+Send `$$` in the console → parameters should be displayed.
 
-#### 2. Test du homing (`$H`)
+#### 2. Homing Test (`$H`)
 
-Effectuer le homing **sans outil** et **sans pièce** :
-- S'assurer que la machine peut atteindre les fins de course sans obstacle
-- Observer le sens de déplacement de chaque axe : doit aller vers les fins de course
-- Après homing, MPos doit afficher `0.000` sur les axes homés
+Perform homing **without tool** and **without workpiece**:
+- Ensure the machine can reach limit switches without obstruction
+- Watch the direction of each axis: must move toward limit switches
+- After homing, MPos should display `0.000` on homed axes
 
-> Si la machine s'éloigne des fins de course, inverser le sens (`$3`) ou le câblage de la bobine.
+> If the machine moves away from limit switches, invert the direction (`$3`) or swap the stepper coil wiring.
 
-#### 3. Test du jog
+#### 3. Jog Test
 
-Tester le jog en incrémental petit pas (0,1 mm) sur chaque axe **à faible vitesse** :
-- Vérifier que X+ déplace bien vers la droite (ou le sens attendu)
-- Vérifier que Z+ monte bien (et Z- descend)
-- Tester les fins de course en approchant lentement : la machine doit s'arrêter proprement
+Test jog in incremental small step (0.1 mm) on each axis **at low speed**:
+- Verify X+ moves to the right (or expected direction)
+- Verify Z+ moves up (and Z- moves down)
+- Test limit switches by approaching slowly: the machine should stop cleanly
 
-#### 4. Test du Probe Z
+#### 4. Probe Z Test
 
-**Prérequis** : outil en place, sonde posée sur la pièce.
-- Vérifier l'indicateur de circuit dans CNCStream : doit être **ouvert** (gris) au repos
-- Toucher manuellement le dessus de la sonde avec l'outil → l'indicateur doit passer au **vert**
-- Lancer le Probe Z en surveillant la descente : la broche doit descendre et s'arrêter au contact
-- Si la machine remonte au lieu de descendre, vérifier le paramètre `$3` (masque d'inversion Z)
+**Prerequisites**: tool in place, probe resting on the workpiece.
+- Check the circuit indicator in CNCStream: must be **open** (grey) at rest
+- Manually touch the top of the probe with the tool → indicator must turn **green**
+- Run Probe Z while watching the descent: the spindle must descend and stop on contact
+- If the machine moves up instead of down, check parameter `$3` (Z invert mask)
 
-#### 5. Test de streaming (à vide)
+#### 5. Dry Run Streaming Test
 
-Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée, outil relevé au safe height) :
-- Charger un fichier G-code simple
-- Vérifier les dimensions affichées dans l'analyse (min/max par axe)
-- Lancer le streaming et surveiller le visualiseur 3D
-- Tester Pause / Resume / Stop pendant l'exécution
+Before machining a real workpiece, perform a **dry run** (spindle stopped, tool raised to safe height):
+- Load a simple G-code file
+- Check the dimensions shown in the analysis (min/max per axis)
+- Start streaming and monitor the 3D visualizer
+- Test Pause / Resume / Stop during execution
 
-#### 6. Premier usinage
+#### 6. First Machining
 
-- Commencer avec une matière tendre (bois, MDF) et des paramètres de coupe conservateurs
-- Rester présent devant la machine, la main sur l'E-Stop
-- Surveiller le bruit de coupe et la température de l'outil
+- Start with a soft material (wood, MDF) and conservative cutting parameters
+- Stay in front of the machine with your hand on the E-Stop
+- Monitor cutting noise and tool temperature
 
-### Paramètres GRBL recommandés
+### Recommended GRBL Parameters
 
-| Paramètre | Valeur | Description |
+| Parameter | Value | Description |
 |---|---|---|
-| `$20` | `1` | Soft limits activées |
-| `$21` | `1` | Hard limits activées |
-| `$22` | `1` | Homing activé |
-| `$1` | `255` | Maintien moteurs actif (évite la perte de position) |
+| `$20` | `1` | Soft limits enabled |
+| `$21` | `1` | Hard limits enabled |
+| `$22` | `1` | Homing enabled |
+| `$1` | `255` | Motor hold enabled (prevents position loss) |
 
-> Ces valeurs sont à adapter à votre machine. Consulter la documentation GRBL pour la signification complète de chaque paramètre (`$$` dans la console ou l'onglet Référence de CNCStream).
+> These values must be adapted to your machine. Refer to the GRBL documentation for the full meaning of each parameter (`$$` in the console or the Reference tab in CNCStream).
 
 ---
 
 ## Interface
 
-| Mode sombre | Mode clair |
+| Dark mode | Light mode |
 |---|---|
-| ![Mode sombre](docs/mode_sombre.png) | ![Mode clair](docs/mode_clair.png) |
+| ![Dark mode](docs/mode_sombre.png) | ![Light mode](docs/mode_clair.png) |
 
 ---
 
-## Fonctionnalités
+## Features
 
-### Connexion série
-- Détection automatique des ports COM disponibles
-- Sélection du baud rate (115200 par défaut)
-- Lecture automatique des paramètres GRBL (`$$`) à la connexion
-- Indicateur d'état de connexion dans la barre de statut
+### Serial Connection
+- Automatic detection of available COM ports
+- Baud rate selection (115200 by default)
+- Automatic GRBL parameter read (`$$`) on connection
+- Connection status indicator in the status bar
 
 ### DRO — Digital Read-Out
-- Affichage des positions sur **4 axes** : X, Y, Z, A (axe A activable dans les réglages)
-- Bascule **MPos / WPos** (position machine / position de travail)
-- Affichage du système de coordonnées de travail actif (G54 par défaut) — pour un usage ponctuel avec une seule pièce à la fois, G54 suffit
-- Saisie directe de position par clic sur une valeur (commande `G10 L20`)
-- Affichage **mm ou pouces** (conversion à l'affichage, la machine reste toujours en G21)
+- Position display on **4 axes**: X, Y, Z, A (A axis can be enabled in settings)
+- **MPos / WPos** toggle (machine position / work position)
+- Active work coordinate system display (G54 by default) — for single workpiece use, G54 is sufficient
+- Direct position entry by clicking a value (`G10 L20` command)
+- **mm or inches** display (display conversion only, machine always runs in G21)
 
 ### Jogging
-- Jog **incrémental** et **continu** (maintien de touche)
-- Deux grilles de présets indépendantes selon l'unité (mm / pouces)
-  - Pas mm : 0,01 · 0,1 · 1 · 10 · 100 mm
-  - Pas pouces : 0,001 · 0,01 · 0,05 · 0,1 · 0,5 · 1,0 in
-- Raccourcis clavier : flèches X/Y, Page Up/Down Z, `[` / `]` pour le pas
-- Boutons A+ / A- pour l'axe rotatif (si activé)
+- **Incremental** and **continuous** jog (hold key)
+- Two independent preset grids by unit (mm / inches)
+  - mm steps: 0.01 · 0.1 · 1 · 10 · 100 mm
+  - inch steps: 0.001 · 0.01 · 0.05 · 0.1 · 0.5 · 1.0 in
+- Keyboard shortcuts: arrows X/Y, Page Up/Down Z, `[` / `]` for step
+- A+ / A- buttons for rotary axis (if enabled)
 
-### Zero / Go To
-- **Go to XY Zero** : monte en Z (safe height), va à X0 Y0, redescend
-- **Go to Z Zero** : descend Z à 0
-- **Home** (`$H`) : cycle de homing complet
-- **Unlock** (`$X`) : déverrouillage après alarme
-- **Safe Height** : hauteur de dégagement configurable pour les déplacements et le probe
+### Zero / Go To / Probe Z
+- **Go to XY Zero**: raises Z (safe height), moves to X0 Y0, lowers back
+- **Go to Z Zero**: lowers Z to 0
+- **Home** (`$H`): full homing cycle
+- **Unlock** (`$X`): unlock after alarm
+- **Safe Height**: configurable clearance height for moves and probe
+- Automatic surface detection via touch probe (GRBL `Pn:P` circuit)
+- **Circuit indicator** real-time: open (grey) / contact detected (green)
+- Probe Z button locked until circuit is validated (per-session safety)
+- Descent at 50 mm/min (`G38.2 Z-20 F50`), automatic return to safe height after contact
+- Configurable probe thickness field (0.1 to 50 mm)
+- Confirmation dialog with Apply / Cancel option
+- Workpiece Z zero applied (`G10 L20 P1`) accounting for probe thickness and safe height
 
-### Probe Z
-- Détection automatique de la surface de la pièce via sonde de contact (circuit `Pn:P` GRBL)
-- **Indicateur circuit** temps réel : ouvert (gris) / contact détecté (vert)
-- Bouton Probe Z bloqué jusqu'à validation du circuit (sécurité par session)
-- Descente à 50 mm/min (`G38.2 Z-20 F50`), remontée automatique au safe height après contact
-- Champ épaisseur sonde configurable (0,1 à 50 mm)
-- Boîte de confirmation avec option Appliquer / Annuler
-- Application du zéro pièce Z (`G10 L20 P1`) en tenant compte de l'épaisseur sonde et du safe height
-
-### Streaming G-Code
-- Chargement de fichiers `.nc`, `.gcode`, `.tap`, `.ngc`
-- Analyse du fichier : dimensions (min/max par axe), trajet total, temps estimé, outils, safe Z détecté
-- Streaming ligne par ligne avec gestion du buffer RX GRBL (128 octets)
+### G-Code Streaming
+- Load `.nc`, `.gcode`, `.tap`, `.ngc` files
+- File analysis: dimensions (min/max per axis), total path, estimated time, tools, detected safe Z
+- Line-by-line streaming with GRBL RX buffer management (128 bytes)
 - **Start / Pause / Resume / Stop** (feed hold, cycle start, soft reset)
-- Arrêt automatique de la broche à la pause et redémarrage avant les axes au resume (commande réaltime GRBL, tous modes)
-- Barre de progression et temps restant estimé
+- Automatic spindle stop on pause and restart before axes on resume (GRBL realtime command, all modes)
+- Progress bar and estimated remaining time
 
-### Visualiseur 3D
-- Rendu Three.js (`@react-three/fiber`) du parcours outil
-- Vert : mouvements d'usinage (G1) — Bleu pointillé : rapides (G0)
-- Orange : lignes déjà exécutées — Cône rouge : position actuelle
-- Navigation : rotation (clic gauche), zoom (molette), pan (clic droit)
+### 3D Visualizer
+- Three.js (`@react-three/fiber`) toolpath rendering
+- Green: cutting moves (G1) — Blue dashed: rapids (G0)
+- Orange: already executed lines — Red cone: current position
+- Navigation: rotate (left click), zoom (scroll wheel), pan (right click)
 
-### Overrides temps réel
-- **Feed** : 10 % à 200 %
-- **Rapid** : 25 %, 50 %, 100 %
-- **Spindle** : 10 % à 200 % (mode PWM)
-- Bouton Reset par override
+### Real-Time Overrides
+- **Feed**: 10% to 200%
+- **Rapid**: 25%, 50%, 100%
+- **Spindle**: 10% to 200% (PWM mode)
+- Reset button per override
 
-### Broche (Spindle)
-- Commandes M3 (CW), M4 (CCW), M5 (arrêt)
-- Trois modes de contrôle :
-  - **PWM** : vitesse pilotée par GRBL, overrides actifs
-  - **Relais** : sortie ON/OFF, vitesse physique maximale
-  - **Manuel** : potentiomètre physique externe, valeurs indicatives
-- À la pause : arrêt automatique de la broche et des axes ; à la reprise : redémarrage de la broche avant les axes (tous modes)
-- Badge mode visible dans le panneau, tooltip explicatif sur chaque mode
+### Spindle
+- M3 (CW), M4 (CCW), M5 (stop) commands
+- Three control modes:
+  - **PWM**: speed controlled by GRBL, overrides active
+  - **Relay**: ON/OFF output, maximum physical speed
+  - **Manual**: external physical potentiometer, indicative values
+- On pause: automatic spindle and axis stop; on resume: spindle restarts before axes (all modes)
+- Mode badge visible in panel, tooltip on each mode
 
-### Arrosage (Coolant)
+### Coolant
 - Flood `M8`, Mist `M7`, Stop `M9`
 
 ### Macros
-- Macros prédéfinies (Carré test XY, Test axes, Retour origine XY) modifiables
-- Création de macros personnalisées avec nom, description et séquence G-code multiligne
-- Exécution via le mécanisme de streaming (Pause/Stop fonctionnels)
-- Persistance locale (localStorage)
+- Predefined macros (XY test square, axis test, return to XY origin) editable
+- Custom macro creation with name, description and multi-line G-code sequence
+- Execution via streaming mechanism (Pause/Stop functional)
+- Automatic local save — macros persist after closing the application (reinstall or new PC: macros lost)
 
-### Console GRBL
-- Envoi de commandes GRBL manuelles
-- Affichage des réponses machine (ok, error, alarm, status)
-- Historique de session
+### GRBL Console
+- Manual GRBL command entry
+- Machine response display (ok, error, alarm, status)
+- Session history
 
-### Référence intégrée
-- Table des **erreurs GRBL** (error:1 à error:38)
-- Table des **alarmes GRBL** (ALARM:1 à ALARM:11)
-- Table des **paramètres GRBL** (`$$`) avec description et unité
-- Raccourcis clavier
+### Built-in Reference
+- **GRBL error** table (error:1 to error:38)
+- **GRBL alarm** table (ALARM:1 to ALARM:11)
+- **GRBL parameter** table (`$$`) with description and unit
+- Keyboard shortcuts
 
-### Réglages
-- Thème **clair / sombre**
-- Unités **mm / pouces**
-- Activation de l'**axe A**
-- **Langue** : français / anglais (i18n react-i18next)
+### Settings
+- **Light / dark** theme
+- **mm / inches** units
+- **A axis** enable
+- **Language**: French / English (i18n react-i18next)
 
 ---
 
-## Stack technique
+## Tech Stack
 
-| Couche | Technologie |
+| Layer | Technology |
 |---|---|
 | Desktop | Electron 33 |
 | UI | React 19 + TypeScript |
 | Build | Vite / electron-vite |
 | 3D | Three.js + @react-three/fiber |
-| État | Zustand |
-| Série | serialport 12 |
+| State | Zustand |
+| Serial | serialport 12 |
 | i18n | i18next + react-i18next |
 
 ---
 
-## Commandes de développement
+## Development Commands
 
-### Mode développement
+### Development mode
 ```bash
 npm run dev
 ```
-Lance Electron + HMR React simultanément.
-`Ctrl+Shift+I` → DevTools — `Ctrl+R` → rechargement manuel.
+Launches Electron + React HMR simultaneously.
+`Ctrl+Shift+I` → DevTools — `Ctrl+R` → manual reload.
 
 ### Build
 ```bash
 npm run build
 ```
-Génère les fichiers optimisés dans `/out`.
+Generates optimized files in `/out`.
 
-### Aperçu production
+### Production preview
 ```bash
 npm run preview
 ```
-Lance la version `/out` comme si elle était installée (nécessite un build préalable).
+Runs the `/out` version as if installed (requires prior build).
 
-### Installateur Windows
+### Windows installer
 ```bash
 npm run package:win
 ```
-Build + packaging electron-builder → crée le `.exe` dans `/dist`.
+Build + electron-builder packaging → creates the `.exe` in `/dist`.
 
 ---
 
-## Structure des sources
+## Source Structure
 
 ```
 src/
-├── main/               # Process principal Electron
-│   ├── ipc/            # Gestionnaires IPC (commandes, probe, serial)
+├── main/               # Electron main process
+│   ├── ipc/            # IPC handlers (commands, probe, serial)
 │   └── services/       # SerialPort, CommandQueue, MachineController
-├── preload/            # Bridge IPC renderer ↔ main
+├── preload/            # IPC bridge renderer ↔ main
 ├── renderer/src/
-│   ├── components/     # Panneaux UI (DRO, Jog, Zero, Spindle, Macros…)
-│   ├── stores/         # État global Zustand (machine, UI, connection)
-│   ├── locales/        # Traductions EN / FR
-│   └── assets/         # Icônes SVG
-└── shared/             # Types et constantes partagés main/renderer
+│   ├── components/     # UI panels (DRO, Jog, Zero, Spindle, Macros…)
+│   ├── stores/         # Global Zustand state (machine, UI, connection)
+│   ├── locales/        # EN / FR translations
+│   └── assets/         # SVG icons
+└── shared/             # Types and constants shared between main/renderer
 ```
 
 ---
 
-## Auteur
+## Author
 
-Développé avec l'assistance de l'IA [Claude](https://claude.ai) (Anthropic).
+Developed with the assistance of [Claude](https://claude.ai) AI (Anthropic).
 
-Contact : zebruo@gmail.com
+Contact: mm@nano.com

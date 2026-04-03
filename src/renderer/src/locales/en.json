@@ -47,7 +47,9 @@
     "incremental": "Incremental Jog",
     "continuous": "Continuous Jog",
     "step": "Step ({{unit}})",
+    "stepTitle": "Distance moved per click in incremental mode.",
     "feed": "Feed ({{unit}})",
+    "feedTitle": "Jog movement speed (all axes). Limited by machine specifications ($110 X, $111 Y, $112 Z).",
     "keyboardShortcuts": "Arrows: X/Y movement\nPage Up/Down: Z movement\n[ / ]: decrease / increase step\nContinuous mode: hold key for continuous movement"
   },
   "zeroGoto": {
@@ -99,7 +101,7 @@
   },
   "dro": {
     "workPosTitle": "Work position (WPos) — coordinates relative to the workpiece zero (G54). Click to show MachinePos.",
-    "machinePosTitle": "Machine position (MPos) — absolute coordinates from the physical reference point (home). Click to show WorkPos.",
+    "machinePosTitle": "Machine position (MPos / G53) — absolute coordinates from the physical reference point (home). Click to show WorkPos.",
     "doubleClickEdit": "Double-click to set a value"
   },
   "spindle": {
