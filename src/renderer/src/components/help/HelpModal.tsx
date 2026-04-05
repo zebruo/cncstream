@@ -300,7 +300,7 @@ function AboutTab() {
   return (
     <div className={styles.about}>
       <h2 className={styles.aboutTitle}>CNCStream</h2>
-      <p className={styles.aboutVersion}>v1.0.0</p>
+      <p className={styles.aboutVersion}>v{__APP_VERSION__}</p>
       <p className={styles.aboutDesc}>
         Application de contrôle CNC pour machines GRBL 1.1.
         Connexion série, DRO 4 axes, jogging, streaming G-code,
