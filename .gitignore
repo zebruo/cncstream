@@ -1,8 +1,28 @@
+# Dépendances
 node_modules/
+
+# Build Electron / Vite
 dist/
 out/
+
+# Installateur
 installer/output/
+
+# Fichiers de développement local
 notes/
 git-manager/
+
+# Environnement
 .env
+.env.*
+
+# Logs
 *.log
+npm-debug.log*
+
+# Sauvegardes
+*.bak
+
+# Système
+.DS_Store
+Thumbs.db
