@@ -1,6 +1,6 @@
 # CNCStream
 
-[English](README.md)
+[Read in english](README.md)
 
 **Contrôleur de machine CNC pour GRBL 1.1 et grblHAL**
 

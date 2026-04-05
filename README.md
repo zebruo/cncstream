@@ -1,6 +1,6 @@
 # CNCStream
 
-[Français](README.fr.md)
+[Lire en français](README.fr.md)
 
 **CNC machine controller for GRBL 1.1 and grblHAL**
 
