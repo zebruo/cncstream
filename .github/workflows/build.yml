@@ -29,20 +29,20 @@ jobs:
       - name: Build + package Windows
         run: npm run package:win
 
-      - name: Installer Inno Setup
-        run: choco install innosetup --yes
-
-      - name: Compiler le setup Inno Setup
-        shell: pwsh
-        run: |
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\CNCStream.iss
-
       - name: Lire la version depuis package.json
         id: pkg
         shell: pwsh
         run: |
           $v = (Get-Content package.json | ConvertFrom-Json).version
           echo "version=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Installer Inno Setup
+        run: choco install innosetup --yes
+
+      - name: Compiler le setup Inno Setup
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\CNCStream.iss /DAppVersion=${{ steps.pkg.outputs.version }}
 
       - name: Créer le zip portable
         shell: pwsh
