@@ -35,8 +35,12 @@ export function parseGCode(raw: string): ParsedGCodeFile {
     let command: string | undefined
 
     for (const token of tokens) {
-      if ((token.letter === 'G' || token.letter === 'M') && command === undefined) {
-        command = `${token.letter}${token.value}`
+      const cmd = `${token.letter}${token.value}`
+      if (token.letter === 'G' || token.letter === 'M') {
+        // First G/M sets command; motion commands (G0-G3) always take priority
+        if (command === undefined || ['G0', 'G1', 'G2', 'G3'].includes(cmd)) {
+          command = cmd
+        }
       }
       params[token.letter] = token.value
     }
@@ -45,11 +49,14 @@ export function parseGCode(raw: string): ParsedGCodeFile {
 
     if (isComment || cleaned.length === 0) continue
 
-    if (command === 'G90') isAbsolute = true
-    if (command === 'G91') isAbsolute = false
-
-    if (['G0', 'G1', 'G2', 'G3'].includes(command ?? '')) {
-      currentMotion = command!
+    // Process ALL G/M words on the line so multi-command lines (e.g. G21 G91 G0 X10) work
+    for (const token of tokens) {
+      if (token.letter === 'G') {
+        const cmd = `G${token.value}`
+        if (cmd === 'G90') isAbsolute = true
+        else if (cmd === 'G91') isAbsolute = false
+        else if (['G0', 'G1', 'G2', 'G3'].includes(cmd)) currentMotion = cmd
+      }
     }
     if (params.F !== undefined) currentFeedRate = params.F
     if (params.S !== undefined) currentSpindleSpeed = params.S

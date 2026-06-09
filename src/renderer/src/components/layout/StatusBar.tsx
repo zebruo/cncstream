@@ -5,16 +5,8 @@ import { useJobStore } from '../../stores/job.store'
 import { useUIStore } from '../../stores/ui.store'
 import { Tooltip } from '../common/Tooltip'
 import styles from './StatusBar.module.css'
+import { formatDuration } from '../../lib/format-duration'
 
-function formatTime(ms: number): string {
-  const totalSec = Math.floor(ms / 1000)
-  const h = Math.floor(totalSec / 3600)
-  const m = Math.floor((totalSec % 3600) / 60)
-  const s = totalSec % 60
-  if (h > 0) return `${h}h ${m}m ${s}s`
-  if (m > 0) return `${m}m ${s}s`
-  return `${s}s`
-}
 
 const SPINDLE_MODE_SHORT: Record<string, string> = {
   pwm: 'PWM',
@@ -107,7 +99,7 @@ export function StatusBar() {
         <div className={styles.section}>
           <span className={styles.label}>{jobState.toUpperCase()}</span>
           <span className={styles.value}>{percentComplete.toFixed(1)}%</span>
-          <span className={styles.unit}>{formatTime(elapsedMs)}</span>
+          <span className={styles.unit}>{formatDuration(elapsedMs / 1000)}</span>
         </div>
       )}
     </footer>

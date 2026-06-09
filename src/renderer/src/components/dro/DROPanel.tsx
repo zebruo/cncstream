@@ -6,6 +6,7 @@ import { useUIStore } from '../../stores/ui.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import { Tooltip } from '../common/Tooltip'
 import styles from './DROPanel.module.css'
+import { MM_PER_INCH } from '@shared/constants/defaults'
 
 const AXES = ['X', 'Y', 'Z', 'A'] as const
 const AXIS_COLORS = {
@@ -19,7 +20,7 @@ function formatCoord(value: number, units: 'mm' | 'in'): string {
   if (units === 'mm') {
     return value.toFixed(3)
   }
-  return (value / 25.4).toFixed(4)
+  return (value / MM_PER_INCH).toFixed(4)
 }
 
 export function DROPanel() {
@@ -49,7 +50,7 @@ export function DROPanel() {
 
   const handleStartEdit = (axis: string, value: number) => {
     setEditingAxis(axis)
-    setEditValue(String(units === 'mm' ? value : value / 25.4))
+    setEditValue(String(units === 'mm' ? value : value / MM_PER_INCH))
   }
 
   const handleConfirmEdit = (axis: string) => {
@@ -59,7 +60,7 @@ export function DROPanel() {
       setEditingAxis(null)
       return
     }
-    const mmVal = units === 'mm' ? val : val * 25.4
+    const mmVal = units === 'mm' ? val : val * MM_PER_INCH
     window.cncstream.sendCommand(`G10 L20 P1 ${axis}${mmVal.toFixed(4)}`)
     setEditingAxis(null)
   }

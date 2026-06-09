@@ -1,3 +1,5 @@
+export const MM_PER_INCH = 25.4
+
 export const DEFAULT_BAUD_RATES = [9600, 19200, 38400, 57600, 115200, 230400] as const
 
 export const DEFAULT_BAUD_RATE = 115200

@@ -7,9 +7,9 @@ import { useMachineStore } from '../../stores/machine.store'
 import homeIcon from '../../assets/icons/home.svg'
 import unlockIcon from '../../assets/icons/unlock.svg'
 import { Tooltip } from '../common/Tooltip'
+import { ConfirmModal } from '../common/ConfirmModal'
 import styles from './ZeroGoToPanel.module.css'
-
-const MM_PER_INCH = 25.4
+import { MM_PER_INCH } from '@shared/constants/defaults'
 
 type ProbePhase = 'idle' | 'running' | 'confirm' | 'failed'
 
@@ -36,6 +36,7 @@ export function ZeroGoToPanel() {
     if (!isConnected) {
       setCircuitTested(false)
       setZProbeApplied(false)
+      setProbePhase('idle')
     }
   }, [isConnected])
 
@@ -78,6 +79,7 @@ export function ZeroGoToPanel() {
     if (z === undefined) {
       window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`)
       window.cncstream.sendCommand(cmd)
+      window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`)
     } else {
       window.cncstream.sendCommand(cmd)
     }
@@ -101,6 +103,7 @@ export function ZeroGoToPanel() {
   const handleDismissProbe = () => setProbePhase('idle')
 
   return (
+    <>
     <Panel title={t('zeroGoto.title')}>
       <div className={styles.row}>
         <button className={styles.actionBtn} onClick={goToXYZero} disabled={!isConnected}>
@@ -177,35 +180,26 @@ export function ZeroGoToPanel() {
       </button>
       </Tooltip>
 
-      {probePhase === 'confirm' && (
-        <div className={`${styles.probeResult} ${styles.probeSuccess}`}>
-          <span className={styles.probeResultTitle}>{t('zeroGoto.probeSuccess')}</span>
-          <span className={styles.probeResultMsg}>
-            {t('zeroGoto.probeSuccessMsg', { thickness: displayProbeThickness, unit: isIn ? 'in' : 'mm' })}
-          </span>
-          <div className={styles.probeResultBtns}>
-            <button className={styles.probeApplyBtn} onClick={handleApplyProbe}>
-              {t('zeroGoto.probeApply')}
-            </button>
-            <button className={styles.probeCancelBtn} onClick={handleDismissProbe}>
-              {t('zeroGoto.probeCancel')}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {probePhase === 'failed' && (
-        <div className={`${styles.probeResult} ${styles.probeFailed}`}>
-          <span className={styles.probeResultTitle}>{t('zeroGoto.probeFailed')}</span>
-          <span className={styles.probeResultMsg}>{t('zeroGoto.probeFailedMsg')}</span>
-          <div className={styles.probeResultBtns}>
-            <button className={styles.probeCancelBtn} onClick={handleDismissProbe}>
-              {t('zeroGoto.probeOk')}
-            </button>
-          </div>
-        </div>
-      )}
-
     </Panel>
+
+    <ConfirmModal
+      isOpen={probePhase === 'confirm'}
+      variant="success"
+      title={t('zeroGoto.probeSuccess')}
+      message={t('zeroGoto.probeSuccessMsg', { thickness: displayProbeThickness, unit: isIn ? 'in' : 'mm' })}
+      confirmLabel={t('zeroGoto.probeApply')}
+      cancelLabel={t('zeroGoto.probeCancel')}
+      onConfirm={handleApplyProbe}
+      onCancel={handleDismissProbe}
+    />
+    <ConfirmModal
+      isOpen={probePhase === 'failed'}
+      variant="error"
+      title={t('zeroGoto.probeFailed')}
+      message={t('zeroGoto.probeFailedMsg')}
+      confirmLabel={t('zeroGoto.probeOk')}
+      onConfirm={handleDismissProbe}
+    />
+    </>
   )
 }

@@ -31,11 +31,13 @@ export class GrblProtocolService extends EventEmitter {
   }
 
   get spindleMaxRpm(): number {
-    return parseInt(this._grblSettings['$30'] ?? '1000', 10) || 1000
+    const val = parseInt(this._grblSettings['$30'] ?? '', 10)
+    return isNaN(val) ? 1000 : val
   }
 
   get spindleMinRpm(): number {
-    return parseInt(this._grblSettings['$31'] ?? '0', 10) || 0
+    const val = parseInt(this._grblSettings['$31'] ?? '', 10)
+    return isNaN(val) ? 0 : val
   }
 
   parseLine(line: string): GrblResponse {

@@ -9,19 +9,8 @@ import { parseGCode } from '../../lib/gcode/parser'
 import { analyzeGCode } from '../../lib/gcode/analyzer'
 import { buildToolpath } from '../../lib/gcode/toolpath-builder'
 import styles from './GCodePanel.module.css'
-
-function formatTime(seconds: number): string {
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = Math.floor(seconds % 60)
-  if (h > 0) return `${h}h ${m}m ${s}s`
-  if (m > 0) return `${m}m ${s}s`
-  return `${s}s`
-}
-
-function formatElapsed(ms: number): string {
-  return formatTime(ms / 1000)
-}
+import { ConfirmModal } from '../common/ConfirmModal'
+import { formatDuration } from '../../lib/format-duration'
 
 export function GCodePanel() {
   const { t } = useTranslation()
@@ -47,16 +36,14 @@ export function GCodePanel() {
   const zProbeApplied = useUIStore((s) => s.zProbeApplied)
   const accessories = useMachineStore((s) => s.accessories)
   const spindleOn = accessories.spindleCW || accessories.spindleCCW
-  const [pendingStart, setPendingStart] = useState(false)
-  const [pendingSpindleWarning, setPendingSpindleWarning] = useState(false)
-  const [pendingSpindleReady, setPendingSpindleReady] = useState(false)
+  type StartPhase = 'idle' | 'probeWarning' | 'spindleWarning' | 'spindleReady'
+  const [startPhase, setStartPhase] = useState<StartPhase>('idle')
 
   useEffect(() => {
-    if (pendingSpindleWarning && spindleOn) {
-      setPendingSpindleWarning(false)
-      setPendingSpindleReady(true)
+    if (startPhase === 'spindleWarning' && spindleOn) {
+      setStartPhase('spindleReady')
     }
-  }, [spindleOn, pendingSpindleWarning])
+  }, [spindleOn, startPhase])
 
   const handleOpenFile = useCallback(async () => {
     const result = await window.cncstream.openFileDialog()
@@ -85,14 +72,8 @@ export function GCodePanel() {
   const needsSpindleWarning = gcodeUsesSpindle && !spindleOn
 
   const handleStartJob = () => {
-    if (!zProbeApplied) {
-      setPendingStart(true)
-      return
-    }
-    if (needsSpindleWarning) {
-      setPendingSpindleWarning(true)
-      return
-    }
+    if (!zProbeApplied) { setStartPhase('probeWarning'); return }
+    if (needsSpindleWarning) { setStartPhase('spindleWarning'); return }
     startJob()
   }
 
@@ -106,54 +87,13 @@ export function GCodePanel() {
         {fileName && (
           <div className={styles.jobControls}>
             {jobState === 'idle' || jobState === 'completed' ? (
-              pendingStart ? (
-                <div className={styles.probeWarning}>
-                  <span className={styles.probeWarningText}>{t('gcode.probeWarningMsg')}</span>
-                  <div className={styles.probeWarningBtns}>
-                    <button className={styles.startBtn} onClick={() => {
-                      setPendingStart(false)
-                      if (needsSpindleWarning) { setPendingSpindleWarning(true) } else { startJob() }
-                    }}>
-                      {t('gcode.probeWarningConfirm')}
-                    </button>
-                    <button className={styles.cancelBtn} onClick={() => setPendingStart(false)}>
-                      {t('common.cancel')}
-                    </button>
-                  </div>
-                </div>
-              ) : pendingSpindleWarning ? (
-                <div className={styles.probeWarning}>
-                  <span className={styles.probeWarningText}>{t('gcode.spindleWarningMsg')}</span>
-                  <div className={styles.probeWarningBtns}>
-                    <button className={styles.startBtn} onClick={() => { setPendingSpindleWarning(false); startJob() }}>
-                      {t('gcode.spindleWarningConfirm')}
-                    </button>
-                    <button className={styles.cancelBtn} onClick={() => setPendingSpindleWarning(false)}>
-                      {t('common.cancel')}
-                    </button>
-                  </div>
-                </div>
-              ) : pendingSpindleReady ? (
-                <div className={styles.probeWarning}>
-                  <span className={styles.probeWarningText}>{t('gcode.spindleReadyMsg')}</span>
-                  <div className={styles.probeWarningBtns}>
-                    <button className={styles.startBtn} onClick={() => { setPendingSpindleReady(false); startJob() }}>
-                      {t('gcode.spindleReadyConfirm')}
-                    </button>
-                    <button className={styles.cancelBtn} onClick={() => setPendingSpindleReady(false)}>
-                      {t('common.cancel')}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  className={styles.startBtn}
-                  onClick={handleStartJob}
-                  disabled={!isConnected}
-                >
-                  {t('gcode.startJob')}
-                </button>
-              )
+              <button
+                className={styles.startBtn}
+                onClick={handleStartJob}
+                disabled={!isConnected}
+              >
+                {t('gcode.startJob')}
+              </button>
             ) : jobState === 'running' ? (
               <>
                 <button className={styles.pauseBtn} onClick={pauseJob}>
@@ -195,7 +135,7 @@ export function GCodePanel() {
             </div>
             <div className={styles.insightItem}>
               <span className={styles.insightLabel}>{t('gcode.estTime')}</span>
-              <span className={styles.insightValue}>{formatTime(fileInsight.estimatedTimeSeconds)}</span>
+              <span className={styles.insightValue}>{formatDuration(fileInsight.estimatedTimeSeconds)}</span>
             </div>
             <div className={styles.insightItem}>
               <span className={styles.insightLabel}>{t('gcode.feed')}</span>
@@ -280,8 +220,8 @@ export function GCodePanel() {
                 <div className={styles.progressInfo}>
                   <span>{t('gcode.linesProgress', { acknowledged: acknowledgedLines, total: totalLines })}</span>
                   <span>{percentComplete.toFixed(1)}%</span>
-                  <span>{formatElapsed(elapsedMs)}</span>
-                  {estimatedRemainingMs > 0 && <span>~{formatElapsed(estimatedRemainingMs)} {t('gcode.left')}</span>}
+                  <span>{formatDuration(elapsedMs / 1000)}</span>
+                  {estimatedRemainingMs > 0 && <span>~{formatDuration(estimatedRemainingMs / 1000)} {t('gcode.left')}</span>}
                 </div>
               </div>
             )}
@@ -290,6 +230,38 @@ export function GCodePanel() {
       )}
 
 
+      <ConfirmModal
+        isOpen={startPhase === 'probeWarning'}
+        variant="warning"
+        title={t('gcode.probeWarningTitle')}
+        message={t('gcode.probeWarningMsg')}
+        confirmLabel={t('gcode.probeWarningConfirm')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={() => {
+          if (needsSpindleWarning) { setStartPhase('spindleWarning') } else { setStartPhase('idle'); startJob() }
+        }}
+        onCancel={() => setStartPhase('idle')}
+      />
+      <ConfirmModal
+        isOpen={startPhase === 'spindleWarning'}
+        variant="warning"
+        title={t('gcode.spindleWarningTitle')}
+        message={t('gcode.spindleWarningMsg')}
+        confirmLabel={t('gcode.spindleWarningConfirm')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={() => { setStartPhase('idle'); startJob() }}
+        onCancel={() => setStartPhase('idle')}
+      />
+      <ConfirmModal
+        isOpen={startPhase === 'spindleReady'}
+        variant="success"
+        title={t('gcode.spindleReadyTitle')}
+        message={t('gcode.spindleReadyMsg')}
+        confirmLabel={t('gcode.spindleReadyConfirm')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={() => { setStartPhase('idle'); startJob() }}
+        onCancel={() => setStartPhase('idle')}
+      />
     </div>
   )
 }

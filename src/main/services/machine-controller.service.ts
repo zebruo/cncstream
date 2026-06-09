@@ -115,6 +115,7 @@ export class MachineControllerService extends EventEmitter {
   }
 
   async connect(path: string, baudRate: number): Promise<void> {
+    if (this._isConnected) return
     await this.serial.open({ path, baudRate })
     this._isConnected = true
     this.protocol.reset()

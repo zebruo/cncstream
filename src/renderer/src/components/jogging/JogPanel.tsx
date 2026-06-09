@@ -5,7 +5,7 @@ import { Panel } from '../common/Panel'
 import { useJogStore } from '../../stores/jog.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import { useUIStore } from '../../stores/ui.store'
-import { DEFAULT_JOG_STEP_PRESETS, DEFAULT_JOG_SPEED_PRESETS } from '@shared/constants/defaults'
+import { DEFAULT_JOG_STEP_PRESETS, DEFAULT_JOG_SPEED_PRESETS, MM_PER_INCH } from '@shared/constants/defaults'
 import upleftIcon from '../../assets/icons/upleft.svg'
 import upIcon from '../../assets/icons/up.svg'
 import uprightIcon from '../../assets/icons/upright.svg'
@@ -17,7 +17,6 @@ import downrightIcon from '../../assets/icons/downright.svg'
 import centerjogIcon from '../../assets/icons/centerjog.svg'
 import styles from './JogPanel.module.css'
 
-const MM_PER_INCH = 25.4
 const JOG_STEP_PRESETS_IN = [0.001, 0.010, 0.050, 0.100, 0.500, 1.000] as const
 const JOG_SPEED_PRESETS_IN = [1, 5, 10, 50, 100, 200] as const
 

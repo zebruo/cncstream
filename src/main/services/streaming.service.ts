@@ -16,11 +16,19 @@ export class StreamingService extends EventEmitter {
   }
 
   async start(gcodeLines: string[], startFromLine = 0): Promise<void> {
-    this.lines = gcodeLines
-      .map((l) => l.trim())
-      .filter((l) => l.length > 0 && !l.startsWith(';') && !l.startsWith('('))
+    const isExecutable = (l: string) => l.length > 0 && !l.startsWith(';') && !l.startsWith('(')
+    this.lines = gcodeLines.map((l) => l.trim()).filter(isExecutable)
 
-    this.currentLineIndex = startFromLine
+    // startFromLine is a raw-file line index; convert to filtered-array index
+    if (startFromLine > 0) {
+      let idx = 0
+      for (let i = 0; i < Math.min(startFromLine, gcodeLines.length); i++) {
+        if (isExecutable(gcodeLines[i].trim())) idx++
+      }
+      this.currentLineIndex = idx
+    } else {
+      this.currentLineIndex = 0
+    }
     this.acknowledgedCount = 0
     this.errorCount = 0
     this.startTime = Date.now()
