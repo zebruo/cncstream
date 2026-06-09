@@ -201,7 +201,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
       z: safeVal(bbox.max.z - bbox.min.z, 0)
     },
     safeZ: rapidZCounts.size > 0
-      ? [...rapidZCounts.entries()].reduce((a, b) => (b[1] > a[1] ? b : a))[0]
+      ? Math.max(...rapidZCounts.keys())
       : null,
     hasTCommands,
     operationCount,
