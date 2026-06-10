@@ -44,6 +44,7 @@ export interface FileInsight {
   }
   dimensions: { x: number; y: number; z: number }
   safeZ: number | null
+  stockThickness: number | null
   operationCount: number
   passCount: number
   passDepth: number | null

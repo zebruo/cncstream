@@ -84,6 +84,12 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
           tools.add(1)
           toolInfoMap.set(1, { diameter: parseFloat(headerDMatch[1]) })
         }
+        // Fusion 360 style: (TOOL/MILL,3.175,0,12,0) → 1st value is diameter
+        const fusionToolMatch = text.match(/\(\s*TOOL\/MILL\s*,\s*(\d+\.?\d*)/i)
+        if (fusionToolMatch && !toolInfoMap.has(1)) {
+          tools.add(1)
+          toolInfoMap.set(1, { diameter: parseFloat(fusionToolMatch[1]) })
+        }
       }
 
       // Match "T<number>" in comment + try to extract diameter and name
@@ -116,6 +122,19 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
         toolInfoMap.set(tNum, existing)
       }
     }
+  }
+
+  // Parse declared stock thickness from header comments
+  // Box Generator:  ; Brut: 19mm
+  // Fusion 360:     (STOCK/BLOCK,150,100,6.5,0,0,0)  → 3rd value is Z depth
+  let stockThickness: number | null = null
+  for (const line of parsed.lines) {
+    if (stockThickness !== null) break
+    if (!line.isComment) continue
+    const boxGen = line.raw.match(/;\s*Brut\s*:\s*(\d+\.?\d*)\s*mm/i)
+    if (boxGen) { stockThickness = parseFloat(boxGen[1]); break }
+    const fusion = line.raw.match(/\(\s*STOCK\/BLOCK\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*(\d+\.?\d*)/i)
+    if (fusion) { stockThickness = parseFloat(fusion[1]); break }
   }
 
   // Detect operations from structured comments (Box Generator, Fusion 360, VCarve)
@@ -203,6 +222,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     safeZ: rapidZCounts.size > 0
       ? Math.max(...rapidZCounts.keys())
       : null,
+    stockThickness,
     hasTCommands,
     operationCount,
     passCount,
