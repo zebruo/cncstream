@@ -1,5 +1,7 @@
 #define AppName "CNCStream"
-#define AppVersion "1.0.3"
+#ifndef AppVersion
+  #define AppVersion "1.0.4"
+#endif
 #define AppPublisher "CNCStream"
 #define AppExeName "CNCStream.exe"
 #define AppId "{{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
