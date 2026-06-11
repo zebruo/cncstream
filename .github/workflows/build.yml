@@ -41,8 +41,9 @@ jobs:
 
       - name: Compiler le setup Inno Setup
         shell: pwsh
+        working-directory: installer
         run: |
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\CNCStream.iss /DAppVersion=${{ steps.pkg.outputs.version }}
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" CNCStream.iss /DAppVersion=${{ steps.pkg.outputs.version }}
 
       - name: Créer le zip portable
         shell: pwsh
@@ -53,6 +54,7 @@ jobs:
       - name: Publier la release GitHub
         uses: softprops/action-gh-release@v2
         with:
+          fail_on_unmatched_files: true
           name: CNCStream v${{ steps.pkg.outputs.version }}
           body: |
             ## CNCStream v${{ steps.pkg.outputs.version }}
