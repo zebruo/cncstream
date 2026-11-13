@@ -74,19 +74,23 @@
 
 .connectionDot[data-state="disconnected"] {
   background-color: var(--color-text-muted);
+  box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-text-muted) 35%, transparent);
 }
 
 .connectionDot[data-state="connecting"] {
   background-color: var(--color-warning);
+  box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-warning) 45%, transparent);
   animation: pulse 1s infinite;
 }
 
 .connectionDot[data-state="connected"] {
   background-color: var(--color-success);
+  box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-success) 45%, transparent);
 }
 
 .connectionDot[data-state="error"] {
   background-color: var(--color-error);
+  box-shadow: 0 0 6px 2px color-mix(in srgb, var(--color-error) 45%, transparent);
 }
 
 @keyframes pulse {
