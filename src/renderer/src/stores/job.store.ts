@@ -103,8 +103,8 @@ export const useJobStore = create<JobStore>((set, get) => ({
     set({ state: 'running', error: null })
     try {
       await window.cncstream.startJob(lines)
-    } catch (e: any) {
-      set({ state: 'error', error: e.message })
+    } catch (e) {
+      set({ state: 'error', error: e instanceof Error ? e.message : String(e) })
     }
   },
 
@@ -127,8 +127,8 @@ export const useJobStore = create<JobStore>((set, get) => ({
     set({ state: 'running', error: null })
     try {
       await window.cncstream.startJob(commands)
-    } catch (e: any) {
-      set({ state: 'error', error: e.message })
+    } catch (e) {
+      set({ state: 'error', error: e instanceof Error ? e.message : String(e) })
     }
   }
 }))

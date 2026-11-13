@@ -15,7 +15,6 @@ export function ConnectionPanel() {
     selectedPort,
     baudRate,
     error,
-    setPorts,
     setSelectedPort,
     setBaudRate,
     refreshPorts,

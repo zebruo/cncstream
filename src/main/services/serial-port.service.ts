@@ -75,7 +75,7 @@ export class SerialPortService extends EventEmitter {
         resolve()
         return
       }
-      this.port.close((err) => {
+      this.port.close(() => {
         this.port = null
         this.parser = null
         resolve()

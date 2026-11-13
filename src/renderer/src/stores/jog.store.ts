@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { JogParams } from '@shared/types/ipc'
 
 type JogMode = 'incremental' | 'continuous'
 
@@ -36,12 +37,12 @@ export const useJogStore = create<JogStore>()(
       jogXY: (dx, dy) => {
         const { stepSize, feedRate, mode, continuousRate } = get()
         if (mode === 'incremental') {
-          const params: any = { feedRate }
+          const params: JogParams = { feedRate }
           if (dx !== 0) params.x = dx * stepSize
           if (dy !== 0) params.y = dy * stepSize
           window.cncstream.jog(params)
         } else {
-          const params: any = { feedRate: feedRate * (continuousRate / 100) }
+          const params: JogParams = { feedRate: feedRate * (continuousRate / 100) }
           if (dx !== 0) params.x = dx * 1000
           if (dy !== 0) params.y = dy * 1000
           window.cncstream.jog(params)

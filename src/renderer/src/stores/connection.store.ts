@@ -42,8 +42,8 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     try {
       const ports = await window.cncstream.listPorts()
       set({ ports })
-    } catch (e: any) {
-      set({ error: e.message })
+    } catch (e) {
+      set({ error: e instanceof Error ? e.message : String(e) })
     }
   },
 
@@ -54,8 +54,8 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
     try {
       await window.cncstream.connect({ path: selectedPort, baudRate })
       set({ state: 'connected' })
-    } catch (e: any) {
-      set({ state: 'error', error: e.message })
+    } catch (e) {
+      set({ state: 'error', error: e instanceof Error ? e.message : String(e) })
     }
   },
 

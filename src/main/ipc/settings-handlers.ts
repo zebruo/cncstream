@@ -8,6 +8,6 @@ export function registerSettingsHandlers(settingsStore: SettingsStoreService): v
   })
 
   ipcMain.handle(IpcChannels.SETTINGS_SET, async (_event, settings: Record<string, unknown>) => {
-    settingsStore.setMultiple(settings as any)
+    settingsStore.setMultiple(settings as Parameters<SettingsStoreService['setMultiple']>[0])
   })
 }

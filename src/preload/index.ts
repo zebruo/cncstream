@@ -2,6 +2,8 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { IpcChannels, IpcEvents } from '@shared/types/ipc'
 import type { CNCStreamAPI } from '@shared/types/ipc'
 
+// Les callbacks ont des signatures différentes selon le canal : typées par CNCStreamAPI
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function createEventListener(channel: string) {
   return (callback: (...args: any[]) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, ...args: any[]) => callback(...args)
@@ -10,6 +12,7 @@ function createEventListener(channel: string) {
       ipcRenderer.removeListener(channel, handler)
     }
   }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
 const api: CNCStreamAPI = {

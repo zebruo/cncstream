@@ -22,7 +22,7 @@ let lineId = 0
 
 const MAX_LINES = 500
 
-export const useConsoleStore = create<ConsoleStore>((set, get) => ({
+export const useConsoleStore = create<ConsoleStore>((set) => ({
   lines: [],
   commandHistory: [],
   historyIndex: -1,

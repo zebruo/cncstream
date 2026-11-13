@@ -3,6 +3,7 @@ import { useMachineStore } from '../stores/machine.store'
 import { useConnectionStore } from '../stores/connection.store'
 import { useJobStore } from '../stores/job.store'
 import { useConsoleStore } from '../stores/console.store'
+import type { ConnectionStatus } from '@shared/types/connection'
 
 export function useMachineStatus(): void {
   const updateFromStatus = useMachineStore((s) => s.updateFromStatus)
@@ -56,7 +57,7 @@ export function useMachineStatus(): void {
 
     unsubs.push(
       window.cncstream.onConnectionStateChanged((state) => {
-        setConnectionState(state as any)
+        setConnectionState(state as ConnectionStatus)
       })
     )
 

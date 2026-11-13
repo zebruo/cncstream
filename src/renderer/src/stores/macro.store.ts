@@ -160,7 +160,8 @@ export const useMacroStore = create<MacroStore>()(
       partialize: (state) => ({
         macros: state.macros
       }),
-      merge: (persisted: any, current) => {
+      merge: (persistedState, current) => {
+        const persisted = persistedState as { macros?: Macro[] } | undefined
         // Keep persisted macros (includes user edits to built-ins)
         // Only inject built-ins that are missing (e.g. new ones added in code updates)
         const persistedMacros: Macro[] = persisted?.macros ?? []
