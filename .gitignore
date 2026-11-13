@@ -10,7 +10,7 @@ installer/output/
 
 # Fichiers de développement local
 notes/
-git-manager/
+test/
 fichiers nc/
 
 # Environnement
