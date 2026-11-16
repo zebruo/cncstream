@@ -20,8 +20,4 @@ export function registerFileHandlers(mainWindow: BrowserWindow): void {
     const content = await readFile(filePath, 'utf-8')
     return { path: filePath, content }
   })
-
-  ipcMain.handle(IpcChannels.FILE_READ, async (_event, filePath: string) => {
-    return readFile(filePath, 'utf-8')
-  })
 }

@@ -42,7 +42,6 @@ const api: CNCStreamAPI = {
 
   // File
   openFileDialog: () => ipcRenderer.invoke(IpcChannels.FILE_OPEN_DIALOG),
-  readFile: (path) => ipcRenderer.invoke(IpcChannels.FILE_READ, path),
 
   // Job
   startJob: (lines, options) => ipcRenderer.invoke(IpcChannels.JOB_START, lines, options),

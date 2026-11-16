@@ -25,7 +25,6 @@ export const IpcChannels = {
   COOLANT_SET: 'coolant:set',
 
   FILE_OPEN_DIALOG: 'file:open-dialog',
-  FILE_READ: 'file:read',
 
   JOB_START: 'job:start',
   JOB_PAUSE: 'job:pause',
@@ -124,7 +123,6 @@ export interface CNCStreamAPI {
 
   // File
   openFileDialog: () => Promise<{ path: string; content: string } | null>
-  readFile: (path: string) => Promise<string>
 
   // Job
   startJob: (lines: string[], options?: JobOptions) => Promise<void>
