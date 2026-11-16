@@ -2,6 +2,26 @@ import type { ParsedGCodeFile, FileInsight } from '@shared/types/gcode'
 
 const RAPID_ESTIMATE_FEED = 5000 // mm/min
 
+// Numéro d'outil dans un commentaire : « T1 » (Fusion 360, générique) ou « Tool 1 » (VCarve)
+const TOOL_NUMBER_PATTERN = /\b(?:T|Tool\s*)(\d+)\b/i
+
+/**
+ * Hauteur de dégagement : la plus fréquente parmi les rapides qui montent.
+ * À égalité, la plus haute. Évite qu'un rapide isolé (parking en fin de programme)
+ * fausse la valeur.
+ */
+function mostFrequentSafeZ(rapidZCounts: Map<number, number>): number | null {
+  let safeZ: number | null = null
+  let bestCount = 0
+  for (const [z, count] of rapidZCounts) {
+    if (count > bestCount || (count === bestCount && safeZ !== null && z > safeZ)) {
+      safeZ = z
+      bestCount = count
+    }
+  }
+  return safeZ
+}
+
 export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
   let minFeed = Infinity
   let maxFeed = 0
@@ -78,7 +98,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
       const text = line.raw
 
       // Box Generator style: "; Tool diameter: 4mm" (no T number)
-      if (!text.match(/\bT(\d+)\b/i)) {
+      if (!TOOL_NUMBER_PATTERN.test(text)) {
         const headerDMatch = text.match(/;\s*Tool diameter:\s*(\d+(?:\.\d*)?)\s*mm/i)
         if (headerDMatch && !toolInfoMap.has(1)) {
           tools.add(1)
@@ -93,7 +113,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
       }
 
       // Match "T<number>" in comment + try to extract diameter and name
-      const toolMatch = text.match(/\bT(\d+)\b/i)
+      const toolMatch = text.match(TOOL_NUMBER_PATTERN)
       if (toolMatch) {
         const tNum = Number.parseInt(toolMatch[1])
         tools.add(tNum)
@@ -219,9 +239,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
       y: safeVal(bbox.max.y - bbox.min.y, 0),
       z: safeVal(bbox.max.z - bbox.min.z, 0)
     },
-    safeZ: rapidZCounts.size > 0
-      ? Math.max(...rapidZCounts.keys())
-      : null,
+    safeZ: mostFrequentSafeZ(rapidZCounts),
     stockThickness,
     hasTCommands,
     operationCount,

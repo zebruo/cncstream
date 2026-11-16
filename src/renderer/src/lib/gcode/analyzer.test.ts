@@ -98,6 +98,21 @@ describe('analyzeGCode : Z de dégagement', () => {
   it('arrondit les valeurs flottantes', () => {
     expect(analyze('G0 Z5.0004').safeZ).toBe(5)
   })
+
+  it('choisit la hauteur la plus fréquente, pas la plus haute', () => {
+    // Dégagement à Z5 trois fois, un seul rapide à Z10
+    const gcode = 'G0 Z5\nG1 Z-1 F100\nG0 Z5\nG1 Z-2\nG0 Z5\nG1 Z-3\nG0 Z10'
+    expect(analyze(gcode).safeZ).toBe(5)
+  })
+
+  it('ignore un parking isolé en fin de programme', () => {
+    const gcode = 'G0 Z5\nG1 Z-1 F100\nG0 Z5\nG1 Z-2\nG0 Z5\nG0 Z50'
+    expect(analyze(gcode).safeZ).toBe(5)
+  })
+
+  it('prend la plus haute en cas d\'égalité', () => {
+    expect(analyze('G0 Z5\nG1 Z-1 F100\nG0 Z10').safeZ).toBe(10)
+  })
 })
 
 describe('analyzeGCode : outils', () => {
@@ -165,9 +180,21 @@ describe('analyzeGCode : outils', () => {
     expect(insight.toolInfo).toEqual([{ number: 1, diameter: 6, name: 'fraise 6mm' }])
   })
 
-  // Limite connue : le commentaire VCarve « (Tool 1: 6.0mm End Mill) » est cité dans le code
-  // comme format pris en charge, mais il n'est pas lu s'il ne contient pas aussi « T1 ».
-  it.todo('lit le nom et le diamètre au format VCarve « (Tool 1: 6.0mm End Mill) »')
+  it('lit le nom et le diamètre au format VCarve « (Tool 1: 6.0mm End Mill) »', () => {
+    const insight = analyze('(Tool 1: 6.0mm End Mill)\nT1 M6')
+    expect(insight.toolInfo).toEqual([{ number: 1, diameter: 6, name: '6.0mm End Mill' }])
+  })
+
+  it('déclare l\'outil d\'un commentaire VCarve même sans commande T', () => {
+    const insight = analyze('(Tool 2: 3.175mm Ball Nose)')
+    expect(insight.toolsUsed).toEqual([2])
+    expect(insight.toolInfo).toEqual([{ number: 2, diameter: 3.175, name: '3.175mm Ball Nose' }])
+  })
+
+  it('ne prend pas « Tool diameter: » pour un numéro d\'outil', () => {
+    expect(analyze('; Tool diameter: 4mm').toolsUsed).toEqual([1])
+    expect(analyze('; Tool diameter: 4mm').toolInfo).toEqual([{ number: 1, diameter: 4 }])
+  })
 
   it('reste rapide sur des commentaires pathologiques (pas de backtracking)', () => {
     const start = Date.now()
