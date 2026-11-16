@@ -10,6 +10,8 @@
     "package": "electron-vite build && node scripts/package.js",
     "package:win": "electron-vite build && node scripts/package.js --win",
     "lint": "eslint src/",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "@types/three": "^0.171.0",
     "@types/yauzl": "^2.10.3",
     "@vitejs/plugin-react": "^4.3.0",
+    "@vitest/coverage-v8": "^2.1.9",
     "electron": "^41.7.1",
     "electron-builder": "^25.0.0",
     "electron-vite": "^2.3.0",
@@ -44,6 +47,7 @@
     "typescript": "^5.7.0",
     "typescript-eslint": "^8.72.2",
     "vite": "^5.4.0",
+    "vitest": "^2.1.9",
     "zustand": "^5.0.0"
   },
   "author": "",
