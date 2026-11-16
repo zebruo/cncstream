@@ -29,17 +29,21 @@ export function ZeroGoToPanel() {
   const [probePhase, setProbePhase] = useState<ProbePhase>('idle')
   const [circuitTested, setCircuitTested] = useState(false)
 
-  useEffect(() => {
-    if (probePin) setCircuitTested(true)
-  }, [probePin])
+  // États locaux ajustés pendant le rendu (pas d'effet) : ils ne dépendent que de
+  // valeurs déjà connues ici. Le circuit est « testé » dès que la sonde est vue fermée,
+  // et tout est remis à zéro à la déconnexion.
+  if (probePin && !circuitTested) {
+    setCircuitTested(true)
+  }
+  if (!isConnected && (circuitTested || probePhase !== 'idle')) {
+    setCircuitTested(false)
+    setProbePhase('idle')
+  }
 
+  // Le drapeau « Z sondé » vit dans un store partagé : sa remise à zéro reste un effet.
   useEffect(() => {
-    if (!isConnected) {
-      setCircuitTested(false)
-      setZProbeApplied(false)
-      setProbePhase('idle')
-    }
-  }, [isConnected])
+    if (!isConnected) setZProbeApplied(false)
+  }, [isConnected, setZProbeApplied])
 
   const isIn = units === 'in'
 

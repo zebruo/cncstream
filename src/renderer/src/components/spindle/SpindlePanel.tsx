@@ -42,7 +42,10 @@ export function SpindlePanel() {
 
   const grblSpindleOn = accessories.spindleCW || accessories.spindleCCW
 
-  // Sync from GRBL (G-code M3/M5), but ignore for 3s after user toggle
+  // Sync from GRBL (G-code M3/M5), but ignore for 3s after user toggle.
+  // Cela reste un effet : la synchro dépend de l'heure (Date.now) et d'une ref de
+  // temporisation, ce qui serait impur dans le rendu. Exemption limitée à ce bloc.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (Date.now() < ignoreGrblUntil.current) return
     if (grblSpindleOn && !localSpindleOn) {
@@ -53,6 +56,7 @@ export function SpindlePanel() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grblSpindleOn])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const isSpindleOn = localSpindleOn
 

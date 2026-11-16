@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useJobStore } from '../../stores/job.store'
 import { useVisualizationStore } from '../../stores/visualization.store'
@@ -39,11 +39,11 @@ export function GCodePanel() {
   type StartPhase = 'idle' | 'probeWarning' | 'spindleWarning' | 'spindleReady'
   const [startPhase, setStartPhase] = useState<StartPhase>('idle')
 
-  useEffect(() => {
-    if (startPhase === 'spindleWarning' && spindleOn) {
-      setStartPhase('spindleReady')
-    }
-  }, [spindleOn, startPhase])
+  // Dès que la broche démarre, l'avertissement passe à « prête ». État ajusté pendant
+  // le rendu (pas d'effet) : il ne dépend que de valeurs déjà connues ici.
+  if (startPhase === 'spindleWarning' && spindleOn) {
+    setStartPhase('spindleReady')
+  }
 
   const handleOpenFile = useCallback(async () => {
     const result = await window.cncstream.openFileDialog()

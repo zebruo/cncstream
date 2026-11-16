@@ -1,4 +1,4 @@
-import { Suspense, useRef, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useRef, useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, GizmoHelper, PerspectiveCamera, OrthographicCamera } from '@react-three/drei'
@@ -84,15 +84,10 @@ function CncAxesGizmo() {
 const VIZ_BG = { dark: '#141517', light: '#d2d6da' }
 
 function SceneBackground() {
-  const { scene } = useThree()
   const theme = useUIStore((s) => s.theme)
 
-  useEffect(() => {
-    scene.background = new THREE.Color(VIZ_BG[theme])
-    return () => { scene.background = null }
-  }, [theme, scene])
-
-  return null
+  // Fond déclaratif : react-three-fiber l'attache à la scène et le retire au démontage
+  return <color attach="background" args={[VIZ_BG[theme]]} />
 }
 
 /* ── Scene ─────────────────────────────────────────────────────── */
@@ -116,24 +111,27 @@ function Scene({ viewMode, resetRef }: SceneProps) {
 
   const { camera } = useThree()
 
-  const resetCamera = (mode: ViewMode) => {
-    const { pos, up } = VIEW_CONFIG[mode]
-    camera.position.set(...pos)
-    camera.up.set(...up)
-    camera.updateProjectionMatrix()
-    if (controlsRef.current) {
-      controlsRef.current.target.set(...INITIAL_TARGET)
-      controlsRef.current.update()
-    }
-  }
+  const resetCamera = useCallback(
+    (mode: ViewMode) => {
+      const { pos, up } = VIEW_CONFIG[mode]
+      camera.position.set(...pos)
+      camera.up.set(...up)
+      camera.updateProjectionMatrix()
+      if (controlsRef.current) {
+        controlsRef.current.target.set(...INITIAL_TARGET)
+        controlsRef.current.update()
+      }
+    },
+    [camera]
+  )
 
   useEffect(() => {
     resetRef.current = resetCamera
-  })
+  }, [resetRef, resetCamera])
 
   useEffect(() => {
     resetCamera(viewMode)
-  }, [viewMode])
+  }, [viewMode, resetCamera])
 
   return (
     <>

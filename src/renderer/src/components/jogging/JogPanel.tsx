@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { Tooltip } from '../common/Tooltip'
 import { Panel } from '../common/Panel'
 import { useJogStore } from '../../stores/jog.store'
@@ -50,12 +50,12 @@ export function JogPanel() {
 
   const isJogging = useRef(false)
 
-  const stopJog = () => {
+  const stopJog = useCallback(() => {
     if (isJogging.current) {
       isJogging.current = false
       cancelJog()
     }
-  }
+  }, [cancelJog])
 
   useEffect(() => {
     document.addEventListener('mouseup', stopJog)
@@ -64,7 +64,7 @@ export function JogPanel() {
       document.removeEventListener('mouseup', stopJog)
       window.removeEventListener('blur', stopJog)
     }
-  }, [mode])
+  }, [stopJog])
 
   const handleJogXY = (dx: number, dy: number) => {
     if (!isConnected || (dx === 0 && dy === 0)) return
