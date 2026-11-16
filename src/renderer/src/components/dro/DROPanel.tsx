@@ -8,6 +8,7 @@ import { Tooltip } from '../common/Tooltip'
 import styles from './DROPanel.module.css'
 import { MM_PER_INCH } from '@shared/constants/defaults'
 import { catchCommandError } from '../../lib/command-errors'
+import { focusOnMount } from '../../lib/focus-on-mount'
 
 const AXES = ['X', 'Y', 'Z', 'A'] as const
 const AXIS_COLORS = {
@@ -110,7 +111,7 @@ export function DROPanel() {
                     if (e.key === 'Escape') setEditingAxis(null)
                   }}
                   onBlur={() => setEditingAxis(null)}
-                  autoFocus
+                  ref={focusOnMount}
                 />
               ) : (
                 <Tooltip text={t('dro.doubleClickEdit')} style={{ flex: 1 }}>

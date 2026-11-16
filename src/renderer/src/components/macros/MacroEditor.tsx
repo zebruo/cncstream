@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal } from '../common/Modal'
 import type { Macro } from '../../stores/macro.store'
+import { focusOnMount } from '../../lib/focus-on-mount'
 import styles from './MacroPanel.module.css'
 
 interface MacroEditorProps {
@@ -47,7 +48,7 @@ export function MacroEditor({ macro, isOpen, onClose, onSave }: MacroEditorProps
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t('macros.placeholderName')}
-            autoFocus
+            ref={focusOnMount}
           />
         </div>
 

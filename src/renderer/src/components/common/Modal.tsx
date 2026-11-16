@@ -25,10 +25,19 @@ export function Modal({ isOpen, onClose, title, children, className }: ModalProp
   if (!isOpen) return null
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    // Le fond ferme la modale ; Échap (écouteur ci-dessus) est l'équivalent clavier
+    <div
+      className={styles.overlay}
+      role="presentation"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
       <div
         className={`${styles.modal} ${className ?? ''}`}
-        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
       >
         <div className={styles.header}>
           <h2 className={styles.title}>{title}</h2>
