@@ -163,12 +163,25 @@ describe('CommandQueueService : priorité', () => {
     expect(sent).toEqual(['H1\n', 'H2\n', 'N1\n'])
   })
 
-  // Défaut connu : quand la file ne contient aucune commande normale, enqueue() insère une
-  // commande prioritaire en tête (`insertIdx === -1 ? 0`) au lieu de la mettre en queue.
-  // Deux prioritaires en attente derrière un tampon plein sont alors envoyées à l'envers.
-  // Scénario : tampon presque plein (121 octets), H1 (3 octets) envoyée, puis une prioritaire de
-  // 11 octets qui attend, puis H3 (3 octets) : H3 part avant elle. Attendu : [11 octets, H3].
-  it.todo('garde l\'ordre d\'arrivée entre commandes prioritaires quand le tampon est plein')
+  it('garde l\'ordre d\'arrivée entre commandes prioritaires quand le tampon est plein', () => {
+    const { queue, sent } = setup()
+    void queue.enqueue(line(120)) // 121 octets : le tampon est presque plein
+    void queue.enqueue('H1', CommandPriority.HIGH) // 3 octets : 124, envoyée
+    void queue.enqueue(line(10), CommandPriority.HIGH) // 11 octets : attend
+    void queue.enqueue('H3', CommandPriority.HIGH) // 3 octets : doit attendre derrière la précédente
+    queue.onResponse(OK) // libère 121 octets
+    expect(sent.slice(2)).toEqual([line(10) + '\n', 'H3\n'])
+  })
+
+  it('garde l\'ordre d\'arrivée entre trois prioritaires en attente, sans commande normale', () => {
+    const { queue, sent } = setup()
+    void queue.enqueue(line(120))
+    void queue.enqueue(line(20), CommandPriority.HIGH) // 21 octets : attend (121 + 21 > 127)
+    void queue.enqueue(line(30), CommandPriority.HIGH) // attend derrière la précédente
+    void queue.enqueue(line(40), CommandPriority.HIGH) // attend derrière les deux
+    queue.onResponse(OK)
+    expect(sent.slice(1)).toEqual([line(20) + '\n', line(30) + '\n', line(40) + '\n'])
+  })
 })
 
 describe('CommandQueueService : pause et reprise', () => {

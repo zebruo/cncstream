@@ -29,8 +29,10 @@ export class CommandQueueService extends EventEmitter {
       const cmd: QueuedCommand = { line, priority, lineNumber, resolve, reject }
 
       if (priority === CommandPriority.HIGH) {
-        const insertIdx = this.queue.findIndex((c) => c.priority > CommandPriority.HIGH)
-        this.queue.splice(insertIdx === -1 ? 0 : insertIdx, 0, cmd)
+        // Après les prioritaires déjà en attente, avant la première commande normale.
+        // Sans commande normale, en fin de file : sinon l'ordre d'arrivée serait inversé.
+        const firstNormal = this.queue.findIndex((c) => c.priority > CommandPriority.HIGH)
+        this.queue.splice(firstNormal === -1 ? this.queue.length : firstNormal, 0, cmd)
       } else {
         this.queue.push(cmd)
       }
