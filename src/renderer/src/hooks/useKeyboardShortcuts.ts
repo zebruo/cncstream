@@ -4,6 +4,7 @@ import { useJobStore } from '../stores/job.store'
 import { useConnectionStore } from '../stores/connection.store'
 import { useUIStore } from '../stores/ui.store'
 import { useMachineStore } from '../stores/machine.store'
+import { catchCommandError } from '../lib/command-errors'
 
 export function useKeyboardShortcuts(): void {
   useEffect(() => {
@@ -83,11 +84,11 @@ export function useKeyboardShortcuts(): void {
         switch (e.key.toLowerCase()) {
           case 'h':
             e.preventDefault()
-            window.cncstream.home()
+            catchCommandError(window.cncstream.home())
             return
           case 'u':
             e.preventDefault()
-            window.cncstream.unlock()
+            catchCommandError(window.cncstream.unlock())
             return
         }
 

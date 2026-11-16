@@ -10,6 +10,7 @@ import { Tooltip } from '../common/Tooltip'
 import { ConfirmModal } from '../common/ConfirmModal'
 import styles from './ZeroGoToPanel.module.css'
 import { MM_PER_INCH } from '@shared/constants/defaults'
+import { catchCommandError } from '../../lib/command-errors'
 
 type ProbePhase = 'idle' | 'running' | 'confirm' | 'failed'
 
@@ -65,9 +66,9 @@ export function ZeroGoToPanel() {
 
   const goToXYZero = () => {
     if (!isConnected) return
-    window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`)
-    window.cncstream.sendCommand('G90 G0 X0 Y0')
-    window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`)
+    catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`))
+    catchCommandError(window.cncstream.sendCommand('G90 G0 X0 Y0'))
+    catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`))
   }
 
   const goToPosition = (x?: number, y?: number, z?: number) => {
@@ -77,16 +78,16 @@ export function ZeroGoToPanel() {
     if (y !== undefined) cmd += ` Y${y}`
     if (z !== undefined) cmd += ` Z${z}`
     if (z === undefined) {
-      window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`)
-      window.cncstream.sendCommand(cmd)
-      window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`)
+      catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`))
+      catchCommandError(window.cncstream.sendCommand(cmd))
+      catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`))
     } else {
-      window.cncstream.sendCommand(cmd)
+      catchCommandError(window.cncstream.sendCommand(cmd))
     }
   }
 
-  const homeAll = () => { if (!isConnected) return; window.cncstream.home() }
-  const unlockMachine = () => { if (!isConnected) return; window.cncstream.unlock() }
+  const homeAll = () => { if (!isConnected) return; catchCommandError(window.cncstream.home()) }
+  const unlockMachine = () => { if (!isConnected) return; catchCommandError(window.cncstream.unlock()) }
 
   const handleProbeZ = () => {
     if (!isConnected || probePhase !== 'idle') return
@@ -95,7 +96,7 @@ export function ZeroGoToPanel() {
   }
 
   const handleApplyProbe = () => {
-    window.cncstream.sendCommand(`G10 L20 P1 Z${probeThickness + safeHeight}`)
+    catchCommandError(window.cncstream.sendCommand(`G10 L20 P1 Z${probeThickness + safeHeight}`))
     setZProbeApplied(true)
     setProbePhase('idle')
   }

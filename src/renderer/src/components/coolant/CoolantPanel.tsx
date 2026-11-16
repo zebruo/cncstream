@@ -4,6 +4,7 @@ import { Panel } from '../common/Panel'
 import { useMachineStore } from '../../stores/machine.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import styles from './CoolantPanel.module.css'
+import { catchCommandError } from '../../lib/command-errors'
 
 export function CoolantPanel() {
   const { t } = useTranslation()
@@ -16,24 +17,24 @@ export function CoolantPanel() {
   const toggleFlood = () => {
     if (!isConnected) return
     if (accessories.flood) {
-      window.cncstream.sendCommand('M9')
+      catchCommandError(window.cncstream.sendCommand('M9'))
     } else {
-      window.cncstream.sendCommand('M8')
+      catchCommandError(window.cncstream.sendCommand('M8'))
     }
   }
 
   const toggleMist = () => {
     if (!isConnected) return
     if (accessories.mist) {
-      window.cncstream.sendCommand('M9')
+      catchCommandError(window.cncstream.sendCommand('M9'))
     } else {
-      window.cncstream.sendCommand('M7')
+      catchCommandError(window.cncstream.sendCommand('M7'))
     }
   }
 
   const stopAll = () => {
     if (!isConnected) return
-    window.cncstream.sendCommand('M9')
+    catchCommandError(window.cncstream.sendCommand('M9'))
   }
 
   return (

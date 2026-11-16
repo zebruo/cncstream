@@ -92,7 +92,9 @@ app.whenReady().then(() => {
 })
 
 app.on('window-all-closed', () => {
-  machineController?.disconnect()
+  machineController?.disconnect().catch((error) => {
+    console.error('Erreur à la déconnexion de la machine :', error)
+  })
   sleepManager?.allowSleep()
   if (process.platform !== 'darwin') {
     app.quit()

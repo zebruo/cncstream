@@ -7,6 +7,7 @@ import { useConnectionStore } from '../../stores/connection.store'
 import { Tooltip } from '../common/Tooltip'
 import styles from './DROPanel.module.css'
 import { MM_PER_INCH } from '@shared/constants/defaults'
+import { catchCommandError } from '../../lib/command-errors'
 
 const AXES = ['X', 'Y', 'Z', 'A'] as const
 const AXIS_COLORS = {
@@ -39,13 +40,13 @@ export function DROPanel() {
 
   const handleZero = (axis: string) => {
     if (!isConnected) return
-    window.cncstream.sendCommand(`G10 L20 P1 ${axis}0`)
+    catchCommandError(window.cncstream.sendCommand(`G10 L20 P1 ${axis}0`))
   }
 
   const handleZeroAll = () => {
     if (!isConnected) return
     const axisStr = axes.map((a) => `${a}0`).join(' ')
-    window.cncstream.sendCommand(`G10 L20 P1 ${axisStr}`)
+    catchCommandError(window.cncstream.sendCommand(`G10 L20 P1 ${axisStr}`))
   }
 
   const handleStartEdit = (axis: string, value: number) => {
@@ -61,7 +62,7 @@ export function DROPanel() {
       return
     }
     const mmVal = units === 'mm' ? val : val * MM_PER_INCH
-    window.cncstream.sendCommand(`G10 L20 P1 ${axis}${mmVal.toFixed(4)}`)
+    catchCommandError(window.cncstream.sendCommand(`G10 L20 P1 ${axis}${mmVal.toFixed(4)}`))
     setEditingAxis(null)
   }
 

@@ -7,6 +7,7 @@ import { useUIStore, type SpindleMode } from '../../stores/ui.store'
 import { useJobStore } from '../../stores/job.store'
 import { Tooltip } from '../common/Tooltip'
 import styles from './SpindlePanel.module.css'
+import { catchCommandError } from '../../lib/command-errors'
 
 
 export function SpindlePanel() {
@@ -69,12 +70,12 @@ export function SpindlePanel() {
     if (isSpindleOn) {
       setLocalSpindleOn(false)
       setTargetRpm(0)
-      window.cncstream.setSpindle({ enabled: false, direction: 'cw', rpm: 0 })
+      catchCommandError(window.cncstream.setSpindle({ enabled: false, direction: 'cw', rpm: 0 }))
     } else {
       setLocalSpindleOn(true)
       setTargetRpm(rpm)
       userEditedRpm.current = false
-      window.cncstream.setSpindle({ enabled: true, direction, rpm })
+      catchCommandError(window.cncstream.setSpindle({ enabled: true, direction, rpm }))
     }
   }
 

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { JogParams } from '@shared/types/ipc'
+import { catchCommandError } from '../lib/command-errors'
 
 type JogMode = 'incremental' | 'continuous'
 
@@ -40,28 +41,28 @@ export const useJogStore = create<JogStore>()(
           const params: JogParams = { feedRate }
           if (dx !== 0) params.x = dx * stepSize
           if (dy !== 0) params.y = dy * stepSize
-          window.cncstream.jog(params)
+          catchCommandError(window.cncstream.jog(params))
         } else {
           const params: JogParams = { feedRate: feedRate * (continuousRate / 100) }
           if (dx !== 0) params.x = dx * 1000
           if (dy !== 0) params.y = dy * 1000
-          window.cncstream.jog(params)
+          catchCommandError(window.cncstream.jog(params))
         }
       },
 
       jogZ: (dz) => {
         const { stepSize, feedRate, mode, continuousRate } = get()
         const distance = mode === 'incremental' ? dz * stepSize : dz * 1000
-        window.cncstream.jog({ z: distance, feedRate: mode === 'incremental' ? feedRate : feedRate * (continuousRate / 100) })
+        catchCommandError(window.cncstream.jog({ z: distance, feedRate: mode === 'incremental' ? feedRate : feedRate * (continuousRate / 100) }))
       },
 
       jogA: (da) => {
         const { stepSize, feedRate } = get()
-        window.cncstream.jog({ a: da * stepSize, feedRate })
+        catchCommandError(window.cncstream.jog({ a: da * stepSize, feedRate }))
       },
 
       cancelJog: () => {
-        window.cncstream.jogCancel()
+        catchCommandError(window.cncstream.jogCancel())
       }
     }),
     { name: 'cncstream-jog' }

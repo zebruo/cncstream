@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useConsoleStore } from '../../stores/console.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import styles from './ConsolePanel.module.css'
+import { catchCommandError } from '../../lib/command-errors'
 
 export function ConsolePanel() {
   const lines = useConsoleStore((s) => s.lines)
@@ -32,7 +33,7 @@ export function ConsolePanel() {
 
     addLine('sent', cmd)
     addCommand(cmd)
-    window.cncstream.sendCommand(cmd)
+    catchCommandError(window.cncstream.sendCommand(cmd))
     setInput('')
   }, [input, isConnected, addLine, addCommand])
 
