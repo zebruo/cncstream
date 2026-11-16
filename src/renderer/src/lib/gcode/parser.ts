@@ -1,4 +1,5 @@
 import type { GCodeToken, ParsedGCodeLine, GCodeMovement, ParsedGCodeFile } from '@shared/types/gcode'
+import { stripGcodeComments } from '@shared/utils/gcode-comments'
 
 function tokenize(line: string): GCodeToken[] {
   const tokens: GCodeToken[] = []
@@ -25,10 +26,7 @@ export function parseGCode(raw: string): ParsedGCodeFile {
     const raw = rawLines[i].trim()
     const isComment = raw.startsWith(';') || raw.startsWith('(') || raw.length === 0
 
-    const semicolon = raw.indexOf(';')
-    const cleaned = (semicolon >= 0 ? raw.slice(0, semicolon) : raw)
-      .replace(/\([^)]*\)/g, '')
-      .trim()
+    const cleaned = stripGcodeComments(raw)
 
     const tokens = tokenize(cleaned)
     const params: Record<string, number> = {}

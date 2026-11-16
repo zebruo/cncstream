@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import { CommandQueueService, CommandPriority } from './command-queue.service'
 import type { JobProgress, JobState } from '@shared/types/job'
+import { stripGcodeComments } from '@shared/utils/gcode-comments'
 
 export class StreamingService extends EventEmitter {
   private state: JobState = 'idle'
@@ -43,10 +44,7 @@ export class StreamingService extends EventEmitter {
 
     while (this.currentLineIndex < this.lines.length) {
       const line = this.lines[this.currentLineIndex]
-      const semicolon = line.indexOf(';')
-      const cleaned = (semicolon >= 0 ? line.slice(0, semicolon) : line)
-        .replace(/\([^)]*\)/g, '')
-        .trim()
+      const cleaned = stripGcodeComments(line)
 
       if (cleaned.length === 0) {
         this.currentLineIndex++
