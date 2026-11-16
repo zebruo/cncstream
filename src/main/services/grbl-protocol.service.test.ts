@@ -38,6 +38,35 @@ describe('GrblProtocolService : réponses simples', () => {
     })
   })
 
+  it('garde une réponse d\'erreur au code illisible (code -1) pour ne pas bloquer la file', () => {
+    const grbl = new GrblProtocolService()
+    expect(grbl.parseLine('error:abc')).toEqual({
+      type: 'error',
+      code: -1,
+      message: 'Unknown error "abc"'
+    })
+    expect(grbl.parseLine('error:')).toEqual({
+      type: 'error',
+      code: -1,
+      message: 'Unknown error ""'
+    })
+  })
+
+  it('lit le code d\'erreur même suivi d\'un texte', () => {
+    const grbl = new GrblProtocolService()
+    expect(grbl.parseLine('error:20 extra')).toMatchObject({ type: 'error', code: 20 })
+  })
+
+  it('garde une alarme au code illisible (code -1)', () => {
+    const grbl = new GrblProtocolService()
+    expect(grbl.parseLine('ALARM:abc')).toEqual({
+      type: 'alarm',
+      code: -1,
+      message: 'Unknown alarm "abc"',
+      description: ''
+    })
+  })
+
   it('traduit une alarme connue avec son nom et sa description', () => {
     const grbl = new GrblProtocolService()
     expect(grbl.parseLine('ALARM:1')).toEqual({

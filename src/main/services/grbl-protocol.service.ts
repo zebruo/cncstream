@@ -13,6 +13,20 @@ export type GrblResponse =
   | { type: 'startup'; version: string; isGrblHAL: boolean }
   | { type: 'probe'; position: { x: number; y: number; z: number }; success: boolean }
 
+/** Code des réponses `error:` et `ALARM:` dont le numéro est absent ou illisible. */
+const UNREADABLE_CODE = -1
+
+/**
+ * Lit le numéro qui suit « : » dans `error:N` ou `ALARM:N`.
+ * Renvoie `code: -1` et le texte brut quand il est illisible : la réponse reste une
+ * erreur ou une alarme (la file de commandes doit la consommer), au lieu d'un NaN.
+ */
+function parseCode(text: string): { code: number; label: string } {
+  const raw = text.slice(text.indexOf(':') + 1).trim()
+  const code = Number.parseInt(raw, 10)
+  return Number.isNaN(code) ? { code: UNREADABLE_CODE, label: `"${raw}"` } : { code, label: String(code) }
+}
+
 export class GrblProtocolService extends EventEmitter {
   private lastWco: Position = { x: 0, y: 0, z: 0, a: 0 }
   private lastOverrides = { feed: 100, rapid: 100, spindle: 100 }
@@ -52,17 +66,17 @@ export class GrblProtocolService extends EventEmitter {
     }
 
     if (trimmed.startsWith('error:')) {
-      const code = Number.parseInt(trimmed.split(':')[1], 10)
-      return { type: 'error', code, message: GRBL_ERRORS[code] ?? `Unknown error ${code}` }
+      const { code, label } = parseCode(trimmed)
+      return { type: 'error', code, message: GRBL_ERRORS[code] ?? `Unknown error ${label}` }
     }
 
     if (trimmed.startsWith('ALARM:')) {
-      const code = Number.parseInt(trimmed.split(':')[1], 10)
+      const { code, label } = parseCode(trimmed)
       const alarm = GRBL_ALARMS[code]
       return {
         type: 'alarm',
         code,
-        message: alarm?.name ?? `Unknown alarm ${code}`,
+        message: alarm?.name ?? `Unknown alarm ${label}`,
         description: alarm?.description ?? ''
       }
     }
