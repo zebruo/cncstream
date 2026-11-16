@@ -37,7 +37,7 @@ export function SpindlePanel() {
 
   const handleRpmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     userEditedRpm.current = true
-    setRpm(parseInt(e.target.value) || 0)
+    setRpm(Number.parseInt(e.target.value) || 0)
   }
 
   const grblSpindleOn = accessories.spindleCW || accessories.spindleCCW

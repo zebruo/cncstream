@@ -82,31 +82,31 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
         const headerDMatch = text.match(/;\s*Tool diameter:\s*(\d+(?:\.\d*)?)\s*mm/i)
         if (headerDMatch && !toolInfoMap.has(1)) {
           tools.add(1)
-          toolInfoMap.set(1, { diameter: parseFloat(headerDMatch[1]) })
+          toolInfoMap.set(1, { diameter: Number.parseFloat(headerDMatch[1]) })
         }
         // Fusion 360 style: (TOOL/MILL,3.175,0,12,0) → 1st value is diameter
         const fusionToolMatch = text.match(/\(\s*TOOL\/MILL\s*,\s*(\d+\.?\d*)/i)
         if (fusionToolMatch && !toolInfoMap.has(1)) {
           tools.add(1)
-          toolInfoMap.set(1, { diameter: parseFloat(fusionToolMatch[1]) })
+          toolInfoMap.set(1, { diameter: Number.parseFloat(fusionToolMatch[1]) })
         }
       }
 
       // Match "T<number>" in comment + try to extract diameter and name
       const toolMatch = text.match(/\bT(\d+)\b/i)
       if (toolMatch) {
-        const tNum = parseInt(toolMatch[1])
+        const tNum = Number.parseInt(toolMatch[1])
         tools.add(tNum)
         const existing = toolInfoMap.get(tNum) || {}
 
         // Look for D=<number> (Fusion 360 style)
         const dMatch = text.match(/\bD\s*=\s*(\d+\.?\d*)/i)
-        if (dMatch) existing.diameter = parseFloat(dMatch[1])
+        if (dMatch) existing.diameter = Number.parseFloat(dMatch[1])
 
         // Look for <number>mm or <number> mm
         if (!existing.diameter) {
           const mmMatch = text.match(/(?<!\d)(\d+(?:\.\d*)?)\s*mm/i)
-          if (mmMatch) existing.diameter = parseFloat(mmMatch[1])
+          if (mmMatch) existing.diameter = Number.parseFloat(mmMatch[1])
         }
 
         // Extract description: text after the last " - " separator (Fusion style)
@@ -132,9 +132,9 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     if (stockThickness !== null) break
     if (!line.isComment) continue
     const boxGen = line.raw.match(/;\s*Brut\s*:\s*(\d+(?:\.\d*)?)\s*mm/i)
-    if (boxGen) { stockThickness = parseFloat(boxGen[1]); break }
+    if (boxGen) { stockThickness = Number.parseFloat(boxGen[1]); break }
     const fusion = line.raw.match(/\(\s*STOCK\/BLOCK\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*(\d+\.?\d*)/i)
-    if (fusion) { stockThickness = parseFloat(fusion[1]); break }
+    if (fusion) { stockThickness = Number.parseFloat(fusion[1]); break }
   }
 
   // Detect operations from structured comments (Box Generator, Fusion 360, VCarve)
@@ -166,7 +166,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
 
     // ; Passe N/M → extract total M
     const passMatch = text.match(/;\s*Passe\s+\d+\/(\d+)/i)
-    if (passMatch) opPassMax = Math.max(opPassMax, parseInt(passMatch[1]))
+    if (passMatch) opPassMax = Math.max(opPassMax, Number.parseInt(passMatch[1]))
   }
   if (inCommentOp) {
     commentOpCount++
@@ -195,7 +195,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     }
   }
 
-  const safeVal = (v: number, fallback: number) => (isFinite(v) ? v : fallback)
+  const safeVal = (v: number, fallback: number) => (Number.isFinite(v) ? v : fallback)
 
   return {
     lineCount: parsed.lines.filter((l) => {

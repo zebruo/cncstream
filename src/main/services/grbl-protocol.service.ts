@@ -31,13 +31,13 @@ export class GrblProtocolService extends EventEmitter {
   }
 
   get spindleMaxRpm(): number {
-    const val = parseInt(this._grblSettings['$30'] ?? '', 10)
-    return isNaN(val) ? 1000 : val
+    const val = Number.parseInt(this._grblSettings['$30'] ?? '', 10)
+    return Number.isNaN(val) ? 1000 : val
   }
 
   get spindleMinRpm(): number {
-    const val = parseInt(this._grblSettings['$31'] ?? '', 10)
-    return isNaN(val) ? 0 : val
+    const val = Number.parseInt(this._grblSettings['$31'] ?? '', 10)
+    return Number.isNaN(val) ? 0 : val
   }
 
   parseLine(line: string): GrblResponse {
@@ -52,12 +52,12 @@ export class GrblProtocolService extends EventEmitter {
     }
 
     if (trimmed.startsWith('error:')) {
-      const code = parseInt(trimmed.split(':')[1], 10)
+      const code = Number.parseInt(trimmed.split(':')[1], 10)
       return { type: 'error', code, message: GRBL_ERRORS[code] ?? `Unknown error ${code}` }
     }
 
     if (trimmed.startsWith('ALARM:')) {
-      const code = parseInt(trimmed.split(':')[1], 10)
+      const code = Number.parseInt(trimmed.split(':')[1], 10)
       const alarm = GRBL_ALARMS[code]
       return {
         type: 'alarm',
@@ -106,7 +106,7 @@ export class GrblProtocolService extends EventEmitter {
     const stateStr = sections[0]
     const colonIdx = stateStr.indexOf(':')
     const state = (colonIdx >= 0 ? stateStr.substring(0, colonIdx) : stateStr) as MachineState
-    const subState = colonIdx >= 0 ? parseInt(stateStr.substring(colonIdx + 1), 10) : undefined
+    const subState = colonIdx >= 0 ? Number.parseInt(stateStr.substring(colonIdx + 1), 10) : undefined
 
     const status: MachineStatus = {
       state,
@@ -198,7 +198,7 @@ export class GrblProtocolService extends EventEmitter {
           break
         }
         case 'Ln': {
-          status.lineNumber = parseInt(value, 10)
+          status.lineNumber = Number.parseInt(value, 10)
           break
         }
       }

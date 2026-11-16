@@ -56,8 +56,8 @@ export function DROPanel() {
 
   const handleConfirmEdit = (axis: string) => {
     if (!isConnected) return
-    const val = parseFloat(editValue)
-    if (isNaN(val)) {
+    const val = Number.parseFloat(editValue)
+    if (Number.isNaN(val)) {
       setEditingAxis(null)
       return
     }

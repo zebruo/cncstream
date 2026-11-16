@@ -43,18 +43,18 @@ export function ZeroGoToPanel() {
 
   const isIn = units === 'in'
 
-  const displaySafeHeight = isIn ? parseFloat((safeHeight / MM_PER_INCH).toFixed(4)) : safeHeight
+  const displaySafeHeight = isIn ? Number.parseFloat((safeHeight / MM_PER_INCH).toFixed(4)) : safeHeight
   const handleSafeHeightChange = (val: number) => {
-    if (isNaN(val) || val < 0) return
+    if (Number.isNaN(val) || val < 0) return
     setSafeHeight(isIn ? val * MM_PER_INCH : val)
   }
 
   const displayProbeThickness = isIn
-    ? parseFloat((probeThickness / MM_PER_INCH).toFixed(4))
+    ? Number.parseFloat((probeThickness / MM_PER_INCH).toFixed(4))
     : probeThickness
   const handleProbeThicknessChange = (val: number) => {
     const mm = isIn ? val * MM_PER_INCH : val
-    if (isNaN(mm) || mm < 0.1 || mm > 50) return
+    if (Number.isNaN(mm) || mm < 0.1 || mm > 50) return
     setProbeThickness(mm)
   }
 
@@ -139,7 +139,7 @@ export function ZeroGoToPanel() {
             type="number"
             className={styles.input}
             value={displayProbeThickness}
-            onChange={(e) => handleProbeThicknessChange(parseFloat(e.target.value))}
+            onChange={(e) => handleProbeThicknessChange(Number.parseFloat(e.target.value))}
             onWheel={(e) => e.currentTarget.blur()}
             min={isIn ? 0.004 : 0.1}
             max={isIn ? 2 : 50}
@@ -154,7 +154,7 @@ export function ZeroGoToPanel() {
             type="number"
             className={styles.input}
             value={displaySafeHeight}
-            onChange={(e) => handleSafeHeightChange(parseFloat(e.target.value) || 0)}
+            onChange={(e) => handleSafeHeightChange(Number.parseFloat(e.target.value) || 0)}
             onWheel={(e) => e.currentTarget.blur()}
             min={0}
             step={isIn ? 0.001 : 0.5}

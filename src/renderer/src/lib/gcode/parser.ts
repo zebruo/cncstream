@@ -6,7 +6,7 @@ function tokenize(line: string): GCodeToken[] {
   const regex = /([A-Z])(-?\d+\.?\d*)/gi
   let match
   while ((match = regex.exec(line)) !== null) {
-    tokens.push({ letter: match[1].toUpperCase(), value: parseFloat(match[2]) })
+    tokens.push({ letter: match[1].toUpperCase(), value: Number.parseFloat(match[2]) })
   }
   return tokens
 }
