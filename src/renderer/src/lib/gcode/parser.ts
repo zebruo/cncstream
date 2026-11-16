@@ -25,9 +25,9 @@ export function parseGCode(raw: string): ParsedGCodeFile {
     const raw = rawLines[i].trim()
     const isComment = raw.startsWith(';') || raw.startsWith('(') || raw.length === 0
 
-    const cleaned = raw
-      .replace(/\s*;.*$/, '')
-      .replace(/\(.*?\)/g, '')
+    const semicolon = raw.indexOf(';')
+    const cleaned = (semicolon >= 0 ? raw.slice(0, semicolon) : raw)
+      .replace(/\([^)]*\)/g, '')
       .trim()
 
     const tokens = tokenize(cleaned)

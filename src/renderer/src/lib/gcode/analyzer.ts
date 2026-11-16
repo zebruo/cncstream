@@ -79,7 +79,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
 
       // Box Generator style: "; Tool diameter: 4mm" (no T number)
       if (!text.match(/\bT(\d+)\b/i)) {
-        const headerDMatch = text.match(/;\s*Tool diameter:\s*(\d+\.?\d*)\s*mm/i)
+        const headerDMatch = text.match(/;\s*Tool diameter:\s*(\d+(?:\.\d*)?)\s*mm/i)
         if (headerDMatch && !toolInfoMap.has(1)) {
           tools.add(1)
           toolInfoMap.set(1, { diameter: parseFloat(headerDMatch[1]) })
@@ -105,12 +105,12 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
 
         // Look for <number>mm or <number> mm
         if (!existing.diameter) {
-          const mmMatch = text.match(/(\d+\.?\d*)\s*mm/i)
+          const mmMatch = text.match(/(?<!\d)(\d+(?:\.\d*)?)\s*mm/i)
           if (mmMatch) existing.diameter = parseFloat(mmMatch[1])
         }
 
         // Extract description: text after the last " - " separator (Fusion style)
-        const descMatch = text.match(/-\s+([a-zA-Z][\w\s]+?)\s*[)]*\s*$/)
+        const descMatch = trimTrailingSpacesAndParens(text).match(/-\s+([a-zA-Z][\w\s]+)$/)
         if (descMatch) existing.name = descMatch[1].trim()
 
         // Or "Tool N: <desc>" style
@@ -131,7 +131,7 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
   for (const line of parsed.lines) {
     if (stockThickness !== null) break
     if (!line.isComment) continue
-    const boxGen = line.raw.match(/;\s*Brut\s*:\s*(\d+\.?\d*)\s*mm/i)
+    const boxGen = line.raw.match(/;\s*Brut\s*:\s*(\d+(?:\.\d*)?)\s*mm/i)
     if (boxGen) { stockThickness = parseFloat(boxGen[1]); break }
     const fusion = line.raw.match(/\(\s*STOCK\/BLOCK\s*,\s*[\d.]+\s*,\s*[\d.]+\s*,\s*(\d+\.?\d*)/i)
     if (fusion) { stockThickness = parseFloat(fusion[1]); break }
@@ -228,4 +228,11 @@ export function analyzeGCode(parsed: ParsedGCodeFile): FileInsight {
     passCount,
     passDepth
   }
+}
+
+/** Retire les espaces et parenthèses fermantes en fin de texte (sans regex, pour éviter le backtracking). */
+function trimTrailingSpacesAndParens(text: string): string {
+  let end = text.length
+  while (end > 0 && (text[end - 1] === ')' || text[end - 1].trim() === '')) end--
+  return text.slice(0, end)
 }

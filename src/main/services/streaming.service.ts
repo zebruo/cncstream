@@ -43,9 +43,9 @@ export class StreamingService extends EventEmitter {
 
     while (this.currentLineIndex < this.lines.length) {
       const line = this.lines[this.currentLineIndex]
-      const cleaned = line
-        .replace(/\s*;.*$/, '')
-        .replace(/\s*\(.*?\)/g, '')
+      const semicolon = line.indexOf(';')
+      const cleaned = (semicolon >= 0 ? line.slice(0, semicolon) : line)
+        .replace(/\([^)]*\)/g, '')
         .trim()
 
       if (cleaned.length === 0) {
