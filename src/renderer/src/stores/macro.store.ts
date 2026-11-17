@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { MACROS_VERSION, migrateMacros } from './macro-migration'
 
 export interface Macro {
   id: string
@@ -16,6 +17,7 @@ interface MacroStore {
   deleteMacro: (id: string) => void
 }
 
+// Toute modification de ces macros exige d'augmenter MACROS_VERSION (macro-migration.ts)
 const BUILT_IN_MACROS: Macro[] = [
   {
     id: 'builtin-square-test',
@@ -61,13 +63,6 @@ const BUILT_IN_MACROS: Macro[] = [
     name: 'Test axes',
     description: 'Aller-retour sur chaque axe pour vérifier les mouvements',
     commands: 'G21 G91\nG0 X20 F1000\nG0 X-20\nG0 Y20\nG0 Y-20\nG0 Z5\nG0 Z-5\nG90',
-    builtIn: true
-  },
-  {
-    id: 'builtin-go-home',
-    name: 'Retour origine XY',
-    description: 'Monte en Z sécurité puis revient à X0 Y0',
-    commands: 'G21 G91\nG0 Z10\nG90\nG0 X0 Y0',
     builtIn: true
   },
   {
@@ -157,6 +152,8 @@ export const useMacroStore = create<MacroStore>()(
     }),
     {
       name: 'cncstream-macros',
+      version: MACROS_VERSION,
+      migrate: (persistedState) => migrateMacros(persistedState as { macros?: Macro[] } | undefined),
       partialize: (state) => ({
         macros: state.macros
       }),
