@@ -2,6 +2,7 @@ import { useUIStore } from '../../stores/ui.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import { useMachineStore } from '../../stores/machine.store'
 import { SettingsDropdown } from './SettingsDropdown'
+import { ConnectionBar } from '../connection/ConnectionBar'
 import styles from './Header.module.css'
 
 const STATE_COLORS: Record<string, string> = {
@@ -26,9 +27,11 @@ export function Header() {
     <header className={styles.header}>
       <div className={styles.left}>
         <h1 className={styles.logo}>CNCStream</h1>
+        <div className={styles.divider} />
+        <ConnectionBar />
       </div>
 
-      <div className={styles.center}>
+      <div className={styles.right}>
         {isConnected && (
           <div
             className={styles.machineState}
@@ -37,9 +40,6 @@ export function Header() {
             {machineState}
           </div>
         )}
-      </div>
-
-      <div className={styles.right}>
         <SettingsDropdown />
         <button
           className={styles.helpBtn}

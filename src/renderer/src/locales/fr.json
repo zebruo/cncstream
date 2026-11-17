@@ -17,6 +17,15 @@
     "connecting": "Connexion...",
     "connect": "Connecter",
     "disconnect": "Déconnecter",
+    "portLabel": "Port série",
+    "baudLabel": "Vitesse série",
+    "dismissError": "Fermer le message",
+    "state": {
+      "disconnected": "Déconnecté",
+      "connecting": "Connexion en cours",
+      "connected": "Connecté",
+      "error": "Erreur de connexion"
+    },
     "errorPortNotFound": "Port {{port}} introuvable. La machine est-elle allumée et le câble USB branché ?",
     "errorPortBusy": "Port {{port}} inaccessible : il est peut-être déjà utilisé par un autre logiciel ou une autre fenêtre CNCStream.",
     "errorGeneric": "Erreur de connexion : {{message}}"

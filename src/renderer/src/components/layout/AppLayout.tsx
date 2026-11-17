@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Header } from './Header'
 import { StatusBar } from './StatusBar'
-import { ConnectionPanel } from '../connection/ConnectionPanel'
+import { ConnectionErrorBanner } from '../connection/ConnectionErrorBanner'
 import { DROPanel } from '../dro/DROPanel'
 import { JogPanel } from '../jogging/JogPanel'
 import { ZeroGoToPanel } from '../zero-goto/ZeroGoToPanel'
@@ -22,9 +22,9 @@ export function AppLayout() {
   return (
     <div className={styles.layout}>
       <Header />
+      <ConnectionErrorBanner />
       <div className={styles.main}>
         <div className={styles.leftPanel}>
-          <ConnectionPanel />
           <DROPanel />
           <JogPanel />
           <ZeroGoToPanel />

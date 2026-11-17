@@ -14,8 +14,8 @@ function GuideTab() {
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Connexion</h3>
         <p className={styles.paragraph}>
-          Branchez votre contrôleur GRBL via USB. Dans le panneau Connection, sélectionnez le port série
-          et le baud rate (115200 par défaut pour GRBL 1.1). Cliquez Connect pour établir la connexion.
+          Branchez votre contrôleur GRBL via USB. Dans la barre du haut, sélectionnez le port série
+          et le baud rate (115200 par défaut pour GRBL 1.1). Cliquez Connecter pour établir la connexion.
           Les paramètres GRBL ($$) sont lus automatiquement.
         </p>
       </div>

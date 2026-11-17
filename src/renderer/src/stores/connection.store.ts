@@ -16,6 +16,8 @@ interface ConnectionStore {
   setConnectionState: (state: ConnectionStatus) => void
   setFirmwareInfo: (version: string, isGrblHAL: boolean) => void
   setError: (error: string | null) => void
+  /** Ferme le message d'erreur ; le voyant rouge repasse à « déconnecté » */
+  clearError: () => void
 
   refreshPorts: () => Promise<void>
   connect: () => Promise<void>
@@ -37,6 +39,7 @@ export const useConnectionStore = create<ConnectionStore>((set, get) => ({
   setConnectionState: (state) => set({ state, error: state === 'connected' ? null : get().error }),
   setFirmwareInfo: (version, isGrblHAL) => set({ firmwareVersion: version, isGrblHAL }),
   setError: (error) => set({ error, state: error ? 'error' : get().state }),
+  clearError: () => set({ error: null, state: get().state === 'error' ? 'disconnected' : get().state }),
 
   refreshPorts: async () => {
     try {

@@ -13,6 +13,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  min-width: 0;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  flex-shrink: 0;
+  background-color: var(--color-border);
 }
 
 .logo {
@@ -28,17 +36,12 @@
   font-family: var(--font-family-mono);
 }
 
-.center {
-  display: flex;
-  align-items: center;
-}
-
 .machineState {
   padding: 2px 16px;
   border-radius: var(--radius-full);
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-inverse);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -47,6 +50,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  flex-shrink: 0;
 }
 
 .themeIcon {
