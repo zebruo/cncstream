@@ -26,3 +26,17 @@ export function travelBoundsInWork(config: MachineConfig, wco: Xyz): WorkBounds 
   const [minZ, maxZ] = axis(config.travel.z, 2, wco.z)
   return { min: { x: minX, y: minY, z: minZ }, max: { x: maxX, y: maxY, z: maxZ } }
 }
+
+/** Axes dans l'ordre des bits de `$23` : X = bit 0, Y = bit 1, Z = bit 2. */
+export const HOMING_AXES = ['x', 'y', 'z'] as const
+export type HomingAxis = (typeof HOMING_AXES)[number]
+
+/** Vrai si l'axe fait son homing vers le côté négatif (son bit est à 1 dans `$23`). */
+export function homesNegative(mask: number, axis: HomingAxis): boolean {
+  return (mask & (1 << HOMING_AXES.indexOf(axis))) !== 0
+}
+
+/** Nouveau masque `$23` avec le sens de l'axe inversé ; les autres axes ne changent pas. */
+export function toggleHomingAxis(mask: number, axis: HomingAxis): number {
+  return mask ^ (1 << HOMING_AXES.indexOf(axis))
+}

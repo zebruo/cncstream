@@ -107,7 +107,10 @@ function Scene({ viewMode, resetRef }: SceneProps) {
   const bbox = useVisualizationStore((s) => s.boundingBox)
   const executedLineIndex = useVisualizationStore((s) => s.executedLineIndex)
   const wpos = useMachineStore((s) => s.wpos)
-  const toolDiameter = useUIStore((s) => s.toolDiameter)
+  const manualToolDiameter = useUIStore((s) => s.toolDiameter)
+  const fileToolDiameter = useVisualizationStore((s) => s.fileToolDiameter)
+  // Le fichier chargé annonce sa fraise : elle prime sur le diamètre réglé à la main
+  const toolDiameter = fileToolDiameter ?? manualToolDiameter
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controlsRef = useRef<any>(null)
 

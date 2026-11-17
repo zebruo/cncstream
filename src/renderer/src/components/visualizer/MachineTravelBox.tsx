@@ -21,7 +21,8 @@ export function MachineTravelBox() {
   const linesRef = useRef<THREE.LineSegments>(null)
 
   const box = useMemo(() => {
-    if (!config) return null
+    // Course renseignée à la main : tant qu'un axe est à 0, il n'y a pas de volume à dessiner
+    if (!config || config.travel.x <= 0 || config.travel.y <= 0 || config.travel.z <= 0) return null
     const { min, max } = travelBoundsInWork(config, { x: wcoX, y: wcoY, z: wcoZ })
     const size: [number, number, number] = [max.x - min.x, max.z - min.z, max.y - min.y]
     const center: [number, number, number] = [(min.x + max.x) / 2, (min.z + max.z) / 2, -(min.y + max.y) / 2]

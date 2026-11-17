@@ -53,7 +53,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-sm);
-  min-width: 160px;
+  min-width: 200px;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
@@ -134,4 +134,41 @@
   padding: 4px 8px;
   text-align: right;
   font-family: var(--font-family-mono);
+}
+
+.travelFields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 0 6px;
+}
+
+.travelInputs {
+  display: flex;
+  gap: 4px;
+}
+
+.travelInputs .numberInput {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.note {
+  margin: 0 0 4px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.axisToggle {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.numberInput:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

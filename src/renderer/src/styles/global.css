@@ -83,6 +83,30 @@ input:focus, select:focus, textarea:focus {
   outline: none;
 }
 
+/*
+ * Flèches des champs numériques. Celles du navigateur sont blanches, rognées sur les petits
+ * champs et ignorent le thème : on les redessine (deux triangles) avec la couleur du texte.
+ * La moitié haute augmente, la moitié basse diminue, comme avec les flèches d'origine.
+ */
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 20px;
+  margin: 0 0 0 4px;
+  cursor: pointer;
+  background-color: var(--color-text-secondary);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M4 1L7.5 5.5H0.5ZM4 13L0.5 8.5H7.5Z'/%3E%3C/svg%3E") center / 10px 17px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M4 1L7.5 5.5H0.5ZM4 13L0.5 8.5H7.5Z'/%3E%3C/svg%3E") center / 10px 17px no-repeat;
+}
+
+input[type="number"]::-webkit-inner-spin-button:hover {
+  background-color: var(--color-accent);
+}
+
 /* Drag region for frameless window */
 .drag-region {
   -webkit-app-region: drag;

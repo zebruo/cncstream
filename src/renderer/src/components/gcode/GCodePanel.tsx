@@ -6,6 +6,7 @@ import { useConnectionStore } from '../../stores/connection.store'
 import { useUIStore } from '../../stores/ui.store'
 import { useMachineStore } from '../../stores/machine.store'
 import { parseGCode } from '../../lib/gcode/parser'
+import { fileToolDiameter } from '../../lib/gcode/tool-diameter'
 import { analyzeGCode } from '../../lib/gcode/analyzer'
 import { buildToolpath } from '../../lib/gcode/toolpath-builder'
 import styles from './GCodePanel.module.css'
@@ -32,6 +33,7 @@ export function GCodePanel() {
 
   const setToolpath = useVisualizationStore((s) => s.setToolpath)
   const clearViz = useVisualizationStore((s) => s.clear)
+  const setFileToolDiameter = useVisualizationStore((s) => s.setFileToolDiameter)
   const isConnected = useConnectionStore((s) => s.state) === 'connected'
   const zProbeApplied = useUIStore((s) => s.zProbeApplied)
   const accessories = useMachineStore((s) => s.accessories)
@@ -57,11 +59,12 @@ export function GCodePanel() {
     const segments = buildToolpath(parsed.movements)
 
     setFile(result.path, name, result.content, insight)
+    setFileToolDiameter(fileToolDiameter(insight))
     setToolpath(segments, {
       min: [insight.boundingBox.min.x, insight.boundingBox.min.y, insight.boundingBox.min.z],
       max: [insight.boundingBox.max.x, insight.boundingBox.max.y, insight.boundingBox.max.z]
     })
-  }, [setFile, setToolpath])
+  }, [setFile, setToolpath, setFileToolDiameter])
 
   const handleClose = () => {
     useJobStore.getState().clearFile()

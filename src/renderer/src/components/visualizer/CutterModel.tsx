@@ -9,33 +9,29 @@ interface Props {
 const RADIAL_SEGMENTS = 24
 
 /**
- * Fraise droite à sa vraie taille : partie coupante, queue, puis écrou de la pince de la broche.
+ * Fraise droite à sa vraie taille : partie coupante puis queue.
  * La pointe est à l'origine du groupe, le reste monte le long de l'axe Z de la machine.
  * Un petit point rouge marque la pointe pour la repérer quand on dézoome.
+ *
+ * Matériaux peu métalliques : la scène n'a pas de carte d'environnement à refléter, un métal
+ * franc y rendrait noir (la lumière ambiante et la lumière directionnelle suffisent à un mat).
  */
 export function CutterModel({ position, diameter }: Props) {
   const radius = Math.max(diameter, 0.5) / 2
   const fluteLength = Math.max(12, diameter * 3)
-  const shankLength = 15
-  const nutRadius = Math.max(9, radius + 2)
-  const nutLength = 14
+  const shankLength = 25
 
   return (
     <group position={position}>
       {/* Partie coupante */}
       <mesh position={[0, fluteLength / 2, 0]}>
         <cylinderGeometry args={[radius, radius, fluteLength, RADIAL_SEGMENTS]} />
-        <meshStandardMaterial color={0xc8ccd2} metalness={0.8} roughness={0.3} />
+        <meshStandardMaterial color={0xd5d9de} metalness={0.15} roughness={0.45} />
       </mesh>
       {/* Queue */}
       <mesh position={[0, fluteLength + shankLength / 2, 0]}>
         <cylinderGeometry args={[radius, radius, shankLength, RADIAL_SEGMENTS]} />
-        <meshStandardMaterial color={0x9aa0a6} metalness={0.7} roughness={0.4} />
-      </mesh>
-      {/* Écrou de la pince */}
-      <mesh position={[0, fluteLength + shankLength + nutLength / 2, 0]}>
-        <cylinderGeometry args={[nutRadius, nutRadius, nutLength, RADIAL_SEGMENTS]} />
-        <meshStandardMaterial color={0x3a3d42} metalness={0.5} roughness={0.6} />
+        <meshStandardMaterial color={0xaeb4bb} metalness={0.15} roughness={0.5} />
       </mesh>
       {/* Pointe */}
       <mesh>
