@@ -68,6 +68,7 @@ const api: CNCStreamAPI = {
   onJobProgress: createEventListener(IpcEvents.JOB_PROGRESS_UPDATE),
   onJobCompleted: createEventListener(IpcEvents.JOB_COMPLETED),
   onJobError: createEventListener(IpcEvents.JOB_ERROR),
+  onJobPausedOnError: createEventListener(IpcEvents.JOB_PAUSED_ON_ERROR),
   onPortsChanged: createEventListener(IpcEvents.PORTS_CHANGED),
   onStartupInfo: createEventListener(IpcEvents.STARTUP_INFO),
   onSpindleConfig: createEventListener(IpcEvents.SPINDLE_CONFIG),

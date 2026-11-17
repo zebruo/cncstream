@@ -84,7 +84,7 @@ app.whenReady().then(() => {
   machineController.on('job:error', (error) => {
     // Un arrêt vide la file : une erreur « Queue flushed » par ligne en attente serait du bruit
     if (!error.error.includes('Queue flushed')) {
-      eventLog.log('job', `Erreur ligne ${error.lineNumber} : ${error.error}`)
+      eventLog.log('job', `Erreur ligne ${error.lineNumber} « ${error.command} » : ${error.error}`)
     }
   })
 
@@ -137,6 +137,10 @@ app.whenReady().then(() => {
 
   machineController.on('job:error', (error) => {
     mainWindow?.webContents.send(IpcEvents.JOB_ERROR, error)
+  })
+
+  machineController.on('job:paused-on-error', (info) => {
+    mainWindow?.webContents.send(IpcEvents.JOB_PAUSED_ON_ERROR, info)
   })
 
   machineController.on('probe', (result) => {

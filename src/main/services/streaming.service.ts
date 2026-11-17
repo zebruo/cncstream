@@ -57,11 +57,25 @@ export class StreamingService extends EventEmitter {
         .enqueue(cleaned, CommandPriority.NORMAL, lineNumber)
         .catch((err) => {
           this.errorCount++
-          this.emit('line-error', { lineNumber, error: err.message })
+          const detail = { lineNumber, command: cleaned, error: err.message as string }
+          this.emit('line-error', detail)
+          this.pauseOnError(detail)
         })
 
       this.currentLineIndex++
     }
+  }
+
+  /**
+   * Première erreur d'une ligne pendant un job en cours : le job se met en pause
+   * au lieu d'envoyer les lignes suivantes à une machine qui n'a pas exécuté celle-ci.
+   * Les erreurs suivantes (lignes déjà dans le tampon de GRBL) et celles d'un arrêt
+   * (« Queue flushed », job déjà repassé à idle) ne déclenchent rien de plus.
+   */
+  private pauseOnError(detail: { lineNumber: number; command: string; error: string }): void {
+    if (this.state !== 'running') return
+    this.pause()
+    this.emit('paused-on-error', detail)
   }
 
   private onAcknowledged(): void {

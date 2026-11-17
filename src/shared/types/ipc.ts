@@ -52,6 +52,7 @@ export const IpcEvents = {
   JOB_PROGRESS_UPDATE: 'job:progress-update',
   JOB_COMPLETED: 'job:completed',
   JOB_ERROR: 'job:error',
+  JOB_PAUSED_ON_ERROR: 'job:paused-on-error',
   PORTS_CHANGED: 'ports:changed',
   STARTUP_INFO: 'startup:info',
   SPINDLE_CONFIG: 'spindle:config',
@@ -152,6 +153,9 @@ export interface CNCStreamAPI {
   onJobProgress: (callback: (progress: JobProgress) => void) => () => void
   onJobCompleted: (callback: () => void) => () => void
   onJobError: (callback: (error: string) => void) => () => void
+  onJobPausedOnError: (
+    callback: (info: { lineNumber: number; command: string; error: string }) => void
+  ) => () => void
   onPortsChanged: (callback: (ports: SerialPortInfo[]) => void) => () => void
   onStartupInfo: (callback: (info: { version: string; isGrblHAL: boolean }) => void) => () => void
   onSpindleConfig: (callback: (config: { maxRpm: number; minRpm: number }) => void) => () => void

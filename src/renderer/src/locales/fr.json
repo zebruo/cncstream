@@ -145,6 +145,7 @@
     "show": "Afficher l'arrosage"
   },
   "gcode": {
+    "pausedOnError": "Job en pause : la machine a refusé la commande n°{{line}} « {{command}} » ({{error}}). Reprendre l'ignore, Stop annule le job.",
     "openFile": "Ouvrir un G-Code",
     "closeFile": "Fermer le fichier",
     "lines": "Lignes",

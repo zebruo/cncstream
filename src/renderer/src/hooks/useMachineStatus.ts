@@ -4,6 +4,7 @@ import { useConnectionStore } from '../stores/connection.store'
 import { useJobStore } from '../stores/job.store'
 import { useConsoleStore } from '../stores/console.store'
 import type { ConnectionStatus } from '@shared/types/connection'
+import i18n from '../i18n'
 
 export function useMachineStatus(): void {
   const updateFromStatus = useMachineStore((s) => s.updateFromStatus)
@@ -83,9 +84,19 @@ export function useMachineStatus(): void {
       })
     )
 
+    // L'erreur de chaque ligne est déjà affichée dans la console (« error:N ») : l'état du
+    // job n'en dépend plus. Seule la pause automatique (ci-dessous) change l'état.
     unsubs.push(
-      window.cncstream.onJobError((error) => {
-        useJobStore.getState().setError(typeof error === 'string' ? error : JSON.stringify(error))
+      window.cncstream.onJobPausedOnError((info) => {
+        setJobState('paused')
+        addConsoleLine(
+          'error',
+          i18n.t('gcode.pausedOnError', {
+            line: info.lineNumber + 1,
+            command: info.command,
+            error: info.error
+          })
+        )
       })
     )
 

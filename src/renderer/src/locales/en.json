@@ -145,6 +145,7 @@
     "show": "Show coolant"
   },
   "gcode": {
+    "pausedOnError": "Job paused: the machine rejected command #{{line}} \"{{command}}\" ({{error}}). Resume skips it, Stop cancels the job.",
     "openFile": "Open G-Code",
     "closeFile": "Close file",
     "lines": "Lines",

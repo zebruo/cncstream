@@ -107,6 +107,14 @@ export class MachineControllerService extends EventEmitter {
     this.streaming.on('completed', () => this.emit('job:completed'))
     this.streaming.on('state', (s) => this.emit('job:state', s))
     this.streaming.on('line-error', (e) => this.emit('job:error', e))
+    // Erreur GRBL sur une ligne : le job est déjà en pause côté file ; on arrête aussi
+    // le mouvement (feed hold) et la broche, comme pour une pause demandée par l'utilisateur
+    this.streaming.on('paused-on-error', (e) => {
+      this.feedHold()
+      this.pendingSpindleStop = true
+      this.emit('log', 'job', `Pause automatique : erreur sur « ${e.command} » (${e.error})`)
+      this.emit('job:paused-on-error', e)
+    })
   }
 
   // --- Connection ---
