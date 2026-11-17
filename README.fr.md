@@ -6,6 +6,8 @@
 
 Application de bureau construite avec **Electron**, **React** et **TypeScript**. Interface moderne, visualisation 3D temps réel, contrôle complet de la machine via liaison série.
 
+> **Matériel testé** : utilisé au quotidien sur une carte de contrôle GRBL 1.1h.
+
 > **Compatibilité grblHAL** : CNCStream supporte le protocole de base GRBL 1.1. En pratique, si grblHAL est configuré pour rester compatible GRBL 1.1 (ce qui est souvent le cas par défaut), CNCStream fonctionne normalement. Les fonctionnalités exclusives à grblHAL (commandes étendues, protocole JSON, etc.) ne sont pas prises en charge.
 
 ---
@@ -56,8 +58,8 @@ Tester le jog en incrémental petit pas (0,1 mm) sur chaque axe **à faible vite
 #### 4. Test du Probe Z
 
 **Prérequis** : outil en place, sonde posée sur la pièce.
-- Vérifier l'indicateur de circuit dans CNCStream : doit être **ouvert** (gris) au repos
-- Toucher manuellement le dessus de la sonde avec l'outil → l'indicateur doit passer au **vert**
+- Vérifier le bandeau de circuit dans CNCStream : il n'apparaît qu'après le premier contact, puis suit la sonde en direct — **gris** (« circuit testé, pas de contact ») au repos
+- Toucher manuellement le dessus de la sonde avec l'outil → le bandeau doit passer au **vert** (« Contact détecté »)
 - Lancer le Probe Z en surveillant la descente : la broche doit descendre et s'arrêter au contact
 - Si la machine remonte au lieu de descendre, vérifier le paramètre `$3` (masque d'inversion Z)
 
@@ -102,7 +104,8 @@ Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée
 - Détection automatique des ports COM disponibles
 - Sélection du baud rate (115200 par défaut)
 - Lecture automatique des paramètres GRBL (`$$`) à la connexion
-- Indicateur d'état de connexion dans la barre de statut
+- Connexion dans la barre du haut : port, baud rate, Connecter / Déconnecter, état de la machine
+- Erreurs de connexion expliquées dans un bandeau fermable sous la barre du haut
 
 ### DRO — Digital Read-Out
 - Affichage des positions sur **4 axes** : X, Y, Z, A (axe A activable dans les réglages)
@@ -119,16 +122,19 @@ Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée
 - Raccourcis clavier : flèches X/Y, Page Up/Down Z, `[` / `]` pour le pas
 - Boutons A+ / A- pour l'axe rotatif (si activé)
 
-### Zero / Go To / Probe Z
+### Barre du haut : Home / Unlock
+- **Home** (`$H`) : cycle de homing complet, visible une fois connecté, grisé pendant un job ou un mouvement
+- **Unlock** (`$X`) : n'apparaît qu'en alarme (un bandeau rouge d'alarme sous la barre propose aussi Unlock puis Home)
+- **Alerte homing** : avant une macro en coordonnées machine (`G53`), un avertissement s'affiche si aucun homing n'a été fait depuis la connexion
+
+### Déplacements / Probe Z
 - **Go to XY Zero** : monte en Z (safe height), va à X0 Y0, redescend
 - **Go to Z Zero** : descend Z à 0
-- **Home** (`$H`) : cycle de homing complet
-- **Unlock** (`$X`) : déverrouillage après alarme
 - **Safe Height** : hauteur de dégagement configurable pour les déplacements et le probe
-- Détection automatique de la surface de la pièce via sonde de contact (circuit `Pn:P` GRBL)
-- **Indicateur circuit** temps réel : ouvert (gris) / contact détecté (vert)
+- Détection automatique de la surface de la pièce via sonde de contact (circuit `Pn:P` GRBL) ; la section Probe Z est repliée par défaut
+- **Bandeau de circuit** en direct sous la barre du haut : vert « Contact détecté » au contact, gris « Circuit testé : lancer le palpage » sans contact (il apparaît après le premier contact)
 - Bouton Probe Z bloqué jusqu'à validation du circuit (sécurité par session)
-- Descente à 50 mm/min (`G38.2 Z-20 F50`), remontée automatique au safe height après contact
+- Descente à 50 mm/min (`G38.2 Z-20 F50`), remontée automatique au safe height après contact ; si rien n'est touché sur 20 mm, le message « Aucune surface sur 20 mm : rapprochez la fraise » s'affiche
 - Champ épaisseur sonde configurable (0,1 à 50 mm)
 - Boîte de confirmation avec option Appliquer / Annuler
 - Application du zéro pièce Z (`G10 L20 P1`) en tenant compte de l'épaisseur sonde et du safe height
@@ -138,14 +144,18 @@ Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée
 - Analyse du fichier : dimensions (min/max par axe), trajet total, temps estimé, outils, safe Z détecté
 - Streaming ligne par ligne avec gestion du buffer RX GRBL (128 octets)
 - **Start / Pause / Resume / Stop** (feed hold, cycle start, soft reset)
+- **Pause automatique sur erreur** : si la machine répond `error:N` à une ligne du job, le job passe en pause (axes et broche arrêtés) avec un message rouge donnant la ligne et l'erreur
+- Avertissements au démarrage : « Palpage Z non effectué » et « Broche hors service », ce dernier avec un bouton **Démarrer la broche (N tr/min)** pour la lancer depuis la fenêtre
 - Arrêt automatique de la broche à la pause et redémarrage avant les axes au resume (commande réaltime GRBL, tous modes)
 - Barre de progression et temps restant estimé
 
 ### Visualiseur 3D
 - Rendu Three.js (`@react-three/fiber`) du parcours outil
 - Vert : mouvements d'usinage (G1) — Bleu pointillé : rapides (G0)
-- Orange : lignes déjà exécutées — Cône rouge : position actuelle
-- Navigation : rotation (clic gauche), zoom (molette), pan (clic droit)
+- Orange : lignes déjà exécutées — **Fraise à l'échelle** à la position actuelle (diamètre lu dans le G-code quand il l'annonce, sinon le réglage)
+- Pavé orange pointillé : **course de la machine**, pour vérifier la marge autour du zéro pièce (valeurs lues sur la machine ou saisies à la main)
+- Vues : 3D, XY (dessus), XZ (face), YZ (côté) et **Ajuster** (cadre le fichier chargé) ; graduations colorées (X rouge, Y vert) qui restent lisibles en dézoomant
+- Navigation : rotation (clic gauche, vue 3D), zoom (molette), pan (clic droit)
 
 ### Overrides temps réel
 - **Feed** : 10 % à 200 %
@@ -166,8 +176,8 @@ Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée
 - Flood `M8`, Mist `M7`, Stop `M9`
 
 ### Macros
-- Macros prédéfinies (Carré test XY, Test axes, Retour origine XY) modifiables
-- Création de macros personnalisées avec nom, description et séquence G-code multiligne
+- Macros prédéfinies (Carré test 200×200, rainure en L, Test largeur diagonale, Test largeur X et Y, Test axes) : elles sont **remplacées par leur version à jour à chaque mise à jour de l'application**, les modifications qu'on leur apporte sont donc perdues
+- Création de macros personnalisées avec nom, description et séquence G-code multiligne : celles-ci sont conservées
 - Exécution via le mécanisme de streaming (Pause/Stop fonctionnels)
 - Sauvegarde automatique locale — les macros persistent après fermeture de l'application (réinstallation ou changement de PC : macros perdues)
 
@@ -186,6 +196,9 @@ Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée
 - Thème **clair / sombre**
 - Unités **mm / pouces**
 - Activation de l'**axe A**
+- **Journal** ON/OFF (désactivé par défaut) : enregistre commandes, réponses de la machine, changements d'état avec positions (et la position toutes les 5 s en mouvement) dans un fichier du jour, pour diagnostiquer un problème après coup ; bouton pour ouvrir le dossier, fichiers de plus de 7 jours supprimés, le bouton « effacer » de la console vide aussi le journal du jour
+- **Course machine** ON/OFF : pavé orange dans la vue 3D, valeurs X / Y / Z saisissables à la main, et un bouton par axe pour le sens du homing (`$23`, désactivé par défaut)
+- **Fraise (mm)** : diamètre affiché dans la vue 3D, grisé quand le fichier chargé annonce le sien
 - **Langue** : français / anglais (i18n react-i18next)
 
 ---
@@ -194,7 +207,7 @@ Avant d'usiner une vraie pièce, effectuer un test **à vide** (broche arrêtée
 
 | Couche | Technologie |
 |---|---|
-| Desktop | Electron 33 |
+| Desktop | Electron 41 |
 | UI | React 19 + TypeScript |
 | Build | Vite / electron-vite |
 | 3D | Three.js + @react-three/fiber |

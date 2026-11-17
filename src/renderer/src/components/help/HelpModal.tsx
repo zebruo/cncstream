@@ -16,7 +16,8 @@ function GuideTab() {
         <p className={styles.paragraph}>
           Branchez votre contrôleur GRBL via USB. Dans la barre du haut, sélectionnez le port série
           et le baud rate (115200 par défaut pour GRBL 1.1). Cliquez Connecter pour établir la connexion.
-          Les paramètres GRBL ($$) sont lus automatiquement.
+          Les paramètres GRBL ($) sont lus automatiquement. Si la connexion échoue, un bandeau rouge fermable
+          sous la barre du haut en explique la cause. Une fois connecté, Homing ($H) apparaît dans la barre du haut.
         </p>
       </div>
 
@@ -58,16 +59,24 @@ function GuideTab() {
       </div>
 
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Déplacements (Aller à, Machine, Palpage Z)</h3>
+        <h3 className={styles.sectionTitle}>Déplacements (Aller à, Palpage Z)</h3>
         <p className={styles.paragraph}>
-          Naviguez vers des positions prédéfinies, gérez la machine (homing, déverrouillage) et définissez Z0 par palpage.
+          Naviguez vers des positions prédéfinies et définissez Z0 par palpage. La section « Palpage Z »
+          est repliée par défaut : ouvrez-la avec la flèche.
         </p>
         <ul className={styles.list}>
           <li><strong>XY zéro</strong> : monte en Z (hauteur sécurité), va à X0 Y0, redescend</li>
           <li><strong>Z zéro</strong> : descend Z à 0</li>
-          <li><strong>Homing ($H)</strong> : cycle de homing, à refaire après chaque mise sous tension</li>
-          <li><strong>Déverrouiller ($X)</strong> : déverrouiller après une alarme. En cas d&apos;alarme, un bandeau rouge sous la barre du haut propose Déverrouiller puis Homing</li>
           <li><strong>Hauteur de sécurité</strong> : dégagement en Z pour les déplacements</li>
+        </ul>
+      </div>
+
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Barre du haut : Homing et Déverrouiller</h3>
+        <ul className={styles.list}>
+          <li><strong>Homing ($H)</strong> : cycle de homing, à refaire après chaque mise sous tension. Visible une fois connecté, grisé tant que la machine n&apos;est ni au repos ni en alarme (job ou mouvement en cours).</li>
+          <li><strong>Déverrouiller ($X)</strong> : n&apos;apparaît qu&apos;en cas d&apos;alarme, en orange. Le bandeau rouge d&apos;alarme sous la barre propose aussi Déverrouiller puis Homing.</li>
+          <li><strong>Avant une macro en coordonnées machine (G53)</strong> : si le homing n&apos;a pas été fait depuis la connexion, une alerte le rappelle, car la position machine est alors fausse.</li>
         </ul>
       </div>
 
@@ -81,12 +90,15 @@ function GuideTab() {
           <li>Connectez la sonde à l&apos;entrée <strong>Probe (A5)</strong> de GRBL, pince de masse sur la <strong>fraise</strong></li>
           <li>Mesurez l&apos;épaisseur de la sonde au pied à coulisse et saisissez-la dans le champ <strong>Épaisseur de la sonde (mm)</strong> (0,1–50 mm)</li>
           <li>Posez la sonde sur la pièce, directement sous la fraise</li>
-          <li>Test circuit : posez la sonde sur la fraise → le bandeau passe au <strong>vert</strong> (« Test sonde–fraise OK »)</li>
-          <li>Retirez la sonde de la fraise puis reposez-la sur la pièce → le bouton <strong>Lancer le palpage</strong> s&apos;active</li>
+          <li>Test circuit : posez la sonde sur la fraise → un bandeau s&apos;affiche sous la barre du haut : <strong>vert « Contact détecté »</strong> au contact, <strong>gris « Circuit sonde–fraise testé : lancer le palpage »</strong> sans contact. Il suit l&apos;état de la sonde en direct, vous pouvez donc la tester autant de fois que nécessaire.</li>
+          <li>Retirez la sonde de la fraise puis reposez-la sur la pièce → le bouton <strong>Lancer le palpage</strong> s&apos;active (le test du circuit une fois réussi suffit)</li>
           <li>Positionnez la fraise à moins de <strong>20 mm</strong> au-dessus de la sonde</li>
           <li>Cliquez <strong>Lancer le palpage</strong> → la machine descend à 50 mm/min, détecte le contact et remonte à la hauteur de sécurité</li>
           <li>Dans la boîte de confirmation : <strong>Appliquer</strong> pour valider Z0, <strong>Annuler</strong> pour ignorer</li>
         </ol>
+        <p className={styles.paragraph}>
+          Si le message « Aucune surface sur 20 mm : rapprochez la fraise » s&apos;affiche, la sonde n&apos;a rien touché sur les 20 mm de la course de recherche : descendez la fraise à la main (jog) à quelques millimètres de la sonde, puis relancez.
+        </p>
         <p className={styles.note}>
           <strong>Note :</strong> le bouton Lancer le palpage se réinitialise à chaque connexion — le test circuit (étape 4) doit être refait à chaque session.
         </p>
@@ -102,13 +114,14 @@ function GuideTab() {
           <li><strong>Open G-Code</strong> : charger un fichier (.nc, .gcode, .tap, .ngc)</li>
           <li><strong>Start Job</strong> : démarrer l&apos;envoi du fichier. Deux vérifications sont effectuées dans l&apos;ordre avant le démarrage :
             <ol className={styles.steps} style={{marginTop: 'var(--space-xs)'}}>
-              <li><strong>Probe Z</strong> : si Z0 n&apos;a pas été défini par sonde dans la session, un avertissement s&apos;affiche. Passer outre est acceptable si : Z0 défini manuellement via le DRO, reprise après reconnexion avec le WCS GRBL déjà correct, hauteur Z connue, ou job sans exigence de précision Z.</li>
-              <li><strong>Broche</strong> : si le G-code contient des commandes broche (M3/M4) et que la broche n&apos;est pas en service, un avertissement s&apos;affiche. Passer outre est acceptable pour un dry run ou un test sans usinage.</li>
+              <li><strong>Probe Z</strong> : si Z0 n&apos;a pas été défini par sonde dans la session, l&apos;avertissement « Palpage Z non effectué » s&apos;affiche (« Lancer sans palpage » passe outre). Passer outre est acceptable si : Z0 défini manuellement via le DRO, reprise après reconnexion avec le WCS GRBL déjà correct, hauteur Z connue, ou job sans exigence de précision Z.</li>
+              <li><strong>Broche</strong> : si le G-code contient des commandes broche (M3/M4) et que la broche n&apos;est pas en service, l&apos;avertissement « Broche hors service » s&apos;affiche. « Démarrer la broche (N tr/min) » la démarre depuis cette fenêtre, à la vitesse du fichier (fraise dégagée de la pièce). « Lancer sans broche » passe outre, ce qui est acceptable pour un dry run ou un test sans usinage.</li>
             </ol>
           </li>
           <li><strong>Pause</strong> : feed hold — les axes décélèrent et s&apos;arrêtent. Si la broche était en service, elle s&apos;arrête automatiquement dès que GRBL confirme l&apos;état Hold (commande réaltime GRBL, indépendante de la queue G-code).</li>
           <li><strong>Resume</strong> : si la broche était active avant la pause, elle redémarre en premier (les axes restent en hold), attend ~2 s pour atteindre sa vitesse de régime, puis les axes reprennent. Si la broche était éteinte, les axes reprennent immédiatement.</li>
           <li><strong>Stop</strong> : arrêt immédiat (soft reset)</li>
+          <li><strong>Pause automatique sur erreur</strong> : si la machine répond <code>error:N</code> à une ligne du job, le job passe en pause (axes arrêtés, broche arrêtée) et un message rouge indique la ligne et l&apos;erreur. Corrigez la cause puis reprenez, ou arrêtez le job.</li>
         </ul>
       </div>
 
@@ -138,8 +151,12 @@ function GuideTab() {
           <li><strong>Vert</strong> : mouvements d&apos;usinage (G1)</li>
           <li><strong>Bleu pointillé</strong> : déplacements rapides (G0)</li>
           <li><strong>Orange</strong> : lignes déjà exécutées</li>
-          <li><strong>Cône rouge</strong> : position actuelle de l&apos;outil</li>
-          <li><strong>Souris</strong> : clic gauche = rotation, molette = zoom, clic droit = pan</li>
+          <li><strong>Fraise</strong> : modèle à l&apos;échelle de la position actuelle de l&apos;outil (partie coupante, queue, pointe rouge). Son diamètre vient du G-code quand il l&apos;annonce, sinon du réglage « Fraise (mm) » du menu ⚙.</li>
+          <li><strong>Pavé orange pointillé</strong> : course de la machine (zone atteignable), pour juger si le zéro pièce laisse assez de marge. Valeurs lues dans les réglages de la machine ou saisies à la main dans ⚙.</li>
+          <li><strong>Graduations</strong> : rouges pour X, vertes pour Y, un « 0 » blanc à l&apos;origine. Elles restent lisibles en dézoomant.</li>
+          <li><strong>Vues</strong> : 3D, XY (dessus), XZ (face) et YZ (côté). En vues de côté, les graduations sont posées sur Z = 0.</li>
+          <li><strong>Ajuster</strong> : cadre le tracé du fichier chargé dans la vue courante.</li>
+          <li><strong>Souris</strong> : clic gauche = rotation (vue 3D), molette = zoom, clic droit = pan</li>
         </ul>
       </div>
 
@@ -182,6 +199,16 @@ function GuideTab() {
       </div>
 
       <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Réglages (⚙)</h3>
+        <ul className={styles.list}>
+          <li><strong>Thème, unités, axe A, langue</strong></li>
+          <li><strong>Journal ON/OFF</strong> : désactivé par défaut. Activé, il enregistre dans un fichier du jour les commandes, les réponses de la machine, les changements d&apos;état avec leurs positions (et la position toutes les 5 s pendant un mouvement), pour comprendre après coup ce qui s&apos;est passé. Un bouton ouvre le dossier des journaux ; les fichiers de plus de 7 jours sont supprimés. Le bouton « effacer » de la console vide aussi le journal du jour.</li>
+          <li><strong>Course machine ON/OFF</strong> : affiche le pavé de la course dans la vue 3D. Les valeurs X / Y / Z peuvent être saisies à la main, et un bouton par axe indique le sens du homing (<code>$23</code>, désactivé par défaut) : ON = l&apos;axe fait son homing vers le négatif (course de 0 à +T).</li>
+          <li><strong>Fraise (mm)</strong> : diamètre de la fraise dans la vue 3D, grisé quand le fichier chargé annonce son propre diamètre.</li>
+        </ul>
+      </div>
+
+      <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Macros</h3>
         <p className={styles.paragraph}>
           Les macros permettent d&apos;enregistrer et d&apos;exécuter des séquences G-code personnalisées
@@ -194,8 +221,10 @@ function GuideTab() {
           <li><strong>+ Nouvelle macro</strong> : crée une macro personnalisée</li>
         </ul>
         <p className={styles.paragraph}>
-          Les macros prédéfinies (Carré test XY, Test axes, Retour origine XY) sont modifiables
-          et leurs modifications sont conservées après redémarrage.
+          Les macros prédéfinies (Carré test 200×200, rainure en L, Test largeur diagonale,
+          Test largeur X et Y, Test axes) sont mises à jour avec l&apos;application : à chaque nouvelle version,
+          elles sont remplacées par leur version à jour, et vos modifications sur ces macros sont perdues.
+          Pour garder une variante, créez une macro personnalisée (+ Nouvelle macro) : celles-ci sont conservées.
           Toutes les macros sont persistées en local (localStorage).
         </p>
         <p className={styles.paragraph}>
@@ -306,6 +335,7 @@ function AboutTab() {
         Connexion série, DRO 4 axes, jogging, streaming G-code,
         visualisation 3D, overrides temps réel, contrôle broche et arrosage.
         Compatible grblHAL (protocole de base) sans support des fonctionnalités spécifiques.
+        Utilisée au quotidien sur une carte GRBL 1.1h.
       </p>
     </div>
   )

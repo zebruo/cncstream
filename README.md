@@ -6,6 +6,8 @@
 
 Desktop application built with **Electron**, **React** and **TypeScript**. Modern interface, real-time 3D visualization, full machine control via serial connection.
 
+> **Tested hardware**: used daily on a GRBL 1.1h controller board.
+
 > **grblHAL compatibility**: CNCStream supports the base GRBL 1.1 protocol. In practice, if grblHAL is configured to remain GRBL 1.1 compatible (which is often the default), CNCStream works normally. Features exclusive to grblHAL (extended commands, JSON protocol, etc.) are not supported.
 
 ---
@@ -56,8 +58,8 @@ Test jog in incremental small step (0.1 mm) on each axis **at low speed**:
 #### 4. Probe Z Test
 
 **Prerequisites**: tool in place, probe resting on the workpiece.
-- Check the circuit indicator in CNCStream: must be **open** (grey) at rest
-- Manually touch the top of the probe with the tool → indicator must turn **green**
+- Check the circuit banner in CNCStream: it only appears after the first contact, then follows the probe live — **grey** ("circuit tested, no contact") at rest
+- Manually touch the top of the probe with the tool → banner must turn **green** ("Contact detected")
 - Run Probe Z while watching the descent: the spindle must descend and stop on contact
 - If the machine moves up instead of down, check parameter `$3` (Z invert mask)
 
@@ -102,7 +104,8 @@ Before machining a real workpiece, perform a **dry run** (spindle stopped, tool 
 - Automatic detection of available COM ports
 - Baud rate selection (115200 by default)
 - Automatic GRBL parameter read (`$$`) on connection
-- Connection status indicator in the status bar
+- Connection in the top bar: port, baud rate, Connect / Disconnect, machine state
+- Connection errors explained in a dismissible banner under the top bar
 
 ### DRO — Digital Read-Out
 - Position display on **4 axes**: X, Y, Z, A (A axis can be enabled in settings)
@@ -119,16 +122,19 @@ Before machining a real workpiece, perform a **dry run** (spindle stopped, tool 
 - Keyboard shortcuts: arrows X/Y, Page Up/Down Z, `[` / `]` for step
 - A+ / A- buttons for rotary axis (if enabled)
 
-### Zero / Go To / Probe Z
+### Top bar: Home / Unlock
+- **Home** (`$H`): full homing cycle, shown once connected, greyed out while a job or a move is running
+- **Unlock** (`$X`): only shown during an alarm (a red alarm banner under the top bar also offers Unlock then Home)
+- **Homing alert**: before a macro that uses machine coordinates (`G53`), a warning appears if no homing was done since the connection
+
+### Moves / Probe Z
 - **Go to XY Zero**: raises Z (safe height), moves to X0 Y0, lowers back
 - **Go to Z Zero**: lowers Z to 0
-- **Home** (`$H`): full homing cycle
-- **Unlock** (`$X`): unlock after alarm
 - **Safe Height**: configurable clearance height for moves and probe
-- Automatic surface detection via touch probe (GRBL `Pn:P` circuit)
-- **Circuit indicator** real-time: open (grey) / contact detected (green)
+- Automatic surface detection via touch probe (GRBL `Pn:P` circuit); the Probe Z section is collapsed by default
+- **Circuit banner** live under the top bar: green "Contact detected" on contact, grey "Circuit tested: start the probing" without contact (appears after the first contact)
 - Probe Z button locked until circuit is validated (per-session safety)
-- Descent at 50 mm/min (`G38.2 Z-20 F50`), automatic return to safe height after contact
+- Descent at 50 mm/min (`G38.2 Z-20 F50`), automatic return to safe height after contact; if nothing is touched within 20 mm, the message "No surface within 20 mm: bring the cutter closer" is shown
 - Configurable probe thickness field (0.1 to 50 mm)
 - Confirmation dialog with Apply / Cancel option
 - Workpiece Z zero applied (`G10 L20 P1`) accounting for probe thickness and safe height
@@ -138,14 +144,18 @@ Before machining a real workpiece, perform a **dry run** (spindle stopped, tool 
 - File analysis: dimensions (min/max per axis), total path, estimated time, tools, detected safe Z
 - Line-by-line streaming with GRBL RX buffer management (128 bytes)
 - **Start / Pause / Resume / Stop** (feed hold, cycle start, soft reset)
+- **Automatic pause on error**: if the machine answers `error:N` to a job line, the job pauses (axes and spindle stopped) with a red message giving the line and the error
+- Start warnings: "Z probe not done" and "Spindle out of service", the latter with a **Start spindle (N rpm)** button to start it from the dialog
 - Automatic spindle stop on pause and restart before axes on resume (GRBL realtime command, all modes)
 - Progress bar and estimated remaining time
 
 ### 3D Visualizer
 - Three.js (`@react-three/fiber`) toolpath rendering
 - Green: cutting moves (G1) — Blue dashed: rapids (G0)
-- Orange: already executed lines — Red cone: current position
-- Navigation: rotate (left click), zoom (scroll wheel), pan (right click)
+- Orange: already executed lines — **True-scale cutter** at the current position (diameter read from the G-code when announced, otherwise the setting)
+- Dashed orange box: **machine travel**, to check the margin around the workpiece zero (values read from the machine, or entered by hand)
+- Views: 3D, XY (top), XZ (front), YZ (side) and **Fit** (frames the loaded file); coloured graduations (red X, green Y) that stay readable when zooming out
+- Navigation: rotate (left click, 3D view), zoom (scroll wheel), pan (right click)
 
 ### Real-Time Overrides
 - **Feed**: 10% to 200%
@@ -166,8 +176,8 @@ Before machining a real workpiece, perform a **dry run** (spindle stopped, tool 
 - Flood `M8`, Mist `M7`, Stop `M9`
 
 ### Macros
-- Predefined macros (XY test square, axis test, return to XY origin) editable
-- Custom macro creation with name, description and multi-line G-code sequence
+- Predefined macros (200×200 test square, L groove, diagonal width test, X and Y width test, axis test): they are **replaced by the up-to-date version on each application update**, so changes made to them are lost
+- Custom macro creation with name, description and multi-line G-code sequence: these are kept
 - Execution via streaming mechanism (Pause/Stop functional)
 - Automatic local save — macros persist after closing the application (reinstall or new PC: macros lost)
 
@@ -186,6 +196,9 @@ Before machining a real workpiece, perform a **dry run** (spindle stopped, tool 
 - **Light / dark** theme
 - **mm / inches** units
 - **A axis** enable
+- **Event log** ON/OFF (off by default): records commands, machine answers, state changes with positions (and the position every 5 s while moving) in a daily file, to diagnose a problem afterwards; button to open the folder, files older than 7 days are removed, the console "clear" button also clears the day's log
+- **Machine travel** ON/OFF: orange box in the 3D view, X / Y / Z values editable by hand, and a per-axis button for the homing direction (`$23`, off by default)
+- **Cutter (mm)**: diameter shown in the 3D view, disabled when the loaded file announces its own
 - **Language**: French / English (i18n react-i18next)
 
 ---
@@ -194,7 +207,7 @@ Before machining a real workpiece, perform a **dry run** (spindle stopped, tool 
 
 | Layer | Technology |
 |---|---|
-| Desktop | Electron 33 |
+| Desktop | Electron 41 |
 | UI | React 19 + TypeScript |
 | Build | Vite / electron-vite |
 | 3D | Three.js + @react-three/fiber |
