@@ -11,6 +11,7 @@ export function useMachineStatus(): void {
   const setAlarm = useMachineStore((s) => s.setAlarm)
   const clearAlarm = useMachineStore((s) => s.clearAlarm)
   const setHomed = useMachineStore((s) => s.setHomed)
+  const resetProbeCircuit = useMachineStore((s) => s.resetProbeCircuit)
   const setConnectionState = useConnectionStore((s) => s.setConnectionState)
   const setFirmwareInfo = useConnectionStore((s) => s.setFirmwareInfo)
   const updateProgress = useJobStore((s) => s.updateProgress)
@@ -64,7 +65,10 @@ export function useMachineStatus(): void {
     unsubs.push(
       window.cncstream.onConnectionStateChanged((state) => {
         setConnectionState(state as ConnectionStatus)
-        if (state !== 'connected') setHomed(false)
+        if (state !== 'connected') {
+          setHomed(false)
+          resetProbeCircuit()
+        }
       })
     )
 
@@ -116,5 +120,5 @@ export function useMachineStatus(): void {
     return () => {
       unsubs.forEach((fn) => fn())
     }
-  }, [updateFromStatus, setAlarm, clearAlarm, setHomed, setConnectionState, setFirmwareInfo, updateProgress, setJobState, addConsoleLine, setSpindleConfig])
+  }, [updateFromStatus, setAlarm, clearAlarm, setHomed, resetProbeCircuit, setConnectionState, setFirmwareInfo, updateProgress, setJobState, addConsoleLine, setSpindleConfig])
 }

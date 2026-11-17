@@ -1,0 +1,41 @@
+.banner {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px var(--space-md);
+  background-color: color-mix(in srgb, var(--color-success) 16%, var(--color-bg-secondary));
+  border-bottom: 1px solid var(--color-success);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-success);
+}
+
+.message {
+  flex: 1;
+  min-width: 0;
+}
+
+.closeBtn {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-lg);
+  line-height: 1;
+}
+
+.closeBtn:hover {
+  color: var(--color-text-primary);
+  background-color: color-mix(in srgb, var(--color-success) 22%, transparent);
+}

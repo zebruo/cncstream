@@ -26,7 +26,9 @@
   border-radius: var(--radius-sm);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  font-family: var(--font-family-mono);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color var(--transition-fast);
 }
 
@@ -107,9 +109,13 @@
 }
 
 .probePinContact {
-  background-color: rgba(42, 157, 80, 0.12);
-  border: 1px solid rgba(42, 157, 80, 0.35);
-  color: #2a9d50;
+  background-color: color-mix(in srgb, var(--color-success) 14%, var(--color-bg-secondary));
+  border: 1px solid color-mix(in srgb, var(--color-success) 45%, transparent);
+  color: var(--color-text-primary);
+}
+
+.probePinContact .probePinDot {
+  background-color: var(--color-success);
 }
 
 .probePinDot {
@@ -130,3 +136,101 @@
   font-weight: 500;
 }
 
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.sectionToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+.sectionToggle:hover {
+  color: var(--color-text-primary);
+}
+
+.toggleRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.chipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-warning);
+}
+
+.chipOk .chipDot {
+  background-color: var(--color-success);
+}
+
+.fieldRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.fieldLabel {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.fieldHint {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.code {
+  margin-left: 6px;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}

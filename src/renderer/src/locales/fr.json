@@ -70,15 +70,15 @@
     "keyboardShortcuts": "Au clavier :\nFlèches : déplacement X/Y\nPage Up/Down : déplacement Z\n[ / ] : diminuer / augmenter le pas\nMode continu : maintenir la touche pour un déplacement continu"
   },
   "zeroGoto": {
-    "title": "Zero / Go To / Probe Z",
-    "goToXY": "Aller à XY Zéro",
-    "goToZ": "Aller à Z Zéro",
+    "title": "Déplacements",
+    "goToXY": "XY zéro",
+    "goToZ": "Z zéro",
     "homeTitle": "Cycle de homing ($H)",
     "unlockTitle": "Déverrouiller après une alarme ($X)",
     "safeHeight": "Hauteur de sécurité ({{unit}})",
-    "probeZ": "Probe Z",
+    "probeZ": "Lancer le palpage",
     "probeRunning": "En cours...",
-    "probeThickness": "Sonde ({{unit}})",
+    "probeThickness": "Épaisseur de la sonde ({{unit}})",
     "probeSuccess": "Contact détecté",
     "probeSuccessMsg": "Appliquer Z0 avec offset sonde {{thickness}} {{unit}} ?",
     "probeFailed": "Aucun contact détecté",
@@ -86,11 +86,23 @@
     "probeApply": "Appliquer",
     "probeCancel": "Annuler",
     "probeOk": "OK",
-    "probeCircuitOpen": "Placer la sonde sur la fraise pour réaliser le test du circuit",
-    "probeCircuitContact": "Circuit OK — reposez la sonde",
+    "probeCircuitOpen": "Étape 1 : placez la sonde sur la fraise pour tester le circuit",
+    "probeCircuitContact": "Test sonde–fraise OK : retirez la sonde de la fraise",
     "probeZTitle": "Détecte automatiquement la surface de la pièce et définit Z0. Nécessite le test circuit au préalable.",
     "probeThicknessTitle": "Épaisseur exacte de votre sonde de contact, mesurée au pied à coulisse (0,1–50 mm)",
-    "safeHeightTitle": "Hauteur de dégagement Z pour les opérations manuelles uniquement : Go to XY Zero, retrait après Probe Z et calcul de l'offset sonde. Sans effet pendant l'exécution d'un job G-code."
+    "safeHeightTitle": "Hauteur de dégagement Z pour les opérations manuelles uniquement : Go to XY Zero, retrait après Probe Z et calcul de l'offset sonde. Sans effet pendant l'exécution d'un job G-code.",
+    "sectionGoTo": "Aller à",
+    "sectionMachine": "Machine",
+    "sectionProbe": "Palpage Z",
+    "home": "Homing",
+    "unlock": "Déverrouiller",
+    "homeHint": "Homing : à refaire après chaque mise sous tension, avant une macro en coordonnées machine.",
+    "safeHeightHint": "Dégagement en Z avant un déplacement XY",
+    "probeThicknessHint": "Mesurée au pied à coulisse",
+    "probeCircuitOk": "Test sonde–fraise OK : prêt à palper",
+    "probeZHint": "Disponible une fois le circuit testé.",
+    "chipTested": "Circuit testé",
+    "chipNotTested": "Circuit non testé"
   },
   "overrides": {
     "title": "Corrections",
@@ -185,5 +197,11 @@
     "stockDepth": "Ép. brut",
     "passes": "Passes",
     "multiOp": "{{ops}} opérations · {{passes}} passes"
+  },
+  "alarm": {
+    "title": "Alarme {{code}} : {{message}}",
+    "note": "La machine est verrouillée. Déverrouillez, puis refaites un homing avant de reprendre : le repère machine n'est plus fiable.",
+    "unlock": "1. Déverrouiller ($X)",
+    "home": "2. Homing ($H)"
   }
 }

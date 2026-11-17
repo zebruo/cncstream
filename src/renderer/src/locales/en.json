@@ -70,15 +70,15 @@
     "keyboardShortcuts": "Arrows: X/Y movement\nPage Up/Down: Z movement\n[ / ]: decrease / increase step\nContinuous mode: hold key for continuous movement"
   },
   "zeroGoto": {
-    "title": "Zero / Go To / Probe Z",
-    "goToXY": "Go to XY Zero",
-    "goToZ": "Go to Z Zero",
+    "title": "Moves",
+    "goToXY": "XY zero",
+    "goToZ": "Z zero",
     "homeTitle": "Homing cycle ($H)",
     "unlockTitle": "Unlock after alarm ($X)",
     "safeHeight": "Safe height ({{unit}})",
-    "probeZ": "Probe Z",
+    "probeZ": "Start probing",
     "probeRunning": "Probing...",
-    "probeThickness": "Probe ({{unit}})",
+    "probeThickness": "Probe thickness ({{unit}})",
     "probeSuccess": "Contact detected",
     "probeSuccessMsg": "Apply Z0 with {{thickness}} {{unit}} probe offset?",
     "probeFailed": "No contact detected",
@@ -86,11 +86,23 @@
     "probeApply": "Apply",
     "probeCancel": "Cancel",
     "probeOk": "OK",
-    "probeCircuitOpen": "Touch tool to plate to test circuit",
-    "probeCircuitContact": "Circuit OK — remove tool before probing",
+    "probeCircuitOpen": "Step 1: place the probe on the cutter to test the circuit",
+    "probeCircuitContact": "Probe–cutter test OK: remove the probe from the cutter",
     "probeZTitle": "Automatically detect the workpiece surface and set Z0. Requires circuit test first.",
     "probeThicknessTitle": "Exact thickness of your touch plate, measured with calipers (0.1–50 mm)",
-    "safeHeightTitle": "Z clearance height for manual operations only: Go to XY Zero, retract after Probe Z, and probe offset calculation. Has no effect during G-code job execution."
+    "safeHeightTitle": "Z clearance height for manual operations only: Go to XY Zero, retract after Probe Z, and probe offset calculation. Has no effect during G-code job execution.",
+    "sectionGoTo": "Go to",
+    "sectionMachine": "Machine",
+    "sectionProbe": "Z probing",
+    "home": "Homing",
+    "unlock": "Unlock",
+    "homeHint": "Homing: redo it after every power-up, before any machine-coordinate macro.",
+    "safeHeightHint": "Z clearance before an XY move",
+    "probeThicknessHint": "Measured with calipers",
+    "probeCircuitOk": "Probe–cutter test OK: ready to probe",
+    "probeZHint": "Available once the circuit is tested.",
+    "chipTested": "Circuit tested",
+    "chipNotTested": "Circuit not tested"
   },
   "overrides": {
     "title": "Overrides",
@@ -185,5 +197,11 @@
     "stockDepth": "Stock depth",
     "passes": "Passes",
     "multiOp": "{{ops}} operations · {{passes}} passes"
+  },
+  "alarm": {
+    "title": "Alarm {{code}}: {{message}}",
+    "note": "The machine is locked. Unlock it, then home again before resuming: the machine position is no longer reliable.",
+    "unlock": "1. Unlock ($X)",
+    "home": "2. Home ($H)"
   }
 }

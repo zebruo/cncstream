@@ -28,16 +28,13 @@ export function ZeroGoToPanel() {
   const { t } = useTranslation()
 
   const [probePhase, setProbePhase] = useState<ProbePhase>('idle')
-  const [circuitTested, setCircuitTested] = useState(false)
+  // Test du circuit sonde / fraise : mémorisé dans le store, le bandeau du haut l'affiche aussi
+  const circuitTested = useMachineStore((s) => s.probeCircuitTested)
+  // Section « Palpage Z » ouverte par défaut ; repliée, elle se résume à une pastille d'état
+  const [probeOpen, setProbeOpen] = useState(true)
 
-  // États locaux ajustés pendant le rendu (pas d'effet) : ils ne dépendent que de
-  // valeurs déjà connues ici. Le circuit est « testé » dès que la sonde est vue fermée,
-  // et tout est remis à zéro à la déconnexion.
-  if (probePin && !circuitTested) {
-    setCircuitTested(true)
-  }
-  if (!isConnected && (circuitTested || probePhase !== 'idle')) {
-    setCircuitTested(false)
+  // État local ajusté pendant le rendu (pas d'effet) : remis à zéro à la déconnexion.
+  if (!isConnected && probePhase !== 'idle') {
     setProbePhase('idle')
   }
 
@@ -100,54 +97,31 @@ export function ZeroGoToPanel() {
 
   const handleDismissProbe = () => setProbePhase('idle')
 
+  const unit = isIn ? 'in' : 'mm'
+  const probeDisabled = !isConnected || probePhase !== 'idle' || probePin || !circuitTested
+
   return (
     <>
     <Panel title={t('zeroGoto.title')}>
-      <div className={styles.row}>
-        <button className={styles.actionBtn} onClick={goToXYZero} disabled={!isConnected}>
-          {t('zeroGoto.goToXY')}
-        </button>
-        <button className={styles.actionBtn} onClick={() => goToPosition(undefined, undefined, 0)} disabled={!isConnected}>
-          {t('zeroGoto.goToZ')}
-        </button>
-      </div>
-
-      <div className={styles.row}>
-        <Tooltip text={t('zeroGoto.homeTitle')} style={{ flex: 1 }}>
-          <button className={styles.machineBtn} style={{ width: '100%' }} onClick={homeAll} disabled={!isConnected}>
-            <img src={homeIcon} alt="" className={styles.btnIcon} />
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>{t('zeroGoto.sectionGoTo')}</h3>
+        <div className={styles.row}>
+          <button className={styles.actionBtn} onClick={goToXYZero} disabled={!isConnected}>
+            {t('zeroGoto.goToXY')}
           </button>
-        </Tooltip>
-        <Tooltip text={t('zeroGoto.unlockTitle')} style={{ flex: 1 }}>
-          <button className={styles.machineBtn} style={{ width: '100%' }} onClick={unlockMachine} disabled={!isConnected}>
-            <img src={unlockIcon} alt="" className={styles.btnIcon} />
+          <button className={styles.actionBtn} onClick={() => goToPosition(undefined, undefined, 0)} disabled={!isConnected}>
+            {t('zeroGoto.goToZ')}
           </button>
-        </Tooltip>
-      </div>
-
-      <div className={styles.divider} />
-
-      <div className={styles.fieldsRow}>
-        <div className={styles.probeThicknessField}>
-          <Tooltip text={t('zeroGoto.probeThicknessTitle')}>
-            <span className={styles.label}>{t('zeroGoto.probeThickness', { unit: isIn ? 'in' : 'mm' })}</span>
-          </Tooltip>
-          <input
-            type="number"
-            className={styles.input}
-            value={displayProbeThickness}
-            onChange={(e) => handleProbeThicknessChange(Number.parseFloat(e.target.value))}
-            onWheel={(e) => e.currentTarget.blur()}
-            min={isIn ? 0.004 : 0.1}
-            max={isIn ? 2 : 50}
-            step={isIn ? 0.001 : 0.1}
-          />
         </div>
-        <div className={styles.safeHeight}>
-          <Tooltip text={t('zeroGoto.safeHeightTitle')}>
-            <label className={styles.label}>{t('zeroGoto.safeHeight', { unit: isIn ? 'in' : 'mm' })}</label>
+        <div className={styles.fieldRow}>
+          <Tooltip text={t('zeroGoto.safeHeightTitle')} style={{ flex: 1, minWidth: 0 }}>
+            <label htmlFor="safe-height" className={styles.fieldLabel}>
+              {t('zeroGoto.safeHeight', { unit })}
+              <span className={styles.fieldHint}>{t('zeroGoto.safeHeightHint')}</span>
+            </label>
           </Tooltip>
           <input
+            id="safe-height"
             type="number"
             className={styles.input}
             value={displaySafeHeight}
@@ -157,34 +131,112 @@ export function ZeroGoToPanel() {
             step={isIn ? 0.001 : 0.5}
           />
         </div>
-      </div>
+      </section>
 
-      {probePhase === 'idle' && (
-        <div className={`${styles.probePinRow} ${probePin ? styles.probePinContact : styles.probePinOpen}`}>
-          <span className={styles.probePinDot} />
-          <span className={styles.probePinText}>
-            {probePin ? t('zeroGoto.probeCircuitContact') : t('zeroGoto.probeCircuitOpen')}
-          </span>
+      <div className={styles.divider} />
+
+      <section className={styles.section}>
+        <h3 className={styles.sectionTitle}>{t('zeroGoto.sectionMachine')}</h3>
+        <div className={styles.row}>
+          <Tooltip text={t('zeroGoto.homeTitle')} style={{ flex: 1 }}>
+            <button className={styles.machineBtn} style={{ width: '100%' }} onClick={homeAll} disabled={!isConnected}>
+              <img src={homeIcon} alt="" className={styles.btnIcon} />
+              {t('zeroGoto.home')} <span className={styles.code}>$H</span>
+            </button>
+          </Tooltip>
+          <Tooltip text={t('zeroGoto.unlockTitle')} style={{ flex: 1 }}>
+            <button className={styles.machineBtn} style={{ width: '100%' }} onClick={unlockMachine} disabled={!isConnected}>
+              <img src={unlockIcon} alt="" className={styles.btnIcon} />
+              {t('zeroGoto.unlock')} <span className={styles.code}>$X</span>
+            </button>
+          </Tooltip>
         </div>
-      )}
+        <p className={styles.note}>{t('zeroGoto.homeHint')}</p>
+      </section>
 
-      <Tooltip text={t('zeroGoto.probeZTitle')} style={{ display: 'block' }}>
-      <button
-        className={`${styles.actionBtn} ${styles.probeBtn}`}
-        onClick={handleProbeZ}
-        disabled={!isConnected || probePhase !== 'idle' || probePin || !circuitTested}
-      >
-        {probePhase === 'running' ? t('zeroGoto.probeRunning') : t('zeroGoto.probeZ')}
-      </button>
-      </Tooltip>
+      <div className={styles.divider} />
 
+      <section className={styles.section}>
+        <button
+          className={styles.sectionToggle}
+          onClick={() => setProbeOpen((open) => !open)}
+          aria-expanded={probeOpen}
+          aria-controls="probe-section"
+        >
+          <span className={styles.sectionTitle}>{t('zeroGoto.sectionProbe')}</span>
+          <span className={styles.toggleRight}>
+            {!probeOpen && (
+              <span className={`${styles.chip} ${circuitTested ? styles.chipOk : ''}`}>
+                <span className={styles.chipDot} />
+                {circuitTested ? t('zeroGoto.chipTested') : t('zeroGoto.chipNotTested')}
+              </span>
+            )}
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d={probeOpen ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
+            </svg>
+          </span>
+        </button>
+
+        {probeOpen && (
+          <div id="probe-section" className={styles.sectionBody}>
+            <div className={styles.fieldRow}>
+              <Tooltip text={t('zeroGoto.probeThicknessTitle')} style={{ flex: 1, minWidth: 0 }}>
+                <label htmlFor="probe-thickness" className={styles.fieldLabel}>
+                  {t('zeroGoto.probeThickness', { unit })}
+                  <span className={styles.fieldHint}>{t('zeroGoto.probeThicknessHint')}</span>
+                </label>
+              </Tooltip>
+              <input
+                id="probe-thickness"
+                type="number"
+                className={styles.input}
+                value={displayProbeThickness}
+                onChange={(e) => handleProbeThicknessChange(Number.parseFloat(e.target.value))}
+                onWheel={(e) => e.currentTarget.blur()}
+                min={isIn ? 0.004 : 0.1}
+                max={isIn ? 2 : 50}
+                step={isIn ? 0.001 : 0.1}
+              />
+            </div>
+
+            {/* Une fois le test réussi, c'est le bandeau vert du haut de l'écran qui le dit */}
+            {probePhase === 'idle' && !circuitTested && (
+              <div className={`${styles.probePinRow} ${styles.probePinOpen}`} role="status">
+                <span className={styles.probePinDot} />
+                <span className={styles.probePinText}>{t('zeroGoto.probeCircuitOpen')}</span>
+              </div>
+            )}
+
+            <Tooltip text={t('zeroGoto.probeZTitle')} style={{ display: 'block' }}>
+              <button
+                className={`${styles.actionBtn} ${styles.probeBtn}`}
+                onClick={handleProbeZ}
+                disabled={probeDisabled}
+              >
+                {probePhase === 'running' ? t('zeroGoto.probeRunning') : t('zeroGoto.probeZ')}
+              </button>
+            </Tooltip>
+            {!circuitTested && <p className={styles.note}>{t('zeroGoto.probeZHint')}</p>}
+          </div>
+        )}
+      </section>
     </Panel>
 
     <ConfirmModal
       isOpen={probePhase === 'confirm'}
       variant="success"
       title={t('zeroGoto.probeSuccess')}
-      message={t('zeroGoto.probeSuccessMsg', { thickness: displayProbeThickness, unit: isIn ? 'in' : 'mm' })}
+      message={t('zeroGoto.probeSuccessMsg', { thickness: displayProbeThickness, unit })}
       confirmLabel={t('zeroGoto.probeApply')}
       cancelLabel={t('zeroGoto.probeCancel')}
       onConfirm={handleApplyProbe}

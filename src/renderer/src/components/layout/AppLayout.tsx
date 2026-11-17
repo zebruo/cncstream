@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Header } from './Header'
 import { StatusBar } from './StatusBar'
+import { AlarmBanner } from './AlarmBanner'
+import { ProbeCircuitBanner } from './ProbeCircuitBanner'
 import { ConnectionErrorBanner } from '../connection/ConnectionErrorBanner'
 import { DROPanel } from '../dro/DROPanel'
 import { JogPanel } from '../jogging/JogPanel'
@@ -23,6 +25,8 @@ export function AppLayout() {
     <div className={styles.layout}>
       <Header />
       <ConnectionErrorBanner />
+      <AlarmBanner />
+      <ProbeCircuitBanner />
       <div className={styles.main}>
         <div className={styles.leftPanel}>
           <DROPanel />

@@ -58,37 +58,37 @@ function GuideTab() {
       </div>
 
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Zero / Go To / Probe Z</h3>
+        <h3 className={styles.sectionTitle}>Déplacements (Aller à, Machine, Palpage Z)</h3>
         <p className={styles.paragraph}>
-          Mettez à zéro les axes de travail et naviguez vers des positions prédéfinies.
+          Naviguez vers des positions prédéfinies, gérez la machine (homing, déverrouillage) et définissez Z0 par palpage.
         </p>
         <ul className={styles.list}>
-          <li><strong>Go to XY Zero</strong> : monte en Z (hauteur sécurité), va à X0 Y0, redescend</li>
-          <li><strong>Go to Z Zero</strong> : descend Z à 0</li>
-          <li><strong>Home ($H)</strong> : cycle de homing</li>
-          <li><strong>Unlock ($X)</strong> : déverrouiller après une alarme</li>
-          <li><strong>Safe Height</strong> : hauteur de sécurité pour les déplacements</li>
+          <li><strong>XY zéro</strong> : monte en Z (hauteur sécurité), va à X0 Y0, redescend</li>
+          <li><strong>Z zéro</strong> : descend Z à 0</li>
+          <li><strong>Homing ($H)</strong> : cycle de homing, à refaire après chaque mise sous tension</li>
+          <li><strong>Déverrouiller ($X)</strong> : déverrouiller après une alarme. En cas d&apos;alarme, un bandeau rouge sous la barre du haut propose Déverrouiller puis Homing</li>
+          <li><strong>Hauteur de sécurité</strong> : dégagement en Z pour les déplacements</li>
         </ul>
       </div>
 
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Probe Z — Mode opératoire</h3>
+        <h3 className={styles.sectionTitle}>Palpage Z — Mode opératoire</h3>
         <p className={styles.paragraph}>
           Détecte automatiquement la surface de la matière et définit Z0 en tenant compte
           de l&apos;épaisseur de la sonde de contact.
         </p>
         <ol className={styles.steps}>
           <li>Connectez la sonde à l&apos;entrée <strong>Probe (A5)</strong> de GRBL, pince de masse sur la <strong>fraise</strong></li>
-          <li>Mesurez l&apos;épaisseur de la sonde au pied à coulisse et saisissez-la dans le champ <strong>Sonde (mm)</strong> (0,1–50 mm)</li>
+          <li>Mesurez l&apos;épaisseur de la sonde au pied à coulisse et saisissez-la dans le champ <strong>Épaisseur de la sonde (mm)</strong> (0,1–50 mm)</li>
           <li>Posez la sonde sur la pièce, directement sous la fraise</li>
-          <li>Test circuit : touchez brièvement la fraise à la plaque → indicateur passe au <strong>vert</strong></li>
-          <li>Reposez la sonde → le bouton <strong>Probe Z</strong> s&apos;active</li>
+          <li>Test circuit : posez la sonde sur la fraise → le bandeau passe au <strong>vert</strong> (« Test sonde–fraise OK »)</li>
+          <li>Retirez la sonde de la fraise puis reposez-la sur la pièce → le bouton <strong>Lancer le palpage</strong> s&apos;active</li>
           <li>Positionnez la fraise à moins de <strong>20 mm</strong> au-dessus de la sonde</li>
-          <li>Cliquez <strong>Probe Z</strong> → la machine descend à 50 mm/min, détecte le contact et remonte à la hauteur de sécurité</li>
+          <li>Cliquez <strong>Lancer le palpage</strong> → la machine descend à 50 mm/min, détecte le contact et remonte à la hauteur de sécurité</li>
           <li>Dans la boîte de confirmation : <strong>Appliquer</strong> pour valider Z0, <strong>Annuler</strong> pour ignorer</li>
         </ol>
         <p className={styles.note}>
-          <strong>Note :</strong> le bouton Probe Z se réinitialise à chaque connexion — le test circuit (étape 4) doit être refait à chaque session.
+          <strong>Note :</strong> le bouton Lancer le palpage se réinitialise à chaque connexion — le test circuit (étape 4) doit être refait à chaque session.
         </p>
       </div>
 

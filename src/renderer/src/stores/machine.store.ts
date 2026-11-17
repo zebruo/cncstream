@@ -15,6 +15,8 @@ interface MachineStore {
   alarmMessage: string | null
   /** Un homing ($H) a abouti depuis la connexion et aucune alarme n'est survenue depuis */
   homed: boolean
+  /** La sonde a été vue fermée sur la fraise depuis la connexion : le circuit de palpage fonctionne */
+  probeCircuitTested: boolean
   pins: string
   lineNumber: number | null
   spindleMaxRpm: number
@@ -24,6 +26,7 @@ interface MachineStore {
   setAlarm: (code: number, message: string) => void
   clearAlarm: () => void
   setHomed: (homed: boolean) => void
+  resetProbeCircuit: () => void
   setSpindleConfig: (maxRpm: number, minRpm: number) => void
 }
 
@@ -42,11 +45,12 @@ export const useMachineStore = create<MachineStore>((set) => ({
   alarmCode: null,
   alarmMessage: null,
   homed: false,
+  probeCircuitTested: false,
   pins: '',
   lineNumber: null,
 
   updateFromStatus: (status) =>
-    set({
+    set((state) => ({
       machineState: status.state,
       mpos: status.mpos,
       wpos: status.wpos,
@@ -57,8 +61,9 @@ export const useMachineStore = create<MachineStore>((set) => ({
       accessories: status.accessories,
       buffer: status.buffer,
       pins: status.pins,
+      probeCircuitTested: state.probeCircuitTested || status.pins.includes('P'),
       lineNumber: status.lineNumber ?? null
-    }),
+    })),
 
   spindleMaxRpm: 0,
   spindleMinRpm: 0,
@@ -66,5 +71,6 @@ export const useMachineStore = create<MachineStore>((set) => ({
   setAlarm: (code, message) => set({ alarmCode: code, alarmMessage: message }),
   clearAlarm: () => set({ alarmCode: null, alarmMessage: null }),
   setHomed: (homed) => set({ homed }),
+  resetProbeCircuit: () => set({ probeCircuitTested: false }),
   setSpindleConfig: (maxRpm, minRpm) => set({ spindleMaxRpm: maxRpm, spindleMinRpm: minRpm })
 }))
