@@ -87,7 +87,7 @@
     "probeCancel": "Cancel",
     "probeOk": "OK",
     "probeCircuitOpen": "Step 1: place the probe on the cutter to test the circuit",
-    "probeCircuitContact": "Probe–cutter test OK: remove the probe from the cutter",
+    "probeCircuitContact": "Contact detected between the probe and the cutter",
     "probeZTitle": "Automatically detect the workpiece surface and set Z0. Requires circuit test first.",
     "probeThicknessTitle": "Exact thickness of your touch plate, measured with calipers (0.1–50 mm)",
     "safeHeightTitle": "Z clearance height for manual operations only: Go to XY Zero, retract after Probe Z, and probe offset calculation. Has no effect during G-code job execution.",
@@ -99,7 +99,7 @@
     "homeHint": "Homing: redo it after every power-up, before any machine-coordinate macro.",
     "safeHeightHint": "Z clearance before an XY move",
     "probeThicknessHint": "Measured with calipers",
-    "probeCircuitOk": "Probe–cutter test OK: ready to probe",
+    "probeCircuitNoContact": "Probe–cutter circuit tested, no contact",
     "probeZHint": "Available once the circuit is tested.",
     "chipTested": "Circuit tested",
     "chipNotTested": "Circuit not tested"

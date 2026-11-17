@@ -27,7 +27,10 @@ export function ProbeCircuitBanner() {
   if (!isConnected || !circuitTested || zProbeApplied || dismissed) return null
 
   return (
-    <div className={styles.banner} role="status">
+    <div
+      className={`${styles.banner} ${inContact ? '' : styles.idle}`}
+      role="status"
+    >
       <svg
         width="18"
         height="18"
@@ -44,7 +47,7 @@ export function ProbeCircuitBanner() {
         <path d="M8 12.5l3 3 5-6" />
       </svg>
       <span className={styles.message}>
-        {inContact ? t('zeroGoto.probeCircuitContact') : t('zeroGoto.probeCircuitOk')}
+        {inContact ? t('zeroGoto.probeCircuitContact') : t('zeroGoto.probeCircuitNoContact')}
       </span>
       <button
         className={styles.closeBtn}

@@ -107,10 +107,10 @@
 
 .connectBtn.disconnect {
   background-color: transparent;
-  color: var(--color-error);
-  border-color: var(--color-error);
+  color: var(--color-warning);
+  border-color: var(--color-warning);
 }
 
 .connectBtn.disconnect:hover:not(:disabled) {
-  background-color: color-mix(in srgb, var(--color-error) 12%, transparent);
+  background-color: color-mix(in srgb, var(--color-warning) 12%, transparent);
 }

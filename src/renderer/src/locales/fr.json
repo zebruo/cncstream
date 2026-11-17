@@ -87,7 +87,7 @@
     "probeCancel": "Annuler",
     "probeOk": "OK",
     "probeCircuitOpen": "Étape 1 : placez la sonde sur la fraise pour tester le circuit",
-    "probeCircuitContact": "Test sonde–fraise OK : retirez la sonde de la fraise",
+    "probeCircuitContact": "Contact détecté entre la sonde et la fraise",
     "probeZTitle": "Détecte automatiquement la surface de la pièce et définit Z0. Nécessite le test circuit au préalable.",
     "probeThicknessTitle": "Épaisseur exacte de votre sonde de contact, mesurée au pied à coulisse (0,1–50 mm)",
     "safeHeightTitle": "Hauteur de dégagement Z pour les opérations manuelles uniquement : Go to XY Zero, retrait après Probe Z et calcul de l'offset sonde. Sans effet pendant l'exécution d'un job G-code.",
@@ -99,7 +99,7 @@
     "homeHint": "Homing : à refaire après chaque mise sous tension, avant une macro en coordonnées machine.",
     "safeHeightHint": "Dégagement en Z avant un déplacement XY",
     "probeThicknessHint": "Mesurée au pied à coulisse",
-    "probeCircuitOk": "Test sonde–fraise OK : prêt à palper",
+    "probeCircuitNoContact": "Circuit sonde–fraise testé, pas de contact",
     "probeZHint": "Disponible une fois le circuit testé.",
     "chipTested": "Circuit testé",
     "chipNotTested": "Circuit non testé"

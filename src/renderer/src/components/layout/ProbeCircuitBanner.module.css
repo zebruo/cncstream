@@ -16,6 +16,20 @@
   color: var(--color-success);
 }
 
+/* Circuit testé mais pas de contact en ce moment : gris neutre */
+.idle {
+  background-color: var(--color-bg-secondary);
+  border-bottom-color: var(--color-border);
+}
+
+.idle .icon {
+  color: var(--color-text-secondary);
+}
+
+.idle .closeBtn:hover {
+  background-color: var(--color-bg-elevated);
+}
+
 .message {
   flex: 1;
   min-width: 0;
