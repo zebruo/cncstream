@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useUIStore, type Language } from '../../stores/ui.store'
 import i18n from '../../i18n'
+import { catchCommandError } from '../../lib/command-errors'
 import gearIcon from '../../assets/icons/gear.svg'
 import sunIcon from '../../assets/icons/sun.svg'
 import moonIcon from '../../assets/icons/moon.svg'
@@ -19,6 +20,18 @@ export function SettingsDropdown() {
   const setShowAAxis = useUIStore((s) => s.setShowAAxis)
 
   const [open, setOpen] = useState(false)
+  // Journal des événements : l'état vit dans le processus principal (réglages), désactivé par défaut
+  const [logEnabled, setLogEnabledState] = useState(false)
+
+  useEffect(() => {
+    window.cncstream.getLogEnabled().then(setLogEnabledState).catch(() => {})
+  }, [])
+
+  const toggleLog = () => {
+    const next = !logEnabled
+    setLogEnabledState(next)
+    catchCommandError(window.cncstream.setLogEnabled(next))
+  }
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -86,6 +99,20 @@ export function SettingsDropdown() {
               onClick={() => setShowAAxis(!showAAxis)}
             >
               {showAAxis ? 'ON' : 'OFF'}
+            </button>
+          </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.section}>
+            <span className={styles.label} title={t('settings.logTitle')}>{t('settings.log')}</span>
+            <button
+              className={`${styles.langBtn} ${logEnabled ? styles.langActive : ''}`}
+              onClick={toggleLog}
+              title={t('settings.logTitle')}
+              aria-pressed={logEnabled}
+            >
+              {logEnabled ? 'ON' : 'OFF'}
             </button>
           </div>
 

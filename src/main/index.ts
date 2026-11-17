@@ -16,7 +16,11 @@ let eventLog: EventLogService
 
 app.whenReady().then(() => {
   settingsStore = new SettingsStoreService()
-  eventLog = new EventLogService(join(app.getPath('userData'), 'logs'))
+  eventLog = new EventLogService(
+    join(app.getPath('userData'), 'logs'),
+    () => new Date(),
+    settingsStore.get('logEnabled')
+  )
   eventLog.log('app', `Démarrage CNCStream ${app.getVersion()} (${app.isPackaged ? 'installée' : 'développement'})`)
   machineController = new MachineControllerService()
   sleepManager = new SleepManagerService()

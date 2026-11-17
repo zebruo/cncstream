@@ -201,6 +201,51 @@ describe('EventLogService', () => {
     })
   })
 
+  describe('activation', () => {
+    it("est actif par défaut quand on ne précise rien (service seul)", () => {
+      expect(new EventLogService(dir, () => NOON).isEnabled).toBe(true)
+    })
+
+    it("n'écrit rien quand il est désactivé", () => {
+      const log = new EventLogService(dir, () => NOON, false)
+      log.log('machine', '> G0 X10')
+      expect(readdirSync(dir)).toEqual([])
+    })
+
+    it("noté « activé » puis écrit normalement quand on l'active", () => {
+      const log = new EventLogService(dir, () => NOON, false)
+      log.setEnabled(true)
+      log.log('machine', '> G0 X10')
+      const content = read('cncstream-2026-11-15.log')
+      expect(content).toContain('[journal] Journal activé')
+      expect(content).toContain('[machine] > G0 X10')
+      expect(log.isEnabled).toBe(true)
+    })
+
+    it("noté « désactivé » puis plus rien d'écrit quand on le coupe", () => {
+      const log = new EventLogService(dir, () => NOON)
+      log.setEnabled(false)
+      log.log('machine', '> G0 X10')
+      const content = read('cncstream-2026-11-15.log')
+      expect(content).toContain('[journal] Journal désactivé')
+      expect(content).not.toContain('G0 X10')
+      expect(log.isEnabled).toBe(false)
+    })
+
+    it("ne note rien quand l'état ne change pas", () => {
+      const log = new EventLogService(dir, () => NOON, false)
+      log.setEnabled(false)
+      expect(readdirSync(dir)).toEqual([])
+    })
+
+    it("vider le journal désactivé n'y écrit pas de ligne de repère", () => {
+      writeFileSync(join(dir, 'cncstream-2026-11-15.log'), 'ancien' + String.fromCharCode(10))
+      const log = new EventLogService(dir, () => NOON, false)
+      log.clear()
+      expect(read('cncstream-2026-11-15.log')).toBe('')
+    })
+  })
+
   it('expose son dossier', () => {
     expect(new EventLogService(dir, () => NOON).directory).toBe(dir)
   })

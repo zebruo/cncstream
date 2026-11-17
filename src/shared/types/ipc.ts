@@ -28,6 +28,8 @@ export const IpcChannels = {
 
   LOGS_OPEN_FOLDER: 'logs:open-folder',
   LOGS_CLEAR: 'logs:clear',
+  LOGS_GET_ENABLED: 'logs:get-enabled',
+  LOGS_SET_ENABLED: 'logs:set-enabled',
 
   JOB_START: 'job:start',
   JOB_PAUSE: 'job:pause',
@@ -132,6 +134,8 @@ export interface CNCStreamAPI {
   // Journal des événements
   openLogsFolder: () => Promise<void>
   clearLogs: () => Promise<void>
+  getLogEnabled: () => Promise<boolean>
+  setLogEnabled: (enabled: boolean) => Promise<void>
 
   // Job
   startJob: (lines: string[], options?: JobOptions) => Promise<void>

@@ -34,9 +34,14 @@ function timeStamp(d: Date): string {
 export class EventLogService {
   private truncatedDay: string | null = null
 
+  /**
+   * @param enabled journal actif ou non : l'appli le lit dans ses réglages (désactivé par défaut) ;
+   *   actif par défaut ici, pour le service seul
+   */
   constructor(
     private readonly dir: string,
-    private readonly now: () => Date = () => new Date()
+    private readonly now: () => Date = () => new Date(),
+    private enabled = true
   ) {
     try {
       mkdirSync(this.dir, { recursive: true })
@@ -50,8 +55,25 @@ export class EventLogService {
     return this.dir
   }
 
+  get isEnabled(): boolean {
+    return this.enabled
+  }
+
+  /** Active ou coupe le journal ; le changement est lui-même noté (côté actif). */
+  setEnabled(enabled: boolean): void {
+    if (enabled === this.enabled) return
+    if (enabled) {
+      this.enabled = true
+      this.log('journal', 'Journal activé')
+    } else {
+      this.log('journal', 'Journal désactivé')
+      this.enabled = false
+    }
+  }
+
   /** Écrit une ligne `HH:MM:SS.mmm [catégorie] message`. */
   log(category: string, message: string): void {
+    if (!this.enabled) return
     const date = this.now()
     const day = dayStamp(date)
     const file = join(this.dir, `cncstream-${day}.log`)

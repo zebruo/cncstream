@@ -20,5 +20,5 @@ export function registerAllIpcHandlers(
   registerFileHandlers(mainWindow)
   registerSettingsHandlers(settingsStore)
   registerJobHandlers(machineController)
-  registerLogHandlers(eventLog)
+  registerLogHandlers(eventLog, settingsStore)
 }

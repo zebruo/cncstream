@@ -123,6 +123,8 @@
     "toDarkMode": "Mode sombre",
     "units": "Unités",
     "aAxis": "Axe A",
+    "log": "Journal",
+    "logTitle": "Enregistre les échanges avec la machine dans un fichier, un par jour (désactivé par défaut)",
     "language": "Langue"
   },
   "statusBar": {

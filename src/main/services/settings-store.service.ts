@@ -10,6 +10,8 @@ interface AppSettings {
   units: 'mm' | 'in'
   safeHeight: number
   showAAxis: boolean
+  /** Journal des événements machine (fichier par jour) : désactivé par défaut */
+  logEnabled: boolean
   jogFeedRate: number
   jogStepSize: number
   windowBounds?: {
@@ -25,6 +27,7 @@ const defaults: AppSettings = {
   units: 'mm',
   safeHeight: 10,
   showAAxis: false,
+  logEnabled: false,
   jogFeedRate: 1000,
   jogStepSize: 1
 }

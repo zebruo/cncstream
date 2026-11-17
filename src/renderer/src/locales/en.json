@@ -123,6 +123,8 @@
     "toDarkMode": "Switch to dark mode",
     "units": "Units",
     "aAxis": "A Axis",
+    "log": "Log",
+    "logTitle": "Records the exchanges with the machine in a file, one per day (off by default)",
     "language": "Language"
   },
   "statusBar": {
