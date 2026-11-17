@@ -4,8 +4,6 @@ import { Panel } from '../common/Panel'
 import { useUIStore } from '../../stores/ui.store'
 import { useConnectionStore } from '../../stores/connection.store'
 import { useMachineStore } from '../../stores/machine.store'
-import homeIcon from '../../assets/icons/home.svg'
-import unlockIcon from '../../assets/icons/unlock.svg'
 import { Tooltip } from '../common/Tooltip'
 import { ConfirmModal } from '../common/ConfirmModal'
 import styles from './ZeroGoToPanel.module.css'
@@ -31,7 +29,7 @@ export function ZeroGoToPanel() {
   // Test du circuit sonde / fraise : mémorisé dans le store, le bandeau du haut l'affiche aussi
   const circuitTested = useMachineStore((s) => s.probeCircuitTested)
   // Section « Palpage Z » ouverte par défaut ; repliée, elle se résume à une pastille d'état
-  const [probeOpen, setProbeOpen] = useState(true)
+  const [probeOpen, setProbeOpen] = useState(false)
 
   // État local ajusté pendant le rendu (pas d'effet) : remis à zéro à la déconnexion.
   if (!isConnected && probePhase !== 'idle') {
@@ -79,9 +77,6 @@ export function ZeroGoToPanel() {
     if (!isConnected) return
     sendAll(goToPositionCommands({ x, y, z }, safeHeight))
   }
-
-  const homeAll = () => { if (!isConnected) return; catchCommandError(window.cncstream.home()) }
-  const unlockMachine = () => { if (!isConnected) return; catchCommandError(window.cncstream.unlock()) }
 
   const handleProbeZ = () => {
     if (!isConnected || probePhase !== 'idle') return
@@ -131,27 +126,6 @@ export function ZeroGoToPanel() {
             step={isIn ? 0.001 : 0.5}
           />
         </div>
-      </section>
-
-      <div className={styles.divider} />
-
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>{t('zeroGoto.sectionMachine')}</h3>
-        <div className={styles.row}>
-          <Tooltip text={t('zeroGoto.homeTitle')} style={{ flex: 1 }}>
-            <button className={styles.machineBtn} style={{ width: '100%' }} onClick={homeAll} disabled={!isConnected}>
-              <img src={homeIcon} alt="" className={styles.btnIcon} />
-              {t('zeroGoto.home')} <span className={styles.code}>$H</span>
-            </button>
-          </Tooltip>
-          <Tooltip text={t('zeroGoto.unlockTitle')} style={{ flex: 1 }}>
-            <button className={styles.machineBtn} style={{ width: '100%' }} onClick={unlockMachine} disabled={!isConnected}>
-              <img src={unlockIcon} alt="" className={styles.btnIcon} />
-              {t('zeroGoto.unlock')} <span className={styles.code}>$X</span>
-            </button>
-          </Tooltip>
-        </div>
-        <p className={styles.note}>{t('zeroGoto.homeHint')}</p>
       </section>
 
       <div className={styles.divider} />

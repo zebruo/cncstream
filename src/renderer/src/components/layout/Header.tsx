@@ -3,6 +3,7 @@ import { useConnectionStore } from '../../stores/connection.store'
 import { useMachineStore } from '../../stores/machine.store'
 import { SettingsDropdown } from './SettingsDropdown'
 import { ConnectionBar } from '../connection/ConnectionBar'
+import { MachineActions } from './MachineActions'
 import styles from './Header.module.css'
 
 const STATE_COLORS: Record<string, string> = {
@@ -29,6 +30,7 @@ export function Header() {
         <h1 className={styles.logo}>CNCStream</h1>
         <div className={styles.divider} />
         <ConnectionBar />
+        <MachineActions />
       </div>
 
       <div className={styles.right}>

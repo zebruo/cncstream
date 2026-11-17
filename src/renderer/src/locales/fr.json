@@ -92,7 +92,6 @@
     "probeThicknessTitle": "Épaisseur exacte de votre sonde de contact, mesurée au pied à coulisse (0,1–50 mm)",
     "safeHeightTitle": "Hauteur de dégagement Z pour les opérations manuelles uniquement : Go to XY Zero, retrait après Probe Z et calcul de l'offset sonde. Sans effet pendant l'exécution d'un job G-code.",
     "sectionGoTo": "Aller à",
-    "sectionMachine": "Machine",
     "sectionProbe": "Palpage Z",
     "home": "Homing",
     "unlock": "Déverrouiller",

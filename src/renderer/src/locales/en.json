@@ -92,7 +92,6 @@
     "probeThicknessTitle": "Exact thickness of your touch plate, measured with calipers (0.1–50 mm)",
     "safeHeightTitle": "Z clearance height for manual operations only: Go to XY Zero, retract after Probe Z, and probe offset calculation. Has no effect during G-code job execution.",
     "sectionGoTo": "Go to",
-    "sectionMachine": "Machine",
     "sectionProbe": "Z probing",
     "home": "Homing",
     "unlock": "Unlock",
