@@ -7,6 +7,8 @@ import { useUIStore } from '../../stores/ui.store'
 import { useMachineStore } from '../../stores/machine.store'
 import { parseGCode } from '../../lib/gcode/parser'
 import { fileToolDiameter } from '../../lib/gcode/tool-diameter'
+import { spindleStartRpm } from '../../lib/spindle-start'
+import { catchCommandError } from '../../lib/command-errors'
 import { analyzeGCode } from '../../lib/gcode/analyzer'
 import { buildToolpath } from '../../lib/gcode/toolpath-builder'
 import styles from './GCodePanel.module.css'
@@ -38,6 +40,7 @@ export function GCodePanel() {
   const zProbeApplied = useUIStore((s) => s.zProbeApplied)
   const accessories = useMachineStore((s) => s.accessories)
   const spindleOn = accessories.spindleCW || accessories.spindleCCW
+  const spindleMaxRpm = useMachineStore((s) => s.spindleMaxRpm)
   type StartPhase = 'idle' | 'probeWarning' | 'spindleWarning' | 'spindleReady'
   const [startPhase, setStartPhase] = useState<StartPhase>('idle')
 
@@ -73,6 +76,13 @@ export function GCodePanel() {
 
   const gcodeUsesSpindle = (fileInsight?.spindleRange.max ?? 0) > 0
   const needsSpindleWarning = gcodeUsesSpindle && !spindleOn
+
+  // Démarrer la broche depuis l'avertissement : à la vitesse que demande le fichier. Quand GRBL
+  // la signale en marche, l'avertissement passe tout seul à « broche prête ».
+  const spindleRpm = spindleStartRpm(fileInsight?.spindleRange.max ?? 0, spindleMaxRpm)
+  const startSpindleFromWarning = () => {
+    catchCommandError(window.cncstream.setSpindle({ enabled: true, direction: 'cw', rpm: spindleRpm }))
+  }
 
   const handleStartJob = () => {
     if (!zProbeApplied) { setStartPhase('probeWarning'); return }
@@ -238,6 +248,8 @@ export function GCodePanel() {
         title={t('gcode.spindleWarningTitle')}
         message={t('gcode.spindleWarningMsg')}
         confirmLabel={t('gcode.spindleWarningConfirm')}
+        secondaryLabel={t('gcode.spindleWarningStart', { rpm: spindleRpm })}
+        onSecondary={startSpindleFromWarning}
         cancelLabel={t('common.cancel')}
         onConfirm={() => { setStartPhase('idle'); startJob() }}
         onCancel={() => setStartPhase('idle')}

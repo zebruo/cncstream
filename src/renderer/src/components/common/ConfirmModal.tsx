@@ -8,6 +8,9 @@ interface ConfirmModalProps {
   message: string
   confirmLabel: string
   cancelLabel?: string
+  /** Action supplémentaire, mise en avant (par exemple « Démarrer la broche ») */
+  secondaryLabel?: string
+  onSecondary?: () => void
   onConfirm: () => void
   onCancel?: () => void
 }
@@ -19,6 +22,8 @@ export function ConfirmModal({
   message,
   confirmLabel,
   cancelLabel,
+  secondaryLabel,
+  onSecondary,
   onConfirm,
   onCancel
 }: ConfirmModalProps) {
@@ -42,6 +47,11 @@ export function ConfirmModal({
           <button className={`${styles.btn} ${styles.confirmBtn}`} onClick={onConfirm}>
             {confirmLabel}
           </button>
+          {secondaryLabel && onSecondary && (
+            <button className={`${styles.btn} ${styles.secondaryBtn}`} onClick={onSecondary}>
+              {secondaryLabel}
+            </button>
+          )}
           {cancelLabel && onCancel && (
             <button className={`${styles.btn} ${styles.cancelBtn}`} onClick={onCancel}>
               {cancelLabel}
