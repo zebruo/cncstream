@@ -22,6 +22,9 @@
     "errorGeneric": "Erreur de connexion : {{message}}"
   },
   "macros": {
+    "unhomedTitle": "Homing non effectué",
+    "unhomedMessage": "La macro « {{name}} » utilise les coordonnées machine (G53), mais aucun homing ($H) n'a été fait depuis la connexion. Si la position machine n'est pas fiable, la machine ira au mauvais endroit, jusqu'en butée. Faites d'abord un homing, ou lancez quand même si vous êtes sûr de la position.",
+    "unhomedRun": "Lancer quand même",
     "editTitle": "Modifier la macro",
     "newTitle": "Nouvelle macro",
     "newMacro": "+ Nouvelle macro",

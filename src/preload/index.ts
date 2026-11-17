@@ -63,6 +63,7 @@ const api: CNCStreamAPI = {
   onMachineStatus: createEventListener(IpcEvents.MACHINE_STATUS_UPDATE),
   onMachineResponse: createEventListener(IpcEvents.MACHINE_RESPONSE),
   onMachineAlarm: createEventListener(IpcEvents.MACHINE_ALARM),
+  onMachineHomed: createEventListener(IpcEvents.MACHINE_HOMED),
   onConsoleOutput: createEventListener(IpcEvents.MACHINE_CONSOLE_OUTPUT),
   onConnectionStateChanged: createEventListener(IpcEvents.CONNECTION_STATE_CHANGED),
   onJobProgress: createEventListener(IpcEvents.JOB_PROGRESS_UPDATE),

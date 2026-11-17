@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { GrblProtocolService } from './grbl-protocol.service'
+import { GrblProtocolService, isHomingCommand } from './grbl-protocol.service'
 import { GRBL_ERRORS } from '@shared/constants/grbl-errors'
 import { GRBL_ALARMS } from '@shared/constants/grbl-alarms'
 import type { MachineStatus } from '@shared/types/machine'
@@ -382,5 +382,25 @@ describe('GrblProtocolService : un statut ne modifie pas le suivant', () => {
     expect(third.spindle.speed).toBe(12000)
     expect(third.overrides.feed).toBe(100)
     expect(third.accessories.flood).toBe(false)
+  })
+})
+
+describe('isHomingCommand', () => {
+  it('reconnaît $H', () => {
+    expect(isHomingCommand('$H')).toBe(true)
+  })
+
+  it('ignore la casse et les espaces autour', () => {
+    expect(isHomingCommand('$h')).toBe(true)
+    expect(isHomingCommand('  $H  ')).toBe(true)
+  })
+
+  it('ne confond pas avec les autres commandes $', () => {
+    expect(isHomingCommand('$HX')).toBe(false)
+    expect(isHomingCommand('$$')).toBe(false)
+    expect(isHomingCommand('$X')).toBe(false)
+    expect(isHomingCommand('$H=1')).toBe(false)
+    expect(isHomingCommand('G28')).toBe(false)
+    expect(isHomingCommand('')).toBe(false)
   })
 })

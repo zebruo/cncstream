@@ -27,6 +27,11 @@ function parseCode(text: string): { code: number; label: string } {
   return Number.isNaN(code) ? { code: UNREADABLE_CODE, label: `"${raw}"` } : { code, label: String(code) }
 }
 
+/** Vrai pour la commande de homing GRBL (« $H », sans tenir compte de la casse ni des espaces). */
+export function isHomingCommand(command: string): boolean {
+  return command.trim().toUpperCase() === '$H'
+}
+
 export class GrblProtocolService extends EventEmitter {
   private lastWco: Position = { x: 0, y: 0, z: 0, a: 0 }
   private lastOverrides = { feed: 100, rapid: 100, spindle: 100 }

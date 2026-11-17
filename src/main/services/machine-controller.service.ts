@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import { SerialPortService } from './serial-port.service'
-import { GrblProtocolService } from './grbl-protocol.service'
+import { GrblProtocolService, isHomingCommand } from './grbl-protocol.service'
 import { CommandQueueService, CommandPriority } from './command-queue.service'
 import { StreamingService } from './streaming.service'
 import { GRBL_REALTIME_COMMANDS, STATUS_POLL_INTERVAL_MS, SPINDLE_STARTUP_DELAY_MS } from '@shared/constants/defaults'
@@ -89,6 +89,13 @@ export class MachineControllerService extends EventEmitter {
     this.commandQueue.on('send', (data: string) => {
       this.emit('console', `> ${data.trim()}`)
       this.serial.write(data)
+    })
+
+    // Un homing ($H) acquitté par « ok » : le repère machine est fiable (cf. alerte G53)
+    this.commandQueue.on('acknowledged', ({ command, response }: { command: string; response: { type: string } }) => {
+      if (response.type === 'ok' && isHomingCommand(command)) {
+        this.emit('homed')
+      }
     })
 
     // Re-read GRBL settings when a $xx=value command is acknowledged

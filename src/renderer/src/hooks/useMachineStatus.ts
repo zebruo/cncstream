@@ -10,6 +10,7 @@ export function useMachineStatus(): void {
   const updateFromStatus = useMachineStore((s) => s.updateFromStatus)
   const setAlarm = useMachineStore((s) => s.setAlarm)
   const clearAlarm = useMachineStore((s) => s.clearAlarm)
+  const setHomed = useMachineStore((s) => s.setHomed)
   const setConnectionState = useConnectionStore((s) => s.setConnectionState)
   const setFirmwareInfo = useConnectionStore((s) => s.setFirmwareInfo)
   const updateProgress = useJobStore((s) => s.updateProgress)
@@ -39,9 +40,13 @@ export function useMachineStatus(): void {
       })
     )
 
+    unsubs.push(window.cncstream.onMachineHomed(() => setHomed(true)))
+
     unsubs.push(
       window.cncstream.onMachineAlarm((alarm) => {
         setAlarm(alarm.code, alarm.message)
+        // Une alarme (fin de course, reset en mouvement…) peut fausser le repère machine
+        setHomed(false)
         addConsoleLine('alarm', `ALARM:${alarm.code} ${alarm.message}`)
       })
     )
@@ -59,6 +64,7 @@ export function useMachineStatus(): void {
     unsubs.push(
       window.cncstream.onConnectionStateChanged((state) => {
         setConnectionState(state as ConnectionStatus)
+        if (state !== 'connected') setHomed(false)
       })
     )
 
@@ -110,5 +116,5 @@ export function useMachineStatus(): void {
     return () => {
       unsubs.forEach((fn) => fn())
     }
-  }, [updateFromStatus, setAlarm, clearAlarm, setConnectionState, setFirmwareInfo, updateProgress, setJobState, addConsoleLine, setSpindleConfig])
+  }, [updateFromStatus, setAlarm, clearAlarm, setHomed, setConnectionState, setFirmwareInfo, updateProgress, setJobState, addConsoleLine, setSpindleConfig])
 }

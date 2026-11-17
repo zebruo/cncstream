@@ -4,6 +4,9 @@ import { Panel } from '../common/Panel'
 import { useMacroStore, type Macro } from '../../stores/macro.store'
 import { useJobStore } from '../../stores/job.store'
 import { useConnectionStore } from '../../stores/connection.store'
+import { useMachineStore } from '../../stores/machine.store'
+import { ConfirmModal } from '../common/ConfirmModal'
+import { usesMachineCoordinates } from '../../lib/gcode/machine-coordinates'
 import { MacroEditor } from './MacroEditor'
 import styles from './MacroPanel.module.css'
 
@@ -66,7 +69,10 @@ export function MacroPanel() {
   const runMacro = useJobStore((s) => s.runMacro)
   const jobState = useJobStore((s) => s.state)
   const isConnected = useConnectionStore((s) => s.state) === 'connected'
+  const homed = useMachineStore((s) => s.homed)
 
+  // Macro en attente de confirmation : elle utilise G53 alors qu'aucun homing n'a été fait
+  const [unhomedMacro, setUnhomedMacro] = useState<Macro | null>(null)
   const [editorOpen, setEditorOpen] = useState(false)
   const [editingMacro, setEditingMacro] = useState<Macro | null>(null)
   const [expanded, setExpanded] = useState(false)
@@ -79,6 +85,14 @@ export function MacroPanel() {
 
   const handleRun = (macro: Macro) => {
     if (!canRun) return
+    if (!homed && usesMachineCoordinates(macro.commands)) {
+      setUnhomedMacro(macro)
+      return
+    }
+    startMacro(macro)
+  }
+
+  const startMacro = (macro: Macro) => {
     const lines = macro.commands
       .split('\n')
       .map((l) => l.trim())
@@ -151,6 +165,20 @@ export function MacroPanel() {
           </>
         )}
       </Panel>
+
+      <ConfirmModal
+        isOpen={unhomedMacro !== null}
+        variant="warning"
+        title={t('macros.unhomedTitle')}
+        message={t('macros.unhomedMessage', { name: unhomedMacro?.name ?? '' })}
+        confirmLabel={t('macros.unhomedRun')}
+        cancelLabel={t('common.cancel')}
+        onConfirm={() => {
+          if (unhomedMacro) startMacro(unhomedMacro)
+          setUnhomedMacro(null)
+        }}
+        onCancel={() => setUnhomedMacro(null)}
+      />
 
       <MacroEditor
         macro={editingMacro}

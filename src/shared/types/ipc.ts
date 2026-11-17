@@ -47,6 +47,7 @@ export const IpcEvents = {
   MACHINE_STATUS_UPDATE: 'machine:status-update',
   MACHINE_RESPONSE: 'machine:response',
   MACHINE_ALARM: 'machine:alarm',
+  MACHINE_HOMED: 'machine:homed',
   MACHINE_CONSOLE_OUTPUT: 'machine:console-output',
   CONNECTION_STATE_CHANGED: 'connection:state-changed',
   JOB_PROGRESS_UPDATE: 'job:progress-update',
@@ -148,6 +149,7 @@ export interface CNCStreamAPI {
   onMachineStatus: (callback: (status: MachineStatus) => void) => () => void
   onMachineResponse: (callback: (response: { type: string; code?: number; message?: string }) => void) => () => void
   onMachineAlarm: (callback: (alarm: AlarmInfo) => void) => () => void
+  onMachineHomed: (callback: () => void) => () => void
   onConsoleOutput: (callback: (line: string) => void) => () => void
   onConnectionStateChanged: (callback: (state: string) => void) => () => void
   onJobProgress: (callback: (progress: JobProgress) => void) => () => void

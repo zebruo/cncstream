@@ -75,6 +75,7 @@ app.whenReady().then(() => {
   machineController.on('startup', (info) => {
     eventLog.log('machine', `Démarrage GRBL ${info.version}${info.isGrblHAL ? ' (grblHAL)' : ''}`)
   })
+  machineController.on('homed', () => eventLog.log('machine', `Homing terminé | ${lastPositions || 'positions inconnues'}`))
   machineController.on('job:state', (state) => {
     eventLog.log('job', `État : ${state} | ${lastPositions || 'positions inconnues'}`)
   })
@@ -137,6 +138,10 @@ app.whenReady().then(() => {
 
   machineController.on('job:error', (error) => {
     mainWindow?.webContents.send(IpcEvents.JOB_ERROR, error)
+  })
+
+  machineController.on('homed', () => {
+    mainWindow?.webContents.send(IpcEvents.MACHINE_HOMED)
   })
 
   machineController.on('job:paused-on-error', (info) => {

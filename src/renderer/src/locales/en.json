@@ -22,6 +22,9 @@
     "errorGeneric": "Connection error: {{message}}"
   },
   "macros": {
+    "unhomedTitle": "Homing not done",
+    "unhomedMessage": "The macro \"{{name}}\" uses machine coordinates (G53), but no homing ($H) has been done since connecting. If the machine position is not reliable, the machine will go to the wrong place, up to the end stop. Home the machine first, or run anyway if you are sure of its position.",
+    "unhomedRun": "Run anyway",
     "editTitle": "Edit macro",
     "newTitle": "New macro",
     "newMacro": "+ New macro",

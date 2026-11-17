@@ -13,6 +13,8 @@ interface MachineStore {
   buffer: { planner: number; rx: number }
   alarmCode: number | null
   alarmMessage: string | null
+  /** Un homing ($H) a abouti depuis la connexion et aucune alarme n'est survenue depuis */
+  homed: boolean
   pins: string
   lineNumber: number | null
   spindleMaxRpm: number
@@ -21,6 +23,7 @@ interface MachineStore {
   updateFromStatus: (status: MachineStatus) => void
   setAlarm: (code: number, message: string) => void
   clearAlarm: () => void
+  setHomed: (homed: boolean) => void
   setSpindleConfig: (maxRpm: number, minRpm: number) => void
 }
 
@@ -38,6 +41,7 @@ export const useMachineStore = create<MachineStore>((set) => ({
   buffer: { planner: 0, rx: 0 },
   alarmCode: null,
   alarmMessage: null,
+  homed: false,
   pins: '',
   lineNumber: null,
 
@@ -61,5 +65,6 @@ export const useMachineStore = create<MachineStore>((set) => ({
 
   setAlarm: (code, message) => set({ alarmCode: code, alarmMessage: message }),
   clearAlarm: () => set({ alarmCode: null, alarmMessage: null }),
+  setHomed: (homed) => set({ homed }),
   setSpindleConfig: (maxRpm, minRpm) => set({ spindleMaxRpm: maxRpm, spindleMinRpm: minRpm })
 }))
