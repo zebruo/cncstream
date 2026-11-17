@@ -8,8 +8,9 @@
  * Historique :
  *  - 0 : avant l'existence d'un numéro de version
  *  - 1 : carré 200×200 et rainures (L, diagonale) ; « Retour origine XY » supprimée
+ *  - 2 : avance XY 800 → 750 (vitesse maximale de la machine, $110/$111)
  */
-export const MACROS_VERSION = 1
+export const MACROS_VERSION = 2
 
 /**
  * Migre les macros enregistrées vers la version courante : les macros intégrées
