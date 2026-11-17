@@ -9,8 +9,10 @@
  *  - 0 : avant l'existence d'un numéro de version
  *  - 1 : carré 200×200 et rainures (L, diagonale) ; « Retour origine XY » supprimée
  *  - 2 : avance XY 800 → 750 (vitesse maximale de la machine, $110/$111)
+ *  - 3 : « Rainure diagonale 200×200 » remplacée par « Test largeur diagonale » ;
+ *        ajout de « Test largeur X et Y »
  */
-export const MACROS_VERSION = 2
+export const MACROS_VERSION = 3
 
 /**
  * Migre les macros enregistrées vers la version courante : les macros intégrées
