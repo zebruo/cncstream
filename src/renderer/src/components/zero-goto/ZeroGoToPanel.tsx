@@ -11,6 +11,9 @@ import { MM_PER_INCH } from '@shared/constants/defaults'
 import { catchCommandError } from '../../lib/command-errors'
 import { goToPositionCommands, goToXYZeroCommands } from '../../lib/go-to-commands'
 
+/** Distance de recherche du palpage (mm) : au-delà, la sonde s'arrête sans contact */
+const PROBE_MAX_DISTANCE = 20
+
 type ProbePhase = 'idle' | 'running' | 'confirm' | 'failed'
 
 export function ZeroGoToPanel() {
@@ -81,7 +84,7 @@ export function ZeroGoToPanel() {
   const handleProbeZ = () => {
     if (!isConnected || probePhase !== 'idle') return
     setProbePhase('running')
-    window.cncstream.probeZ({ feedRate: 50, maxDistance: 20, retractDistance: safeHeight }).catch(() => setProbePhase('failed'))
+    window.cncstream.probeZ({ feedRate: 50, maxDistance: PROBE_MAX_DISTANCE, retractDistance: safeHeight }).catch(() => setProbePhase('failed'))
   }
 
   const handleApplyProbe = () => {
@@ -220,7 +223,7 @@ export function ZeroGoToPanel() {
       isOpen={probePhase === 'failed'}
       variant="error"
       title={t('zeroGoto.probeFailed')}
-      message={t('zeroGoto.probeFailedMsg')}
+      message={t('zeroGoto.probeFailedMsg', { distance: PROBE_MAX_DISTANCE })}
       confirmLabel={t('zeroGoto.probeOk')}
       onConfirm={handleDismissProbe}
     />

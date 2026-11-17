@@ -82,7 +82,7 @@
     "probeSuccess": "Contact détecté",
     "probeSuccessMsg": "Appliquer Z0 avec offset sonde {{thickness}} {{unit}} ?",
     "probeFailed": "Aucun contact détecté",
-    "probeFailedMsg": "La sonde n'a pas détecté de surface dans la plage de recherche.",
+    "probeFailedMsg": "Aucune surface sur {{distance}} mm : rapprochez la fraise.",
     "probeApply": "Appliquer",
     "probeCancel": "Annuler",
     "probeOk": "OK",
@@ -98,7 +98,7 @@
     "homeHint": "Homing : à refaire après chaque mise sous tension, avant une macro en coordonnées machine.",
     "safeHeightHint": "Dégagement en Z avant un déplacement XY",
     "probeThicknessHint": "Mesurée au pied à coulisse",
-    "probeCircuitNoContact": "Circuit sonde–fraise testé, pas de contact",
+    "probeCircuitNoContact": "Circuit sonde–fraise testé : lancer le palpage",
     "probeZHint": "Disponible une fois le circuit testé.",
     "chipTested": "Circuit testé",
     "chipNotTested": "Circuit non testé"

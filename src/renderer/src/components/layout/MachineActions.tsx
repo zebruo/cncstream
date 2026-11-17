@@ -32,8 +32,10 @@ export function MachineActions() {
           aria-label={t('zeroGoto.homeTitle')}
         >
           <img src={homeIcon} alt="" className={styles.icon} />
-          <span className={styles.label}>{t('zeroGoto.home')}</span>
-          <span className={styles.code}>$H</span>
+          <span className={styles.text}>
+            <span className={styles.label}>{t('zeroGoto.home')}</span>
+            <span className={styles.code}>$H</span>
+          </span>
         </button>
       </Tooltip>
       {machineState === 'Alarm' && (
@@ -44,8 +46,10 @@ export function MachineActions() {
             aria-label={t('zeroGoto.unlockTitle')}
           >
             <img src={unlockIcon} alt="" className={styles.icon} />
-            <span className={styles.label}>{t('zeroGoto.unlock')}</span>
-            <span className={styles.code}>$X</span>
+            <span className={styles.text}>
+              <span className={styles.label}>{t('zeroGoto.unlock')}</span>
+              <span className={styles.code}>$X</span>
+            </span>
           </button>
         </Tooltip>
       )}

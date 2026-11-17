@@ -43,6 +43,13 @@
   display: block;
 }
 
+/* Libellé et code sur la même ligne de base : le « $H » n'est plus au milieu de la hauteur */
+.text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
 .code {
   font-size: var(--font-size-xs);
   font-weight: 500;
@@ -52,8 +59,7 @@
 
 /* Fenêtre étroite : icône seule, l'infobulle garde le nom */
 @media (max-width: 1000px) {
-  .label,
-  .code {
+  .text {
     display: none;
   }
 

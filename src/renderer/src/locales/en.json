@@ -82,7 +82,7 @@
     "probeSuccess": "Contact detected",
     "probeSuccessMsg": "Apply Z0 with {{thickness}} {{unit}} probe offset?",
     "probeFailed": "No contact detected",
-    "probeFailedMsg": "The probe did not detect a surface within the search range.",
+    "probeFailedMsg": "No surface within {{distance}} mm: bring the cutter closer.",
     "probeApply": "Apply",
     "probeCancel": "Cancel",
     "probeOk": "OK",
@@ -98,7 +98,7 @@
     "homeHint": "Homing: redo it after every power-up, before any machine-coordinate macro.",
     "safeHeightHint": "Z clearance before an XY move",
     "probeThicknessHint": "Measured with calipers",
-    "probeCircuitNoContact": "Probe–cutter circuit tested, no contact",
+    "probeCircuitNoContact": "Probe–cutter circuit tested: start the probing",
     "probeZHint": "Available once the circuit is tested.",
     "chipTested": "Circuit tested",
     "chipNotTested": "Circuit not tested"
