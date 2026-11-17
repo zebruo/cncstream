@@ -22,6 +22,29 @@ const axisStyle = (color: string): CSSProperties => ({
   fontWeight: 600
 })
 
+/*
+ * Les étiquettes sont du HTML posé sur un point 3D : leur taille reste fixe à l'écran quand on
+ * zoome, mais un décalage en unités du monde se réduit avec le zoom et les étiquettes finissent
+ * par se chevaucher. Les décalages sont donc en pixels (transform CSS), comme leur taille.
+ * Le point 3D est le bord de la grille ; « center » centre l'étiquette sur ce point, le
+ * transform la pousse ensuite hors de la grille.
+ */
+const GAP = 10
+
+/** Graduation de l'axe X : sous le bord avant de la grille. */
+const xTickStyle: CSSProperties = {
+  ...labelStyle,
+  display: 'inline-block',
+  transform: `translateY(${GAP + 4}px)`
+}
+
+/** Graduation de l'axe Y : à gauche du bord, alignée à droite contre la grille. */
+const yTickStyle: CSSProperties = {
+  ...labelStyle,
+  display: 'inline-block',
+  transform: `translateX(calc(-50% - ${GAP}px))`
+}
+
 export function WorkAreaGrid({ bbox }: Props) {
   const units = useUIStore((s) => s.units)
   const { gridSize, yOffset } = useMemo(() => {
@@ -45,8 +68,6 @@ export function WorkAreaGrid({ bbox }: Props) {
     return values
   }, [gridSize])
 
-  const offset = gridSize * 0.035
-
   return (
     <group>
       <gridHelper
@@ -56,24 +77,40 @@ export function WorkAreaGrid({ bbox }: Props) {
 
       {/* X axis labels (along front edge, CNC Y = 0) */}
       {labelValues.map((v) => (
-        <Html key={`x-${v}`} position={[v, yOffset, offset]} center zIndexRange={[1, 0]}>
-          <span style={labelStyle}>{v}</span>
+        <Html key={`x-${v}`} position={[v, yOffset, 0]} center zIndexRange={[1, 0]}>
+          <span style={xTickStyle}>{v}</span>
         </Html>
       ))}
 
       {/* Y axis labels (along left edge, CNC X = 0) */}
       {labelValues.map((v) => (
-        <Html key={`y-${v}`} position={[-offset, yOffset, -v]} center zIndexRange={[1, 0]}>
-          <span style={labelStyle}>{v}</span>
+        <Html key={`y-${v}`} position={[0, yOffset, -v]} center zIndexRange={[1, 0]}>
+          <span style={yTickStyle}>{v}</span>
         </Html>
       ))}
 
-      {/* Axis name + unit at end of each axis */}
-      <Html position={[gridSize + offset * 2, yOffset, offset]} center zIndexRange={[1, 0]}>
-        <span style={axisStyle('#fa5252')}>{`X (${units})`}</span>
+      {/* Axis name + unit : à droite de la dernière graduation X, au-dessus de la dernière graduation Y */}
+      <Html position={[gridSize, yOffset, 0]} center zIndexRange={[1, 0]}>
+        <span
+          style={{
+            ...axisStyle('#fa5252'),
+            display: 'inline-block',
+            transform: `translate(calc(50% + ${GAP * 2 + 6}px), ${GAP + 4}px)`
+          }}
+        >
+          {`X (${units})`}
+        </span>
       </Html>
-      <Html position={[-offset * 2, yOffset, -(gridSize + offset * 2)]} center zIndexRange={[1, 0]}>
-        <span style={axisStyle('#40c057')}>{`Y (${units})`}</span>
+      <Html position={[0, yOffset, -gridSize]} center zIndexRange={[1, 0]}>
+        <span
+          style={{
+            ...axisStyle('#40c057'),
+            display: 'inline-block',
+            transform: `translate(calc(-50% - ${GAP}px), -${GAP * 2 + 4}px)`
+          }}
+        >
+          {`Y (${units})`}
+        </span>
       </Html>
     </group>
   )
