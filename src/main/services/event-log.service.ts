@@ -1,4 +1,4 @@
-import { appendFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync } from 'fs'
+import { appendFileSync, existsSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from 'fs'
 import { join } from 'path'
 
 /** Nombre de jours de journaux conservés (le plus ancien est supprimé au démarrage). */
@@ -70,6 +70,21 @@ export class EventLogService {
     }
   }
 
+  /**
+   * Vide le journal du jour (bouton « Effacer » de la console) pour repartir d'un
+   * fichier lisible avant un essai. Les journaux des jours précédents sont conservés.
+   */
+  clear(): void {
+    const date = this.now()
+    try {
+      writeFileSync(join(this.dir, `cncstream-${dayStamp(date)}.log`), '')
+      this.truncatedDay = null
+    } catch {
+      // Voir le commentaire de la classe
+    }
+    this.log('journal', 'Journal effacé depuis la console')
+  }
+
   /** Supprime les journaux plus anciens que LOG_RETENTION_DAYS jours. */
   private pruneOldFiles(): void {
     try {
@@ -89,4 +104,20 @@ export class EventLogService {
       // Nettoyage impossible : sans conséquence
     }
   }
+}
+
+interface Xyz {
+  x: number
+  y: number
+  z: number
+}
+
+/**
+ * Positions sur une ligne : `MPos 115.000 155.000 -1.000 | WPos 0.000 0.000 0.000`.
+ * MPos = repère machine (celui du homing et de G53), WPos = repère pièce (G54).
+ * Comparer les deux au fil du journal révèle un repère faussé.
+ */
+export function formatPositions(status: { mpos: Xyz; wpos: Xyz }): string {
+  const fmt = (p: Xyz): string => `${p.x.toFixed(3)} ${p.y.toFixed(3)} ${p.z.toFixed(3)}`
+  return `MPos ${fmt(status.mpos)} | WPos ${fmt(status.wpos)}`
 }

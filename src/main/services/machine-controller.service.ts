@@ -158,14 +158,17 @@ export class MachineControllerService extends EventEmitter {
 
   // --- Realtime Commands (bypass queue) ---
   feedHold(): void {
+    this.emit('log', 'commande', 'Feed hold (!)')
     this.serial.writeRealtime(GRBL_REALTIME_COMMANDS.FEED_HOLD)
   }
 
   cycleStart(): void {
+    this.emit('log', 'commande', 'Cycle start (~)')
     this.serial.writeRealtime(GRBL_REALTIME_COMMANDS.CYCLE_START)
   }
 
   softReset(): void {
+    this.emit('log', 'commande', 'Reset (Ctrl-X)')
     this.serial.writeRealtime(GRBL_REALTIME_COMMANDS.SOFT_RESET)
     this.commandQueue.flush()
     this.protocol.reset()
@@ -309,6 +312,7 @@ export class MachineControllerService extends EventEmitter {
   }
 
   stopJob(): void {
+    this.emit('log', 'job', 'Arrêt demandé')
     this.pendingSpindleStop = false
     this.spindleStoppedByHold = false
     this.streaming.stop()

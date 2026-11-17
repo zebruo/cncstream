@@ -40,7 +40,7 @@
     "notConnected": "Not connected",
     "send": "Send",
     "clear": "Clear",
-    "clearTitle": "Clear console",
+    "clearTitle": "Clear the console and today's log",
     "logs": "Log",
     "logsTitle": "Open the log folder (one file per day, 7 days kept)"
   },

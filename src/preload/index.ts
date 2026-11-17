@@ -45,6 +45,7 @@ const api: CNCStreamAPI = {
 
   // Logs
   openLogsFolder: () => ipcRenderer.invoke(IpcChannels.LOGS_OPEN_FOLDER),
+  clearLogs: () => ipcRenderer.invoke(IpcChannels.LOGS_CLEAR),
 
   // Job
   startJob: (lines, options) => ipcRenderer.invoke(IpcChannels.JOB_START, lines, options),

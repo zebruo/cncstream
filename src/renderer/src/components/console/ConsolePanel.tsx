@@ -37,6 +37,12 @@ export function ConsolePanel() {
     setInput('')
   }, [input, isConnected, addLine, addCommand])
 
+  // Efface la console et le journal du jour : repartir d'un journal lisible avant un essai
+  const handleClear = () => {
+    clearConsole()
+    catchCommandError(window.cncstream.clearLogs())
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()
@@ -90,7 +96,7 @@ export function ConsolePanel() {
         >
           {t('console.send')}
         </button>
-        <button className={styles.clearBtn} onClick={clearConsole} title={t('console.clearTitle')}>
+        <button className={styles.clearBtn} onClick={handleClear} title={t('console.clearTitle')}>
           {t('console.clear')}
         </button>
         <button

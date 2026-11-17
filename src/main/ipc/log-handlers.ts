@@ -8,4 +8,8 @@ export function registerLogHandlers(eventLog: EventLogService): void {
     const error = await shell.openPath(eventLog.directory)
     if (error) throw new Error(error)
   })
+
+  ipcMain.handle(IpcChannels.LOGS_CLEAR, async () => {
+    eventLog.clear()
+  })
 }

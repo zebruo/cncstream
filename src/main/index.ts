@@ -5,7 +5,7 @@ import { registerAllIpcHandlers } from './ipc/register'
 import { MachineControllerService } from './services/machine-controller.service'
 import { SettingsStoreService } from './services/settings-store.service'
 import { SleepManagerService } from './services/sleep-manager.service'
-import { EventLogService } from './services/event-log.service'
+import { EventLogService, formatPositions } from './services/event-log.service'
 import { IpcEvents } from '@shared/types/ipc'
 
 let mainWindow: BrowserWindow | null = null
@@ -36,16 +36,34 @@ app.whenReady().then(() => {
 
   // Journal des événements (fichier consultable après coup)
   // Les rapports d'état (5 Hz) ne sont pas écrits : seul un changement d'état l'est.
+  const POSITION_LOG_INTERVAL_MS = 5000
   let lastMachineState = ''
+  let lastPositions = ''
+  let lastPositionLogAt = 0
+  machineController.on('log', (category: string, message: string) => eventLog.log(category, message))
   machineController.on('connected', ({ path, baudRate }) => {
     eventLog.log('connexion', `Connecté à ${path} (${baudRate} baud)`)
   })
-  machineController.on('disconnected', () => eventLog.log('connexion', 'Déconnecté'))
+  machineController.on('disconnected', () => {
+    eventLog.log('connexion', `Déconnecté (dernier état connu : ${lastMachineState || '?'}, ${lastPositions || 'positions inconnues'})`)
+    // Nouvelle connexion = nouvel état de départ
+    lastMachineState = ''
+    lastPositions = ''
+  })
   machineController.on('console', (line: string) => eventLog.log('machine', line))
   machineController.on('status', (status) => {
+    lastPositions = formatPositions(status)
     if (status.state !== lastMachineState) {
-      eventLog.log('état', `${lastMachineState || '?'} -> ${status.state}`)
+      eventLog.log('état', `${lastMachineState || '?'} -> ${status.state} | ${lastPositions}`)
       lastMachineState = status.state
+      lastPositionLogAt = Date.now()
+    } else if (
+      (status.state === 'Run' || status.state === 'Home') &&
+      Date.now() - lastPositionLogAt >= POSITION_LOG_INTERVAL_MS
+    ) {
+      // Suivi d'un long déplacement : une position toutes les 5 s
+      eventLog.log('position', lastPositions)
+      lastPositionLogAt = Date.now()
     }
   })
   machineController.on('response', (response) => {
@@ -57,8 +75,12 @@ app.whenReady().then(() => {
   machineController.on('startup', (info) => {
     eventLog.log('machine', `Démarrage GRBL ${info.version}${info.isGrblHAL ? ' (grblHAL)' : ''}`)
   })
-  machineController.on('job:state', (state) => eventLog.log('job', `État : ${state}`))
-  machineController.on('job:completed', () => eventLog.log('job', 'Terminé'))
+  machineController.on('job:state', (state) => {
+    eventLog.log('job', `État : ${state} | ${lastPositions || 'positions inconnues'}`)
+  })
+  machineController.on('job:completed', () => {
+    eventLog.log('job', `Terminé | ${lastPositions || 'positions inconnues'}`)
+  })
   machineController.on('job:error', (error) => {
     // Un arrêt vide la file : une erreur « Queue flushed » par ligne en attente serait du bruit
     if (!error.error.includes('Queue flushed')) {

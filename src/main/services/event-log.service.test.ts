@@ -2,7 +2,12 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { EventLogService, LOG_MAX_FILE_BYTES, LOG_RETENTION_DAYS } from './event-log.service'
+import {
+  EventLogService,
+  formatPositions,
+  LOG_MAX_FILE_BYTES,
+  LOG_RETENTION_DAYS
+} from './event-log.service'
 
 // 15 novembre 2026, 14:03:09.007 (heure locale)
 const NOON = new Date(2026, 10, 15, 14, 3, 9, 7)
@@ -136,6 +141,63 @@ describe('EventLogService', () => {
       writeFileSync(join(dir, 'cncstream-2020-01-01.log'), 'x')
       new EventLogService(dir, () => NOON)
       expect(names()).toEqual(['cncstream-2020-01-01.log.bak', 'notes.txt'])
+    })
+  })
+
+  describe('clear', () => {
+    it("vide le journal du jour et n'y laisse qu'une ligne de repère", () => {
+      const log = new EventLogService(dir, () => NOON)
+      log.log('machine', '> G0 X10')
+      log.log('machine', '< ok')
+      log.clear()
+      expect(read('cncstream-2026-11-15.log')).toBe('14:03:09.007 [journal] Journal effacé depuis la console\n')
+    })
+
+    it('laisse les journaux des autres jours', () => {
+      writeFileSync(join(dir, 'cncstream-2026-11-14.log'), 'hier\n')
+      const log = new EventLogService(dir, () => NOON)
+      log.log('a', 'x')
+      log.clear()
+      expect(read('cncstream-2026-11-14.log')).toBe('hier\n')
+    })
+
+    it("réautorise l'écriture après une limite de taille atteinte", () => {
+      writeFileSync(join(dir, 'cncstream-2026-11-15.log'), 'x'.repeat(LOG_MAX_FILE_BYTES))
+      const log = new EventLogService(dir, () => NOON)
+      log.log('a', 'refusée')
+      log.clear()
+      log.log('a', 'acceptée')
+      expect(read('cncstream-2026-11-15.log')).toContain('acceptée')
+    })
+
+    it("crée le fichier s'il n'existe pas encore", () => {
+      const log = new EventLogService(dir, () => NOON)
+      log.clear()
+      expect(readdirSync(dir)).toEqual(['cncstream-2026-11-15.log'])
+    })
+
+    it('ne lève rien si le dossier est inutilisable', () => {
+      const blocker = join(dir, 'fichier')
+      writeFileSync(blocker, 'x')
+      const log = new EventLogService(join(blocker, 'logs'), () => NOON)
+      expect(() => log.clear()).not.toThrow()
+    })
+  })
+
+  describe('formatPositions', () => {
+    it('affiche machine puis pièce, avec 3 décimales', () => {
+      expect(
+        formatPositions({
+          mpos: { x: 115, y: 155.5, z: -1 },
+          wpos: { x: 0, y: 0.25, z: 0 }
+        })
+      ).toBe('MPos 115.000 155.500 -1.000 | WPos 0.000 0.250 0.000')
+    })
+
+    it('arrondit à 3 décimales', () => {
+      expect(
+        formatPositions({ mpos: { x: 1.23456, y: 0, z: 0 }, wpos: { x: 0, y: 0, z: -0.0004 } })
+      ).toBe('MPos 1.235 0.000 0.000 | WPos 0.000 0.000 -0.000')
     })
   })
 
