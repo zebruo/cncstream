@@ -4,6 +4,11 @@ import { useUIStore } from '../../stores/ui.store'
 
 interface Props {
   bbox: { min: [number, number, number]; max: [number, number, number] } | null
+  /**
+   * Vue de côté : la grille est vue par la tranche, les graduations se posent sur Z = 0.
+   * 'xz' montre l'axe X, 'yz' l'axe Y ; l'autre axe part vers le fond de l'écran.
+   */
+  sideView?: 'xz' | 'yz' | null
 }
 
 const labelStyle: CSSProperties = {
@@ -36,7 +41,7 @@ const xTickStyle: CSSProperties = {
   ...labelStyle,
   color: '#fa5252',
   display: 'inline-block',
-  transform: `translateY(${GAP + 4}px)`
+  transform: `translateY(0px)`
 }
 
 /** Graduation de l'axe Y : à gauche du bord, alignée à droite contre la grille. */
@@ -47,7 +52,22 @@ const yTickStyle: CSSProperties = {
   transform: `translateX(calc(-50% - ${GAP}px))`
 }
 
-export function WorkAreaGrid({ bbox }: Props) {
+/** Graduation de l'axe Y en vue de côté (YZ) : centrée sur le point, comme celles de X. */
+const yTickSideStyle: CSSProperties = {
+  ...labelStyle,
+  color: '#40c057',
+  display: 'inline-block'
+}
+
+/** Origine commune aux deux axes : en blanc, en diagonale hors du coin de la grille. */
+const originStyle: CSSProperties = {
+  ...labelStyle,
+  color: '#ffffff',
+  display: 'inline-block',
+  transform: `translate(-${GAP}px, ${GAP}px)`
+}
+
+export function WorkAreaGrid({ bbox, sideView = null }: Props) {
   const units = useUIStore((s) => s.units)
   const { gridSize, yOffset } = useMemo(() => {
     if (!bbox) return { gridSize: 200, yOffset: 0 }
@@ -70,6 +90,11 @@ export function WorkAreaGrid({ bbox }: Props) {
     return values
   }, [gridSize])
 
+  // Hauteur des graduations : le plan de la grille, ou le zéro pièce en vue de côté
+  const tickY = sideView ? 0 : yOffset
+  const showX = sideView !== 'yz'
+  const showY = sideView !== 'xz'
+
   return (
     <group>
       <gridHelper
@@ -78,42 +103,62 @@ export function WorkAreaGrid({ bbox }: Props) {
       />
 
       {/* X axis labels (along front edge, CNC Y = 0) */}
-      {labelValues.map((v) => (
-        <Html key={`x-${v}`} position={[v, yOffset, 0]} center zIndexRange={[1, 0]}>
-          <span style={xTickStyle}>{v}</span>
-        </Html>
-      ))}
+      {showX &&
+        labelValues
+          .filter((v) => sideView || v > 0)
+          .map((v) => (
+            <Html key={`x-${v}`} position={[v, tickY, 0]} center zIndexRange={[1, 0]}>
+              <span style={xTickStyle}>{v}</span>
+            </Html>
+          ))}
 
-      {/* Y axis labels (along left edge, CNC X = 0) */}
-      {labelValues.map((v) => (
-        <Html key={`y-${v}`} position={[0, yOffset, -v]} center zIndexRange={[1, 0]}>
-          <span style={yTickStyle}>{v}</span>
+      {/* Origine : un seul « 0 » blanc, en vue de côté c'est la graduation de l'axe visible qui le porte */}
+      {!sideView && (
+        <Html position={[0, yOffset, 0]} center zIndexRange={[1, 0]}>
+          <span style={originStyle}>0</span>
         </Html>
-      ))}
+      )}
 
-      {/* Axis name + unit : à droite de la dernière graduation X, au-dessus de la dernière graduation Y */}
-      <Html position={[gridSize, yOffset, 0]} center zIndexRange={[1, 0]}>
-        <span
-          style={{
-            ...axisStyle('#fa5252'),
-            display: 'inline-block',
-            transform: `translate(calc(50% + ${GAP * 2 + 6}px), ${GAP + 4}px)`
-          }}
-        >
-          {`X (${units})`}
-        </span>
-      </Html>
-      <Html position={[0, yOffset, -gridSize]} center zIndexRange={[1, 0]}>
-        <span
-          style={{
-            ...axisStyle('#40c057'),
-            display: 'inline-block',
-            transform: `translate(calc(-50% - ${GAP}px), -${GAP * 2 + 4}px)`
-          }}
-        >
-          {`Y (${units})`}
-        </span>
-      </Html>
+      {/* Y axis labels (along left edge, CNC X = 0). En vue XZ l'axe Y part vers le fond de
+          l'écran : ses graduations s'empileraient, on ne les affiche pas. */}
+      {showY &&
+        labelValues
+          .filter((v) => sideView || v > 0)
+          .map((v) => (
+            <Html key={`y-${v}`} position={[0, tickY, -v]} center zIndexRange={[1, 0]}>
+              <span style={sideView ? yTickSideStyle : yTickStyle}>{v}</span>
+            </Html>
+          ))}
+
+      {/* Axis name + unit : à droite de la dernière graduation de l'axe visible */}
+      {showX && (
+        <Html position={[gridSize, tickY, 0]} center zIndexRange={[1, 0]}>
+          <span
+            style={{
+              ...axisStyle('#fa5252'),
+              display: 'inline-block',
+              transform: `translate(calc(50% + ${GAP * 2 + 6}px), 0px)`
+            }}
+          >
+            {`X (${units})`}
+          </span>
+        </Html>
+      )}
+      {showY && (
+        <Html position={[0, tickY, -gridSize]} center zIndexRange={[1, 0]}>
+          <span
+            style={{
+              ...axisStyle('#40c057'),
+              display: 'inline-block',
+              transform: sideView
+                ? `translate(calc(50% + ${GAP * 2 + 6}px), 0px)`
+                : `translate(calc(-50% - ${GAP}px), -${GAP * 2 + 4}px)`
+            }}
+          >
+            {`Y (${units})`}
+          </span>
+        </Html>
+      )}
     </group>
   )
 }

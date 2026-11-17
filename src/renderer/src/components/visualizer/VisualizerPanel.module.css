@@ -45,3 +45,11 @@
   background: var(--color-accent);
   color: #fff;
 }
+
+/* Sans fichier chargé, « Ajuster » n'a rien à cadrer */
+.viewBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}

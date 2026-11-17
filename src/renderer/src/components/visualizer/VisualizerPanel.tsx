@@ -15,14 +15,22 @@ const INITIAL_CAM_POS: [number, number, number] = [100, 200, 200]
 const INITIAL_TARGET: [number, number, number] = [100, 0, -100]
 const TOP_VIEW_POS: [number, number, number] = [100, 300, -100]
 const SIDE_VIEW_POS: [number, number, number] = [100, 0, 200]
+// Vue de la droite : la caméra regarde vers −X, l'axe Y de la machine va vers la droite de l'écran
+const RIGHT_VIEW_POS: [number, number, number] = [300, 0, -100]
 
-type ViewMode = 'perspective' | 'top' | 'side'
+type ViewMode = 'perspective' | 'top' | 'side' | 'right'
 
 const VIEW_CONFIG: Record<ViewMode, { pos: [number, number, number]; up: [number, number, number] }> = {
   perspective: { pos: INITIAL_CAM_POS, up: [0, 1, 0] },
   top:         { pos: TOP_VIEW_POS,    up: [0, 0, -1] },
   side:        { pos: SIDE_VIEW_POS,   up: [0, 1, 0] },
+  right:       { pos: RIGHT_VIEW_POS,  up: [0, 1, 0] },
 }
+
+/** Marge autour du tracé quand on ajuste la vue au fichier */
+const FIT_MARGIN = 1.25
+/** Étendue minimale cadrée (mm) : un fichier minuscule ne doit pas donner un zoom absurde */
+const FIT_MIN_EXTENT = 10
 
 /* ── Custom CNC axes gizmo ────────────────────────────────────── */
 
@@ -97,12 +105,17 @@ interface ResetCameraFn {
   (mode: ViewMode): void
 }
 
-interface SceneProps {
-  viewMode: ViewMode
-  resetRef: React.RefObject<ResetCameraFn | null>
+interface SceneActions {
+  reset: ResetCameraFn
+  fit: (mode: ViewMode) => void
 }
 
-function Scene({ viewMode, resetRef }: SceneProps) {
+interface SceneProps {
+  viewMode: ViewMode
+  actionsRef: React.RefObject<SceneActions | null>
+}
+
+function Scene({ viewMode, actionsRef }: SceneProps) {
   const segments = useVisualizationStore((s) => s.toolpathSegments)
   const bbox = useVisualizationStore((s) => s.boundingBox)
   const executedLineIndex = useVisualizationStore((s) => s.executedLineIndex)
@@ -114,7 +127,8 @@ function Scene({ viewMode, resetRef }: SceneProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controlsRef = useRef<any>(null)
 
-  const { camera } = useThree()
+  const { camera, size } = useThree()
+  const getState = useThree((s) => s.get)
 
   const resetCamera = useCallback(
     (mode: ViewMode) => {
@@ -130,9 +144,48 @@ function Scene({ viewMode, resetRef }: SceneProps) {
     [camera]
   )
 
+  // Cadre le tracé du fichier dans la vue courante, en gardant la direction de regard
+  const fitToFile = useCallback(
+    (mode: ViewMode) => {
+      if (!bbox) return
+      const [minX, minY, minZ] = bbox.min
+      const [maxX, maxY, maxZ] = bbox.max
+      // Repère de la scène : X = X machine, haut = Z machine, profondeur = −Y machine
+      const center = new THREE.Vector3((minX + maxX) / 2, (minZ + maxZ) / 2, -(minY + maxY) / 2)
+      const ext = {
+        x: Math.max(maxX - minX, FIT_MIN_EXTENT),
+        y: Math.max(maxY - minY, FIT_MIN_EXTENT),
+        z: Math.max(maxZ - minZ, FIT_MIN_EXTENT)
+      }
+      const controls = controlsRef.current
+      const previousTarget: THREE.Vector3 = controls ? controls.target.clone() : new THREE.Vector3(...INITIAL_TARGET)
+      const direction = camera.position.clone().sub(previousTarget).normalize()
+
+      if (mode === 'perspective') {
+        const radius = Math.hypot(ext.x, ext.y, ext.z) / 2
+        const persp = camera as THREE.PerspectiveCamera
+        const distance = (radius * FIT_MARGIN) / Math.sin(THREE.MathUtils.degToRad(persp.fov / 2))
+        camera.position.copy(center).addScaledVector(direction, distance)
+      } else {
+        const [width, height] =
+          mode === 'top' ? [ext.x, ext.y] : mode === 'side' ? [ext.x, ext.z] : [ext.y, ext.z]
+        // Caméra relue au moment de l'appel : la modifier directement est réservé à r3f
+        const ortho = getState().camera as THREE.OrthographicCamera
+        ortho.zoom = Math.min(size.width / (width * FIT_MARGIN), size.height / (height * FIT_MARGIN))
+        camera.position.copy(center).addScaledVector(direction, 300)
+      }
+      camera.updateProjectionMatrix()
+      if (controls) {
+        controls.target.copy(center)
+        controls.update()
+      }
+    },
+    [bbox, camera, size, getState]
+  )
+
   useEffect(() => {
-    resetRef.current = resetCamera
-  }, [resetRef, resetCamera])
+    actionsRef.current = { reset: resetCamera, fit: fitToFile }
+  }, [actionsRef, resetCamera, fitToFile])
 
   useEffect(() => {
     resetCamera(viewMode)
@@ -162,7 +215,7 @@ function Scene({ viewMode, resetRef }: SceneProps) {
       <ambientLight intensity={0.6} />
       <directionalLight position={[50, 100, 50]} intensity={0.4} />
 
-      <WorkAreaGrid bbox={bbox} />
+      <WorkAreaGrid bbox={bbox} sideView={viewMode === 'side' ? 'xz' : viewMode === 'right' ? 'yz' : null} />
 
       {/* Axes helper */}
       <group>
@@ -201,11 +254,12 @@ function Scene({ viewMode, resetRef }: SceneProps) {
 
 export function VisualizerPanel() {
   const [viewMode, setViewMode] = useState<ViewMode>('perspective')
-  const resetRef = useRef<ResetCameraFn | null>(null)
+  const actionsRef = useRef<SceneActions | null>(null)
+  const hasFile = useVisualizationStore((s) => s.boundingBox !== null)
 
   const handleView = (mode: ViewMode) => {
     setViewMode(mode)
-    resetRef.current?.(mode)
+    actionsRef.current?.reset(mode)
   }
 
   return (
@@ -215,7 +269,7 @@ export function VisualizerPanel() {
         dpr={window.devicePixelRatio}
       >
         <Suspense fallback={null}>
-          <Scene viewMode={viewMode} resetRef={resetRef} />
+          <Scene viewMode={viewMode} actionsRef={actionsRef} />
         </Suspense>
       </Canvas>
       <div className={styles.viewBtns}>
@@ -239,6 +293,21 @@ export function VisualizerPanel() {
           title="Vue de face orthogonale (XZ)"
         >
           ▯ XZ
+        </button>
+        <button
+          className={`${styles.viewBtn} ${viewMode === 'right' ? styles.viewBtnActive : ''}`}
+          onClick={() => handleView('right')}
+          title="Vue de côté orthogonale (YZ)"
+        >
+          ▯ YZ
+        </button>
+        <button
+          className={styles.viewBtn}
+          onClick={() => actionsRef.current?.fit(viewMode)}
+          disabled={!hasFile}
+          title="Ajuster la vue au fichier chargé"
+        >
+          ⤢ Ajuster
         </button>
       </div>
     </div>
