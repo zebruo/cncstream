@@ -26,6 +26,8 @@ export const IpcChannels = {
 
   FILE_OPEN_DIALOG: 'file:open-dialog',
 
+  LOGS_OPEN_FOLDER: 'logs:open-folder',
+
   JOB_START: 'job:start',
   JOB_PAUSE: 'job:pause',
   JOB_RESUME: 'job:resume',
@@ -123,6 +125,9 @@ export interface CNCStreamAPI {
 
   // File
   openFileDialog: () => Promise<{ path: string; content: string } | null>
+
+  // Journal des événements
+  openLogsFolder: () => Promise<void>
 
   // Job
   startJob: (lines: string[], options?: JobOptions) => Promise<void>

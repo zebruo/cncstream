@@ -93,6 +93,13 @@ export function ConsolePanel() {
         <button className={styles.clearBtn} onClick={clearConsole} title={t('console.clearTitle')}>
           {t('console.clear')}
         </button>
+        <button
+          className={styles.clearBtn}
+          onClick={() => catchCommandError(window.cncstream.openLogsFolder())}
+          title={t('console.logsTitle')}
+        >
+          {t('console.logs')}
+        </button>
       </div>
     </div>
   )

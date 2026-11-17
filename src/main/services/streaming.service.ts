@@ -51,11 +51,13 @@ export class StreamingService extends EventEmitter {
         continue
       }
 
+      // Numéro figé ici : au moment de l'erreur, currentLineIndex est déjà à la fin du fichier
+      const lineNumber = this.currentLineIndex
       this.commandQueue
-        .enqueue(cleaned, CommandPriority.NORMAL, this.currentLineIndex)
+        .enqueue(cleaned, CommandPriority.NORMAL, lineNumber)
         .catch((err) => {
           this.errorCount++
-          this.emit('line-error', { lineNumber: this.currentLineIndex, error: err.message })
+          this.emit('line-error', { lineNumber, error: err.message })
         })
 
       this.currentLineIndex++

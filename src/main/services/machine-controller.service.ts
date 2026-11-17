@@ -118,6 +118,7 @@ export class MachineControllerService extends EventEmitter {
     if (this._isConnected) return
     await this.serial.open({ path, baudRate })
     this._isConnected = true
+    this.emit('connected', { path, baudRate })
     this.protocol.reset()
     this.startPolling()
 

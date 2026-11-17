@@ -40,7 +40,9 @@
     "notConnected": "Non connecté",
     "send": "Envoyer",
     "clear": "Effacer",
-    "clearTitle": "Effacer la console"
+    "clearTitle": "Effacer la console",
+    "logs": "Journal",
+    "logsTitle": "Ouvrir le dossier des journaux (un fichier par jour, 7 jours conservés)"
   },
   "jog": {
     "title": "Jogging",

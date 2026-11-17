@@ -40,7 +40,9 @@
     "notConnected": "Not connected",
     "send": "Send",
     "clear": "Clear",
-    "clearTitle": "Clear console"
+    "clearTitle": "Clear console",
+    "logs": "Log",
+    "logsTitle": "Open the log folder (one file per day, 7 days kept)"
   },
   "jog": {
     "title": "Jogging",

@@ -1,18 +1,23 @@
+import { join } from 'path'
 import { app, BrowserWindow, globalShortcut } from 'electron'
 import { createMainWindow } from './window'
 import { registerAllIpcHandlers } from './ipc/register'
 import { MachineControllerService } from './services/machine-controller.service'
 import { SettingsStoreService } from './services/settings-store.service'
 import { SleepManagerService } from './services/sleep-manager.service'
+import { EventLogService } from './services/event-log.service'
 import { IpcEvents } from '@shared/types/ipc'
 
 let mainWindow: BrowserWindow | null = null
 let machineController: MachineControllerService
 let settingsStore: SettingsStoreService
 let sleepManager: SleepManagerService
+let eventLog: EventLogService
 
 app.whenReady().then(() => {
   settingsStore = new SettingsStoreService()
+  eventLog = new EventLogService(join(app.getPath('userData'), 'logs'))
+  eventLog.log('app', `Démarrage CNCStream ${app.getVersion()} (${app.isPackaged ? 'installée' : 'développement'})`)
   machineController = new MachineControllerService()
   sleepManager = new SleepManagerService()
 
@@ -27,7 +32,39 @@ app.whenReady().then(() => {
     })
   }
 
-  registerAllIpcHandlers(mainWindow, machineController, settingsStore)
+  registerAllIpcHandlers(mainWindow, machineController, settingsStore, eventLog)
+
+  // Journal des événements (fichier consultable après coup)
+  // Les rapports d'état (5 Hz) ne sont pas écrits : seul un changement d'état l'est.
+  let lastMachineState = ''
+  machineController.on('connected', ({ path, baudRate }) => {
+    eventLog.log('connexion', `Connecté à ${path} (${baudRate} baud)`)
+  })
+  machineController.on('disconnected', () => eventLog.log('connexion', 'Déconnecté'))
+  machineController.on('console', (line: string) => eventLog.log('machine', line))
+  machineController.on('status', (status) => {
+    if (status.state !== lastMachineState) {
+      eventLog.log('état', `${lastMachineState || '?'} -> ${status.state}`)
+      lastMachineState = status.state
+    }
+  })
+  machineController.on('response', (response) => {
+    eventLog.log('machine', response.type === 'ok' ? '< ok' : `< error:${response.code} ${response.message}`)
+  })
+  machineController.on('alarm', (alarm) => {
+    eventLog.log('alarme', `ALARM:${alarm.code} ${alarm.message}`)
+  })
+  machineController.on('startup', (info) => {
+    eventLog.log('machine', `Démarrage GRBL ${info.version}${info.isGrblHAL ? ' (grblHAL)' : ''}`)
+  })
+  machineController.on('job:state', (state) => eventLog.log('job', `État : ${state}`))
+  machineController.on('job:completed', () => eventLog.log('job', 'Terminé'))
+  machineController.on('job:error', (error) => {
+    // Un arrêt vide la file : une erreur « Queue flushed » par ligne en attente serait du bruit
+    if (!error.error.includes('Queue flushed')) {
+      eventLog.log('job', `Erreur ligne ${error.lineNumber} : ${error.error}`)
+    }
+  })
 
   // Forward machine events to renderer
   machineController.on('status', (status) => {
