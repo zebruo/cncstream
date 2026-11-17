@@ -16,7 +16,10 @@
     "refreshTitle": "Refresh ports",
     "connecting": "Connecting...",
     "connect": "Connect",
-    "disconnect": "Disconnect"
+    "disconnect": "Disconnect",
+    "errorPortNotFound": "Port {{port}} not found. Is the machine powered on and the USB cable plugged in?",
+    "errorPortBusy": "Port {{port}} is not accessible: it may already be in use by another program or another CNCStream window.",
+    "errorGeneric": "Connection error: {{message}}"
   },
   "macros": {
     "editTitle": "Edit macro",

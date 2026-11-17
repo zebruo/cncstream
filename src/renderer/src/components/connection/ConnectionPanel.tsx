@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Panel } from '../common/Panel'
 import { useConnectionStore } from '../../stores/connection.store'
 import { DEFAULT_BAUD_RATES } from '@shared/constants/defaults'
+import { describeConnectionError } from '../../lib/connection-errors'
 import plugIcon from '../../assets/icons/plug.svg'
 import unplugIcon from '../../assets/icons/unplug.svg'
 import refreshIcon from '../../assets/icons/refresh.svg'
@@ -31,6 +32,7 @@ export function ConnectionPanel() {
   const { t } = useTranslation()
   const isConnected = state === 'connected'
   const isConnecting = state === 'connecting'
+  const errorInfo = error ? describeConnectionError(error) : null
 
   return (
     <Panel
@@ -89,7 +91,7 @@ export function ConnectionPanel() {
         </button>
       </div>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {errorInfo && <div className={styles.error}>{t(errorInfo.key, errorInfo.params)}</div>}
     </Panel>
   )
 }
