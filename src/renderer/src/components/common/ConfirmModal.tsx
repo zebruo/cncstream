@@ -39,8 +39,8 @@ export function ConfirmModal({
   if (!isOpen) return null
 
   return (
-      <div className={`${styles.modal} ${styles[variant]} ${secondaryLabel ? styles.wide : ""}`}>
-      <div className={`${styles.modal} ${styles[variant]}`}>
+    <div className={styles.overlay}>
+      <div className={`${styles.modal} ${styles[variant]} ${secondaryLabel ? styles.wide : ''}`}>
         <p className={styles.title}>{title}</p>
         <p className={styles.message}>{message}</p>
         <div className={styles.actions}>
