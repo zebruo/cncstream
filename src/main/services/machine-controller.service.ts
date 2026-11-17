@@ -270,8 +270,13 @@ export class MachineControllerService extends EventEmitter {
   }
 
   async probeZ(feedRate: number, maxDistance: number, retractDistance: number): Promise<void> {
-    await this.commandQueue.enqueue(`G21 G91 G38.2 Z-${maxDistance} F${feedRate}`, CommandPriority.HIGH)
-    await this.commandQueue.enqueue(`G21 G91 G0 Z${retractDistance}`, CommandPriority.HIGH)
+    try {
+      await this.commandQueue.enqueue(`G21 G91 G38.2 Z-${maxDistance} F${feedRate}`, CommandPriority.HIGH)
+      await this.commandQueue.enqueue(`G21 G91 G0 Z${retractDistance}`, CommandPriority.HIGH)
+    } finally {
+      // Les deux commandes ci-dessus sont en relatif : on rétablit l'absolu, même si la sonde échoue
+      await this.commandQueue.enqueue('G90', CommandPriority.HIGH).catch(() => {})
+    }
   }
 
   async getGrblSettings(): Promise<void> {

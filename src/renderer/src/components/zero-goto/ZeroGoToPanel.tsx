@@ -11,6 +11,7 @@ import { ConfirmModal } from '../common/ConfirmModal'
 import styles from './ZeroGoToPanel.module.css'
 import { MM_PER_INCH } from '@shared/constants/defaults'
 import { catchCommandError } from '../../lib/command-errors'
+import { goToPositionCommands, goToXYZeroCommands } from '../../lib/go-to-commands'
 
 type ProbePhase = 'idle' | 'running' | 'confirm' | 'failed'
 
@@ -68,26 +69,18 @@ export function ZeroGoToPanel() {
     })
   }, [])
 
+  const sendAll = (commands: string[]) => {
+    for (const command of commands) catchCommandError(window.cncstream.sendCommand(command))
+  }
+
   const goToXYZero = () => {
     if (!isConnected) return
-    catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`))
-    catchCommandError(window.cncstream.sendCommand('G90 G0 X0 Y0'))
-    catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`))
+    sendAll(goToXYZeroCommands(safeHeight))
   }
 
   const goToPosition = (x?: number, y?: number, z?: number) => {
     if (!isConnected) return
-    let cmd = 'G90 G0'
-    if (x !== undefined) cmd += ` X${x}`
-    if (y !== undefined) cmd += ` Y${y}`
-    if (z !== undefined) cmd += ` Z${z}`
-    if (z === undefined) {
-      catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z${safeHeight}`))
-      catchCommandError(window.cncstream.sendCommand(cmd))
-      catchCommandError(window.cncstream.sendCommand(`G21 G91 G0 Z-${safeHeight}`))
-    } else {
-      catchCommandError(window.cncstream.sendCommand(cmd))
-    }
+    sendAll(goToPositionCommands({ x, y, z }, safeHeight))
   }
 
   const homeAll = () => { if (!isConnected) return; catchCommandError(window.cncstream.home()) }
