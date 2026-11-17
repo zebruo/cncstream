@@ -1,5 +1,5 @@
 import type { ConnectionConfig, SerialPortInfo } from './connection'
-import type { MachineStatus, AlarmInfo } from './machine'
+import type { MachineStatus, AlarmInfo, MachineConfig } from './machine'
 import type { JobProgress, JobOptions } from './job'
 
 // Invoke channels (renderer -> main, request/response)
@@ -59,6 +59,7 @@ export const IpcEvents = {
   PORTS_CHANGED: 'ports:changed',
   STARTUP_INFO: 'startup:info',
   SPINDLE_CONFIG: 'spindle:config',
+  MACHINE_CONFIG: 'machine:config',
   PROBE_RESULT: 'probe:result'
 } as const
 
@@ -164,6 +165,7 @@ export interface CNCStreamAPI {
   ) => () => void
   onPortsChanged: (callback: (ports: SerialPortInfo[]) => void) => () => void
   onStartupInfo: (callback: (info: { version: string; isGrblHAL: boolean }) => void) => () => void
+  onMachineConfig: (callback: (config: MachineConfig) => void) => () => void
   onSpindleConfig: (callback: (config: { maxRpm: number; minRpm: number }) => void) => () => void
   onProbeResult: (callback: (result: ProbeResult) => void) => () => void
 }

@@ -59,6 +59,20 @@ export class GrblProtocolService extends EventEmitter {
     return Number.isNaN(val) ? 0 : val
   }
 
+  /** Course maximale de X, Y et Z ($130, $131, $132) en mm ; null tant que GRBL ne les a pas toutes données. */
+  get maxTravel(): { x: number; y: number; z: number } | null {
+    const x = Number.parseFloat(this._grblSettings['$130'] ?? '')
+    const y = Number.parseFloat(this._grblSettings['$131'] ?? '')
+    const z = Number.parseFloat(this._grblSettings['$132'] ?? '')
+    return Number.isNaN(x) || Number.isNaN(y) || Number.isNaN(z) ? null : { x, y, z }
+  }
+
+  /** Masque d'inversion du sens de homing ($23) : un bit à 1 = l'axe va vers son côté négatif. */
+  get homingDirectionInvertMask(): number {
+    const val = Number.parseInt(this._grblSettings['$23'] ?? '', 10)
+    return Number.isNaN(val) ? 0 : val
+  }
+
   parseLine(line: string): GrblResponse {
     const trimmed = line.trim()
 

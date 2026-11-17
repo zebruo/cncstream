@@ -4,7 +4,8 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, GizmoHelper, PerspectiveCamera, OrthographicCamera } from '@react-three/drei'
 import { ToolpathLines } from './ToolpathLines'
 import { WorkAreaGrid } from './WorkAreaGrid'
-import { ToolPositionMarker } from './ToolPositionMarker'
+import { CutterModel } from './CutterModel'
+import { MachineTravelBox } from './MachineTravelBox'
 import { useVisualizationStore } from '../../stores/visualization.store'
 import { useMachineStore } from '../../stores/machine.store'
 import { useUIStore } from '../../stores/ui.store'
@@ -106,6 +107,7 @@ function Scene({ viewMode, resetRef }: SceneProps) {
   const bbox = useVisualizationStore((s) => s.boundingBox)
   const executedLineIndex = useVisualizationStore((s) => s.executedLineIndex)
   const wpos = useMachineStore((s) => s.wpos)
+  const toolDiameter = useUIStore((s) => s.toolDiameter)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const controlsRef = useRef<any>(null)
 
@@ -182,7 +184,9 @@ function Scene({ viewMode, resetRef }: SceneProps) {
         <ToolpathLines segments={segments} executedIndex={executedLineIndex} />
       )}
 
-      <ToolPositionMarker position={[wpos.x, wpos.z, -wpos.y]} />
+      <MachineTravelBox />
+
+      <CutterModel position={[wpos.x, wpos.z, -wpos.y]} diameter={toolDiameter} />
 
       {/* Custom CNC gizmo with correct axis directions */}
       <GizmoHelper alignment="bottom-right" margin={[60, 60]}>

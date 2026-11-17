@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { MachineConfig } from '@shared/types/machine'
 
 type Theme = 'light' | 'dark'
 type Units = 'mm' | 'in'
@@ -19,6 +20,11 @@ interface UIStore {
   helpOpen: boolean
   language: Language
   zProbeApplied: boolean
+  /** Course lue dans GRBL, mémorisée pour rester affichée machine déconnectée */
+  machineTravel: MachineConfig | null
+  showMachineTravel: boolean
+  /** Diamètre de la fraise affichée dans la vue 3D, en mm */
+  toolDiameter: number
 
   toggleTheme: () => void
   setTheme: (theme: Theme) => void
@@ -33,6 +39,9 @@ interface UIStore {
   setHelpOpen: (open: boolean) => void
   setLanguage: (lang: Language) => void
   setZProbeApplied: (applied: boolean) => void
+  setMachineTravel: (config: MachineConfig) => void
+  setShowMachineTravel: (show: boolean) => void
+  setToolDiameter: (diameter: number) => void
 }
 
 export const useUIStore = create<UIStore>()(
@@ -49,6 +58,9 @@ export const useUIStore = create<UIStore>()(
       helpOpen: false,
       language: 'fr',
       zProbeApplied: false,
+      machineTravel: null,
+      showMachineTravel: true,
+      toolDiameter: 4,
 
       toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
       setTheme: (theme) => set({ theme }),
@@ -62,7 +74,10 @@ export const useUIStore = create<UIStore>()(
       setSpindleMode: (mode) => set({ spindleMode: mode }),
       setHelpOpen: (open) => set({ helpOpen: open }),
       setLanguage: (lang) => set({ language: lang }),
-      setZProbeApplied: (applied) => set({ zProbeApplied: applied })
+      setZProbeApplied: (applied) => set({ zProbeApplied: applied }),
+      setMachineTravel: (config) => set({ machineTravel: config }),
+      setShowMachineTravel: (show) => set({ showMachineTravel: show }),
+      setToolDiameter: (diameter) => set({ toolDiameter: diameter })
     }),
     {
       name: 'cncstream-ui',

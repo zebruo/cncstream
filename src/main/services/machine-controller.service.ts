@@ -62,6 +62,16 @@ export class MachineControllerService extends EventEmitter {
           break
         case 'setting':
           this.emit('setting', response)
+          // Course de la machine : $130 et $131 précèdent $132, qui clôt donc la série
+          if (response.key === '$132') {
+            const travel = this.protocol.maxTravel
+            if (travel) {
+              this.emit('machine-config', {
+                travel,
+                homingInvertMask: this.protocol.homingDirectionInvertMask
+              })
+            }
+          }
           // Emit spindle config only when $30 is received (after $31 is already parsed)
           if (response.key === '$30') {
             this.emit('spindle-config', {

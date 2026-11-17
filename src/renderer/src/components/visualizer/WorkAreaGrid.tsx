@@ -34,6 +34,7 @@ const GAP = 10
 /** Graduation de l'axe X : sous le bord avant de la grille. */
 const xTickStyle: CSSProperties = {
   ...labelStyle,
+  color: '#fa5252',
   display: 'inline-block',
   transform: `translateY(${GAP + 4}px)`
 }
@@ -41,6 +42,7 @@ const xTickStyle: CSSProperties = {
 /** Graduation de l'axe Y : à gauche du bord, alignée à droite contre la grille. */
 const yTickStyle: CSSProperties = {
   ...labelStyle,
+  color: '#40c057',
   display: 'inline-block',
   transform: `translateX(calc(-50% - ${GAP}px))`
 }

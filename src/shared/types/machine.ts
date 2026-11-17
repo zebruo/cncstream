@@ -48,6 +48,14 @@ export interface ErrorInfo {
   message: string
 }
 
+/** Course de la machine, lue dans les réglages GRBL ($130-$132 et $23). */
+export interface MachineConfig {
+  /** Course maximale de X, Y et Z en mm */
+  travel: { x: number; y: number; z: number }
+  /** $23 : un bit à 1 = l'axe fait son homing vers le côté négatif (X = bit 0, Y = bit 1, Z = bit 2) */
+  homingInvertMask: number
+}
+
 export interface GrblSetting {
   key: string
   value: string

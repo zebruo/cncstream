@@ -128,3 +128,10 @@
   color: var(--color-accent) !important;
   border-color: var(--color-accent) !important;
 }
+
+.numberInput {
+  width: 64px;
+  padding: 4px 8px;
+  text-align: right;
+  font-family: var(--font-family-mono);
+}

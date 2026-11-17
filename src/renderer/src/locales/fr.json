@@ -123,6 +123,10 @@
     "toDarkMode": "Mode sombre",
     "units": "Unités",
     "aAxis": "Axe A",
+    "travel": "Course machine",
+    "travelTitle": "Affiche en pointillé la zone atteignable par la machine (lue dans GRBL : $130, $131, $132)",
+    "tool": "Fraise (mm)",
+    "toolTitle": "Diamètre de la fraise affichée dans la vue 3D",
     "log": "Journal",
     "logTitle": "Enregistre les échanges avec la machine dans un fichier, un par jour (désactivé par défaut)",
     "language": "Langue"

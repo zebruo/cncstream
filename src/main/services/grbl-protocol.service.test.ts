@@ -192,6 +192,45 @@ describe('GrblProtocolService : réglages ($)', () => {
   })
 })
 
+describe('GrblProtocolService : course de la machine', () => {
+  it("n'en donne pas tant que les trois courses manquent", () => {
+    const grbl = new GrblProtocolService()
+    expect(grbl.maxTravel).toBeNull()
+    grbl.parseLine('$130=450.000')
+    grbl.parseLine('$131=450.000')
+    expect(grbl.maxTravel).toBeNull()
+  })
+
+  it('lit les courses X, Y et Z ($130, $131, $132)', () => {
+    const grbl = new GrblProtocolService()
+    grbl.parseLine('$130=450.000')
+    grbl.parseLine('$131=300.5')
+    grbl.parseLine('$132=80.000')
+    expect(grbl.maxTravel).toEqual({ x: 450, y: 300.5, z: 80 })
+  })
+
+  it('ignore une course illisible', () => {
+    const grbl = new GrblProtocolService()
+    grbl.parseLine('$130=450')
+    grbl.parseLine('$131=abc')
+    grbl.parseLine('$132=80')
+    expect(grbl.maxTravel).toBeNull()
+  })
+
+  it('lit le masque de sens de homing ($23), 0 par défaut', () => {
+    const grbl = new GrblProtocolService()
+    expect(grbl.homingDirectionInvertMask).toBe(0)
+    grbl.parseLine('$23=3')
+    expect(grbl.homingDirectionInvertMask).toBe(3)
+  })
+
+  it('revient à 0 si $23 est illisible', () => {
+    const grbl = new GrblProtocolService()
+    grbl.parseLine('$23=x')
+    expect(grbl.homingDirectionInvertMask).toBe(0)
+  })
+})
+
 describe('GrblProtocolService : rapport de statut', () => {
   it('lit l\'état et la position machine', () => {
     const grbl = new GrblProtocolService()

@@ -5,6 +5,7 @@ import { useJobStore } from '../stores/job.store'
 import { useConsoleStore } from '../stores/console.store'
 import type { ConnectionStatus } from '@shared/types/connection'
 import i18n from '../i18n'
+import { useUIStore } from '../stores/ui.store'
 
 export function useMachineStatus(): void {
   const updateFromStatus = useMachineStore((s) => s.updateFromStatus)
@@ -42,6 +43,11 @@ export function useMachineStatus(): void {
     )
 
     unsubs.push(window.cncstream.onMachineHomed(() => setHomed(true)))
+
+    // Course de la machine ($130-$132, $23) : mémorisée pour la vue 3D
+    unsubs.push(
+      window.cncstream.onMachineConfig((config) => useUIStore.getState().setMachineTravel(config))
+    )
 
     unsubs.push(
       window.cncstream.onMachineAlarm((alarm) => {

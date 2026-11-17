@@ -123,6 +123,10 @@
     "toDarkMode": "Switch to dark mode",
     "units": "Units",
     "aAxis": "A Axis",
+    "travel": "Machine travel",
+    "travelTitle": "Shows the area the machine can reach as a dashed box (read from GRBL: $130, $131, $132)",
+    "tool": "Cutter (mm)",
+    "toolTitle": "Diameter of the cutter shown in the 3D view",
     "log": "Log",
     "logTitle": "Records the exchanges with the machine in a file, one per day (off by default)",
     "language": "Language"

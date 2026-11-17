@@ -114,6 +114,10 @@ app.whenReady().then(() => {
     mainWindow?.webContents.send(IpcEvents.STARTUP_INFO, info)
   })
 
+  machineController.on('machine-config', (config) => {
+    mainWindow?.webContents.send(IpcEvents.MACHINE_CONFIG, config)
+  })
+
   machineController.on('spindle-config', (config) => {
     mainWindow?.webContents.send(IpcEvents.SPINDLE_CONFIG, config)
   })

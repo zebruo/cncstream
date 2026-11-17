@@ -18,6 +18,10 @@ export function SettingsDropdown() {
   const setLanguage = useUIStore((s) => s.setLanguage)
   const showAAxis = useUIStore((s) => s.showAAxis)
   const setShowAAxis = useUIStore((s) => s.setShowAAxis)
+  const showMachineTravel = useUIStore((s) => s.showMachineTravel)
+  const setShowMachineTravel = useUIStore((s) => s.setShowMachineTravel)
+  const toolDiameter = useUIStore((s) => s.toolDiameter)
+  const setToolDiameter = useUIStore((s) => s.setToolDiameter)
 
   const [open, setOpen] = useState(false)
   // Journal des événements : l'état vit dans le processus principal (réglages), désactivé par défaut
@@ -114,6 +118,42 @@ export function SettingsDropdown() {
             >
               {logEnabled ? 'ON' : 'OFF'}
             </button>
+          </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.section}>
+            <span className={styles.label} title={t('settings.travelTitle')}>{t('settings.travel')}</span>
+            <button
+              className={`${styles.langBtn} ${showMachineTravel ? styles.langActive : ''}`}
+              onClick={() => setShowMachineTravel(!showMachineTravel)}
+              title={t('settings.travelTitle')}
+              aria-pressed={showMachineTravel}
+            >
+              {showMachineTravel ? 'ON' : 'OFF'}
+            </button>
+          </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.section}>
+            <label htmlFor="tool-diameter" className={styles.label} title={t('settings.toolTitle')}>
+              {t('settings.tool')}
+            </label>
+            <input
+              id="tool-diameter"
+              type="number"
+              className={styles.numberInput}
+              value={toolDiameter}
+              min={0.1}
+              max={50}
+              step={0.5}
+              onChange={(e) => {
+                const value = Number.parseFloat(e.target.value)
+                if (!Number.isNaN(value) && value >= 0.1 && value <= 50) setToolDiameter(value)
+              }}
+              onWheel={(e) => e.currentTarget.blur()}
+            />
           </div>
 
           <div className={styles.divider} />
