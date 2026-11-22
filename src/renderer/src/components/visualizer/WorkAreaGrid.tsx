@@ -1,4 +1,6 @@
-import { useMemo, CSSProperties } from 'react'
+import { useMemo, useRef, CSSProperties } from 'react'
+import * as THREE from 'three'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import { useUIStore } from '../../stores/ui.store'
 
@@ -67,6 +69,52 @@ const originStyle: CSSProperties = {
   transform: `translate(-${GAP}px, ${GAP}px)`
 }
 
+type Xyz = [number, number, number]
+
+/**
+ * Nom d'axe (« X (mm) ») posé au-delà de l'extrémité de son axe, dans le prolongement des
+ * graduations : la direction est celle que l'axe a à l'écran, relue à chaque image. Un décalage
+ * fixe (haut, droite…) n'est juste que pour un angle de vue ; quand on fait pivoter la vue,
+ * le nom resterait à côté de l'axe au lieu de le prolonger.
+ */
+function AxisName({ text, color, end, before, gap }: {
+  text: string
+  color: string
+  end: Xyz
+  /** Un point de l'axe en retrait de l'extrémité : donne le sens de l'axe à l'écran */
+  before: Xyz
+  /** Distance (px) entre l'extrémité de l'axe et le bord du nom */
+  gap: number
+}) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const { camera, size } = useThree()
+  const tip = useMemo(() => new THREE.Vector3(), [])
+  const tail = useMemo(() => new THREE.Vector3(), [])
+
+  useFrame(() => {
+    const el = ref.current
+    if (!el) return
+    tip.set(...end).project(camera)
+    tail.set(...before).project(camera)
+    const dx = ((tip.x - tail.x) * size.width) / 2
+    const dy = (-(tip.y - tail.y) * size.height) / 2
+    const length = Math.hypot(dx, dy)
+    // Axe vu par le bout : pas de direction à l'écran, le nom reste à droite
+    const [ux, uy] = length > 0.5 ? [dx / length, dy / length] : [1, 0]
+    // Le bord du nom est à la distance « gap » de l'extrémité, quelle que soit la direction
+    const distance = Math.abs(ux) * (el.offsetWidth / 2) + Math.abs(uy) * (el.offsetHeight / 2) + gap
+    el.style.transform = `translate(${ux * distance}px, ${uy * distance}px)`
+  })
+
+  return (
+    <Html position={end} center zIndexRange={[1, 0]}>
+      <span ref={ref} style={{ ...axisStyle(color), display: 'inline-block' }}>
+        {text}
+      </span>
+    </Html>
+  )
+}
+
 export function WorkAreaGrid({ bbox, sideView = null }: Props) {
   const units = useUIStore((s) => s.units)
   const { gridSize, yOffset } = useMemo(() => {
@@ -132,32 +180,22 @@ export function WorkAreaGrid({ bbox, sideView = null }: Props) {
 
       {/* Axis name + unit : à droite de la dernière graduation de l'axe visible */}
       {showX && (
-        <Html position={[gridSize, tickY, 0]} center zIndexRange={[1, 0]}>
-          <span
-            style={{
-              ...axisStyle('#fa5252'),
-              display: 'inline-block',
-              transform: `translate(calc(50% + ${GAP * 2 + 6}px), 0px)`
-            }}
-          >
-            {`X (${units})`}
-          </span>
-        </Html>
+        <AxisName
+          text={`X (${units})`}
+          color="#fa5252"
+          end={[gridSize, tickY, 0]}
+          before={[gridSize * 0.8, tickY, 0]}
+          gap={GAP * 2 + 6}
+        />
       )}
       {showY && (
-        <Html position={[0, tickY, -gridSize]} center zIndexRange={[1, 0]}>
-          <span
-            style={{
-              ...axisStyle('#40c057'),
-              display: 'inline-block',
-              transform: sideView
-                ? `translate(calc(50% + ${GAP * 2 + 6}px), 0px)`
-                : `translate(calc(-50% - ${GAP}px), -${GAP * 2 + 4}px)`
-            }}
-          >
-            {`Y (${units})`}
-          </span>
-        </Html>
+        <AxisName
+          text={`Y (${units})`}
+          color="#40c057"
+          end={[0, tickY, -gridSize]}
+          before={[0, tickY, -gridSize * 0.8]}
+          gap={GAP * 2 + 6}
+        />
       )}
     </group>
   )

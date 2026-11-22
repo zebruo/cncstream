@@ -64,13 +64,14 @@
   filter: brightness(1.15);
 }
 
+/* Action de démarrage (« Démarrer la broche ») : vert, comme le bouton du panneau Broche */
 .secondaryBtn {
-  background-color: var(--color-accent);
-  color: var(--color-accent-text);
+  background-color: var(--color-success);
+  color: #fff;
 }
 
 .secondaryBtn:hover {
-  background-color: var(--color-accent-hover);
+  filter: brightness(1.1);
 }
 
 .cancelBtn {

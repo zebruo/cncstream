@@ -93,6 +93,8 @@ export function ConnectionBar() {
         className={`${styles.connectBtn} ${isConnected ? styles.disconnect : ''}`}
         onClick={isConnected ? disconnect : connect}
         disabled={(!selectedPort && !isConnected) || isConnecting}
+        title={buttonLabel}
+        aria-label={buttonLabel}
       >
         <svg
           width="16"
@@ -109,7 +111,8 @@ export function ConnectionBar() {
           <path d="M12 18v4" />
           {isConnected && <path d="M3 3l18 18" />}
         </svg>
-        {buttonLabel}
+        {/* Connecté : icône seule (le nom reste en infobulle et pour les lecteurs d'écran) */}
+        {!isConnected && buttonLabel}
       </button>
     </div>
   )

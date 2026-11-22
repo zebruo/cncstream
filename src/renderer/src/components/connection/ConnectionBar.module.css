@@ -106,6 +106,9 @@
 }
 
 .connectBtn.disconnect {
+  width: 32px;
+  padding: 0;
+  justify-content: center;
   background-color: transparent;
   color: var(--color-warning);
   border-color: var(--color-warning);

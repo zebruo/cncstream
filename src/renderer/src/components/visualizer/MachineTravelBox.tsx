@@ -44,7 +44,7 @@ export function MachineTravelBox() {
 
   return (
     <lineSegments ref={linesRef} position={box.center} geometry={box.edges}>
-      <lineDashedMaterial color="#fab005" dashSize={8} gapSize={5} transparent opacity={0.6} />
+      <lineDashedMaterial color="#fab005" dashSize={8} gapSize={5} transparent opacity={0.3} />
     </lineSegments>
   )
 }
